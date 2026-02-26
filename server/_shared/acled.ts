@@ -12,8 +12,11 @@ import { CHROME_UA } from './constants';
 import { cachedFetchJson } from './redis';
 
 const ACLED_API_URL = 'https://acleddata.com/api/acled/read';
+const ACLED_AUTH_URL = 'https://acleddata.com/oauth/token';
 const ACLED_CACHE_TTL = 900; // 15 min — matches ACLED rate-limit window
 const ACLED_TIMEOUT_MS = 15_000;
+
+let acledTokenCache: { token: string; expiresAt: number } | null = null;
 
 export interface AcledRawEvent {
   event_id_cnty?: string;
@@ -41,13 +44,58 @@ interface FetchAcledOptions {
   limit?: number;
 }
 
+async function getAcledAccessToken(): Promise<string | null> {
+  // Backward compatibility: explicit static token wins.
+  const staticToken = process.env.ACLED_ACCESS_TOKEN;
+  if (staticToken) return staticToken;
+
+  const username = process.env.ACLED_USERNAME;
+  const password = process.env.ACLED_PASSWORD;
+  if (!username || !password) return null;
+
+  const now = Date.now();
+  if (acledTokenCache && acledTokenCache.expiresAt > now + 60_000) {
+    return acledTokenCache.token;
+  }
+
+  const body = new URLSearchParams({
+    username,
+    password,
+    grant_type: 'password',
+    client_id: 'acled',
+  });
+
+  const resp = await fetch(ACLED_AUTH_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      Accept: 'application/json',
+      'User-Agent': CHROME_UA,
+    },
+    body: body.toString(),
+    signal: AbortSignal.timeout(ACLED_TIMEOUT_MS),
+  });
+
+  if (!resp.ok) return null;
+
+  const data = await resp.json() as { access_token?: string; expires_in?: number };
+  if (!data?.access_token) return null;
+
+  const expiresInMs = Math.max(60, Number(data.expires_in || 86400)) * 1000;
+  acledTokenCache = {
+    token: data.access_token,
+    expiresAt: now + expiresInMs,
+  };
+  return data.access_token;
+}
+
 /**
  * Fetch ACLED events with automatic Redis caching.
  * Cache key is derived from query parameters so identical queries across
  * different handlers share the same cached result.
  */
 export async function fetchAcledCached(opts: FetchAcledOptions): Promise<AcledRawEvent[]> {
-  const token = process.env.ACLED_ACCESS_TOKEN;
+  const token = await getAcledAccessToken();
   if (!token) return [];
 
   const cacheKey = `acled:shared:${opts.eventTypes}:${opts.startDate}:${opts.endDate}:${opts.country || 'all'}:${opts.limit || 500}`;
