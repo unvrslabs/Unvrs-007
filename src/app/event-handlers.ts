@@ -7,7 +7,6 @@ import {
   PlaybackControl,
   StatusPanel,
   MobileWarningModal,
-  PizzIntIndicator,
   CIIPanel,
   PredictionPanel,
 } from '@/components';
