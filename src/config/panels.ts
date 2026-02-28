@@ -556,11 +556,137 @@ const HAPPY_MOBILE_MAP_LAYERS: MapLayers = {
 };
 
 // ============================================
+// ITALIA VARIANT (Italy Focus)
+// ============================================
+const ITALIA_PANELS: Record<string, PanelConfig> = {
+  map: { name: 'Mappa Italia', enabled: true, priority: 1 },
+  'live-news': { name: 'Live News', enabled: true, priority: 1 },
+  'live-webcams': { name: 'Live Webcams', enabled: true, priority: 1 },
+  insights: { name: 'AI Insights', enabled: true, priority: 1 },
+  'strategic-posture': { name: 'AI Strategic Posture', enabled: true, priority: 1 },
+  cii: { name: 'Country Instability', enabled: true, priority: 1 },
+  'strategic-risk': { name: 'Strategic Risk Overview', enabled: true, priority: 1 },
+  intel: { name: 'Intel Feed', enabled: true, priority: 1 },
+  'gdelt-intel': { name: 'Live Intelligence', enabled: true, priority: 1 },
+  // Italy-specific panels
+  'italia-politica': { name: 'Politica Italiana', enabled: true, priority: 1 },
+  'italia-economia': { name: 'Economia Italiana', enabled: true, priority: 1 },
+  'italia-difesa': { name: 'Difesa & Sicurezza', enabled: true, priority: 1 },
+  'italia-energia': { name: 'Energia Italia', enabled: true, priority: 1 },
+  'italia-esteri': { name: 'Esteri & Diplomazia', enabled: true, priority: 1 },
+  'italia-finanza': { name: 'Borsa & Finanza', enabled: true, priority: 1 },
+  'italia-infrastrutture': { name: 'Infrastrutture & Trasporti', enabled: true, priority: 1 },
+  'italia-tech': { name: 'Tech & Innovazione', enabled: true, priority: 1 },
+  // Context panels
+  gov: { name: 'Government', enabled: true, priority: 1 },
+  thinktanks: { name: 'Think Tanks', enabled: true, priority: 1 },
+  europe: { name: 'Europe', enabled: true, priority: 1 },
+  cascade: { name: 'Infrastructure Cascade', enabled: true, priority: 1 },
+  economic: { name: 'Economic Indicators', enabled: true, priority: 1 },
+  markets: { name: 'Markets', enabled: true, priority: 2 },
+  commodities: { name: 'Commodities', enabled: true, priority: 2 },
+  energy: { name: 'Energy & Resources', enabled: true, priority: 2 },
+  monitors: { name: 'My Monitors', enabled: true, priority: 2 },
+};
+
+const ITALIA_MAP_LAYERS: MapLayers = {
+  conflicts: true,
+  bases: true,
+  cables: true,
+  pipelines: true,
+  hotspots: true,
+  ais: false,
+  nuclear: true,
+  irradiators: false,
+  sanctions: true,
+  weather: true,
+  economic: true,
+  waterways: true,
+  outages: true,
+  cyberThreats: false,
+  datacenters: false,
+  protests: false,
+  flights: false,
+  military: true,
+  natural: true,
+  spaceports: false,
+  minerals: false,
+  fires: false,
+  ucdpEvents: false,
+  displacement: false,
+  climate: false,
+  startupHubs: false,
+  cloudRegions: false,
+  accelerators: false,
+  techHQs: false,
+  techEvents: false,
+  stockExchanges: false,
+  financialCenters: false,
+  centralBanks: false,
+  commodityHubs: false,
+  gulfInvestments: false,
+  positiveEvents: false,
+  kindness: false,
+  happiness: false,
+  speciesRecovery: false,
+  renewableInstallations: false,
+  tradeRoutes: false,
+  iranAttacks: false,
+  dayNight: false,
+};
+
+const ITALIA_MOBILE_MAP_LAYERS: MapLayers = {
+  conflicts: true,
+  bases: false,
+  cables: false,
+  pipelines: false,
+  hotspots: true,
+  ais: false,
+  nuclear: false,
+  irradiators: false,
+  sanctions: true,
+  weather: true,
+  economic: false,
+  waterways: false,
+  outages: true,
+  cyberThreats: false,
+  datacenters: false,
+  protests: false,
+  flights: false,
+  military: false,
+  natural: true,
+  spaceports: false,
+  minerals: false,
+  fires: false,
+  ucdpEvents: false,
+  displacement: false,
+  climate: false,
+  startupHubs: false,
+  cloudRegions: false,
+  accelerators: false,
+  techHQs: false,
+  techEvents: false,
+  stockExchanges: false,
+  financialCenters: false,
+  centralBanks: false,
+  commodityHubs: false,
+  gulfInvestments: false,
+  positiveEvents: false,
+  kindness: false,
+  happiness: false,
+  speciesRecovery: false,
+  renewableInstallations: false,
+  tradeRoutes: false,
+  iranAttacks: false,
+  dayNight: false,
+};
+
+// ============================================
 // VARIANT-AWARE EXPORTS
 // ============================================
-export const DEFAULT_PANELS = SITE_VARIANT === 'happy' ? HAPPY_PANELS : SITE_VARIANT === 'tech' ? TECH_PANELS : SITE_VARIANT === 'finance' ? FINANCE_PANELS : FULL_PANELS;
-export const DEFAULT_MAP_LAYERS = SITE_VARIANT === 'happy' ? HAPPY_MAP_LAYERS : SITE_VARIANT === 'tech' ? TECH_MAP_LAYERS : SITE_VARIANT === 'finance' ? FINANCE_MAP_LAYERS : FULL_MAP_LAYERS;
-export const MOBILE_DEFAULT_MAP_LAYERS = SITE_VARIANT === 'happy' ? HAPPY_MOBILE_MAP_LAYERS : SITE_VARIANT === 'tech' ? TECH_MOBILE_MAP_LAYERS : SITE_VARIANT === 'finance' ? FINANCE_MOBILE_MAP_LAYERS : FULL_MOBILE_MAP_LAYERS;
+export const DEFAULT_PANELS = SITE_VARIANT === 'happy' ? HAPPY_PANELS : SITE_VARIANT === 'tech' ? TECH_PANELS : SITE_VARIANT === 'finance' ? FINANCE_PANELS : SITE_VARIANT === 'italia' ? ITALIA_PANELS : FULL_PANELS;
+export const DEFAULT_MAP_LAYERS = SITE_VARIANT === 'happy' ? HAPPY_MAP_LAYERS : SITE_VARIANT === 'tech' ? TECH_MAP_LAYERS : SITE_VARIANT === 'finance' ? FINANCE_MAP_LAYERS : SITE_VARIANT === 'italia' ? ITALIA_MAP_LAYERS : FULL_MAP_LAYERS;
+export const MOBILE_DEFAULT_MAP_LAYERS = SITE_VARIANT === 'happy' ? HAPPY_MOBILE_MAP_LAYERS : SITE_VARIANT === 'tech' ? TECH_MOBILE_MAP_LAYERS : SITE_VARIANT === 'finance' ? FINANCE_MOBILE_MAP_LAYERS : SITE_VARIANT === 'italia' ? ITALIA_MOBILE_MAP_LAYERS : FULL_MOBILE_MAP_LAYERS;
 
 /** Maps map-layer toggle keys to their data-freshness source IDs (single source of truth). */
 export const LAYER_TO_SOURCE: Partial<Record<keyof MapLayers, DataSourceId[]>> = {

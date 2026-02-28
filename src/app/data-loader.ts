@@ -234,11 +234,11 @@ export class DataLoaderManager implements AppModule {
       }),
     });
 
-    if (SITE_VARIANT === 'full') {
+    if (SITE_VARIANT === 'full' || SITE_VARIANT === 'italia') {
       tasks.push({ name: 'intelligence', task: runGuarded('intelligence', () => this.loadIntelligenceSignals()) });
     }
 
-    if (SITE_VARIANT === 'full') tasks.push({ name: 'firms', task: runGuarded('firms', () => this.loadFirmsData()) });
+    if (SITE_VARIANT === 'full' || SITE_VARIANT === 'italia') tasks.push({ name: 'firms', task: runGuarded('firms', () => this.loadFirmsData()) });
     if (this.ctx.mapLayers.natural) tasks.push({ name: 'natural', task: runGuarded('natural', () => this.loadNatural()) });
     if (SITE_VARIANT !== 'happy' && this.ctx.mapLayers.weather) tasks.push({ name: 'weather', task: runGuarded('weather', () => this.loadWeatherAlerts()) });
     if (SITE_VARIANT !== 'happy' && this.ctx.mapLayers.ais) tasks.push({ name: 'ais', task: runGuarded('ais', () => this.loadAisSignals()) });
@@ -576,7 +576,7 @@ export class DataLoaderManager implements AppModule {
       }
     });
 
-    if (SITE_VARIANT === 'full') {
+    if (SITE_VARIANT === 'full' || SITE_VARIANT === 'italia') {
       const enabledIntelSources = INTEL_SOURCES.filter(f => !this.ctx.disabledSources.has(f.name));
       const intelPanel = this.ctx.newsPanels['intel'];
       if (enabledIntelSources.length === 0) {

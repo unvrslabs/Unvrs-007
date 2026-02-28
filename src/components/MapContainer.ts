@@ -38,7 +38,7 @@ import type { SpeciesRecovery } from '@/services/conservation-data';
 import type { RenewableInstallation } from '@/services/renewable-installations';
 
 export type TimeRange = '1h' | '6h' | '24h' | '48h' | '7d' | 'all';
-export type MapView = 'global' | 'america' | 'mena' | 'eu' | 'asia' | 'latam' | 'africa' | 'oceania';
+export type MapView = 'global' | 'america' | 'mena' | 'eu' | 'asia' | 'latam' | 'africa' | 'oceania' | 'italia';
 
 export interface MapContainerState {
   zoom: number;

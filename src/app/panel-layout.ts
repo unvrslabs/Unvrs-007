@@ -113,6 +113,7 @@ export class PanelLayoutManager implements AppModule {
         <span class="glass-nav-left-mount">
           <select id="regionSelect" class="glass-nav-select">
             <option value="global">${t('components.deckgl.views.global')}</option>
+            <option value="italia" ${SITE_VARIANT === 'italia' ? 'selected' : ''}>Italia</option>
             <option value="america">${t('components.deckgl.views.americas')}</option>
             <option value="mena">${t('components.deckgl.views.mena')}</option>
             <option value="eu">${t('components.deckgl.views.europe')}</option>
@@ -127,7 +128,7 @@ export class PanelLayoutManager implements AppModule {
             <span id="glassNotificationsMount" class="glass-nav-notifications-mount"></span>
             <span class="glass-nav-divider"></span>
             <a href="#" class="glass-nav-item ${SITE_VARIANT === 'full' ? 'active' : ''}" data-glass-variant="full">World</a>
-            <a href="#" class="glass-nav-item ${SITE_VARIANT === 'finance' ? 'active' : ''}" data-glass-variant="finance">Finance</a>
+            <a href="#" class="glass-nav-item ${SITE_VARIANT === 'italia' ? 'active' : ''}" data-glass-variant="italia">Italia</a>
             <a href="#" class="glass-nav-item ${SITE_VARIANT === 'tech' ? 'active' : ''}" data-glass-variant="tech">Tech</a>
             <span class="glass-nav-divider"></span>
             <button class="glass-nav-item glass-nav-agent" id="glassAgentBtn">⬡ Agent</button>
@@ -146,7 +147,7 @@ export class PanelLayoutManager implements AppModule {
         <div class="map-section" id="mapSection">
           <div class="panel-header">
             <div class="panel-header-left">
-              <span class="panel-title">${SITE_VARIANT === 'tech' ? t('panels.techMap') : SITE_VARIANT === 'happy' ? 'Good News Map' : t('panels.map')}</span>
+              <span class="panel-title">${SITE_VARIANT === 'tech' ? t('panels.techMap') : SITE_VARIANT === 'happy' ? 'Good News Map' : SITE_VARIANT === 'italia' ? 'Mappa Italia' : t('panels.map')}</span>
             </div>
             <span class="header-clock" id="headerClock"></span>
             <button class="map-pin-btn" id="mapPinBtn" title="${t('header.pinMap')}">
@@ -256,7 +257,7 @@ export class PanelLayoutManager implements AppModule {
     this.ctx.map = new MapContainer(mapContainer, {
       zoom: this.ctx.isMobile ? 2.5 : 1.0,
       pan: { x: 0, y: 0 },
-      view: this.ctx.isMobile ? 'mena' : 'global',
+      view: SITE_VARIANT === 'italia' ? 'italia' : this.ctx.isMobile ? 'mena' : 'global',
       layers: this.ctx.mapLayers,
       timeRange: '7d',
     });
@@ -446,7 +447,7 @@ export class PanelLayoutManager implements AppModule {
       this.ctx.panels[panelKey] = panel;
     }
 
-    if (SITE_VARIANT === 'full') {
+    if (SITE_VARIANT === 'full' || SITE_VARIANT === 'italia') {
       const gdeltIntelPanel = new GdeltIntelPanel();
       this.ctx.panels['gdelt-intel'] = gdeltIntelPanel;
 

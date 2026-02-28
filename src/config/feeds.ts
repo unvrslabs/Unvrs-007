@@ -1020,6 +1020,102 @@ const HAPPY_FEEDS: Record<string, Feed[]> = {
   ],
 };
 
+// ============================================
+// ITALIA VARIANT FEEDS
+// ============================================
+const ITALIA_FEEDS: Record<string, Feed[]> = {
+  // Politica Italiana
+  'italia-politica': [
+    { name: 'ANSA Politica', url: rss('https://www.ansa.it/sito/notizie/politica/politica_rss.xml') },
+    { name: 'Repubblica Politica', url: rss('https://news.google.com/rss/search?q=site:repubblica.it+politica+governo+when:1d&hl=it&gl=IT&ceid=IT:it') },
+    { name: 'Corriere Politica', url: rss('https://news.google.com/rss/search?q=site:corriere.it+politica+when:1d&hl=it&gl=IT&ceid=IT:it') },
+    { name: 'Il Sole 24 Ore Politica', url: rss('https://news.google.com/rss/search?q=site:ilsole24ore.com+politica+governo+when:1d&hl=it&gl=IT&ceid=IT:it') },
+    { name: 'AGI Politica', url: rss('https://news.google.com/rss/search?q=site:agi.it+politica+when:1d&hl=it&gl=IT&ceid=IT:it') },
+    { name: 'Adnkronos Politica', url: rss('https://news.google.com/rss/search?q=site:adnkronos.com+politica+when:1d&hl=it&gl=IT&ceid=IT:it') },
+  ],
+
+  // Economia Italiana
+  'italia-economia': [
+    { name: 'ANSA Economia', url: rss('https://www.ansa.it/sito/notizie/economia/economia_rss.xml') },
+    { name: 'Il Sole 24 Ore', url: rss('https://news.google.com/rss/search?q=site:ilsole24ore.com+economia+when:1d&hl=it&gl=IT&ceid=IT:it') },
+    { name: 'Milano Finanza', url: rss('https://news.google.com/rss/search?q=site:milanofinanza.it+when:1d&hl=it&gl=IT&ceid=IT:it') },
+    { name: 'Italia Oggi', url: rss('https://news.google.com/rss/search?q=site:italiaoggi.it+when:2d&hl=it&gl=IT&ceid=IT:it') },
+    { name: 'Confindustria', url: rss('https://news.google.com/rss/search?q=Confindustria+OR+"PIL+Italia"+OR+"economia+italiana"+when:2d&hl=it&gl=IT&ceid=IT:it') },
+  ],
+
+  // Difesa & Sicurezza
+  'italia-difesa': [
+    { name: 'Difesa Online', url: rss('https://news.google.com/rss/search?q=site:difesaonline.it+when:7d&hl=it&gl=IT&ceid=IT:it') },
+    { name: 'Analisi Difesa', url: rss('https://news.google.com/rss/search?q=site:analisidifesa.it+when:7d&hl=it&gl=IT&ceid=IT:it') },
+    { name: 'Difesa Italia', url: rss('https://news.google.com/rss/search?q=("difesa+italiana"+OR+"forze+armate+italiane"+OR+"esercito+italiano"+OR+"marina+militare")+when:7d&hl=it&gl=IT&ceid=IT:it') },
+    { name: 'NATO Italia', url: rss('https://news.google.com/rss/search?q=(NATO+Italia+OR+"spesa+militare"+Italia)+when:7d&hl=it&gl=IT&ceid=IT:it') },
+    { name: 'Sicurezza Nazionale', url: rss('https://news.google.com/rss/search?q=("sicurezza+nazionale"+OR+"intelligence"+OR+AISE+OR+AISI+OR+COPASIR)+Italia+when:7d&hl=it&gl=IT&ceid=IT:it') },
+  ],
+
+  // Energia Italia
+  'italia-energia': [
+    { name: 'QualEnergia', url: rss('https://news.google.com/rss/search?q=site:qualenergia.it+when:3d&hl=it&gl=IT&ceid=IT:it') },
+    { name: 'Energia Italia', url: rss('https://news.google.com/rss/search?q=("energia+Italia"+OR+ENI+OR+ENEL+OR+"gas+Italia"+OR+"rinnovabili+Italia")+when:2d&hl=it&gl=IT&ceid=IT:it') },
+    { name: 'Staffetta Quotidiana', url: rss('https://news.google.com/rss/search?q=site:staffettaonline.com+when:7d&hl=it&gl=IT&ceid=IT:it') },
+    { name: 'Piano Energetico', url: rss('https://news.google.com/rss/search?q=("piano+energetico"+OR+"transizione+energetica"+OR+"bolletta"+OR+"prezzo+gas")+Italia+when:3d&hl=it&gl=IT&ceid=IT:it') },
+  ],
+
+  // Esteri & Diplomazia
+  'italia-esteri': [
+    { name: 'ANSA Esteri', url: rss('https://news.google.com/rss/search?q=site:ansa.it+("politica+estera"+OR+"Farnesina"+OR+esteri)+when:2d&hl=it&gl=IT&ceid=IT:it') },
+    { name: 'Limes', url: rss('https://news.google.com/rss/search?q=site:limesonline.com+when:7d&hl=it&gl=IT&ceid=IT:it') },
+    { name: 'ISPI', url: rss('https://news.google.com/rss/search?q=site:ispionline.it+when:7d&hl=it&gl=IT&ceid=IT:it') },
+    { name: 'Affari Internazionali', url: rss('https://news.google.com/rss/search?q=site:affarinternazionali.it+when:7d&hl=it&gl=IT&ceid=IT:it') },
+    { name: 'Diplomazia Italiana', url: rss('https://news.google.com/rss/search?q=("ambasciatore"+OR+"diplomazia"+OR+"G7"+OR+"Unione+Europea")+Italia+when:3d&hl=it&gl=IT&ceid=IT:it') },
+  ],
+
+  // Borsa & Finanza
+  'italia-finanza': [
+    { name: 'Borsa Italiana', url: rss('https://news.google.com/rss/search?q=("Borsa+Italiana"+OR+"FTSE+MIB"+OR+"Piazza+Affari")+when:1d&hl=it&gl=IT&ceid=IT:it') },
+    { name: 'Il Sole Finanza', url: rss('https://news.google.com/rss/search?q=site:ilsole24ore.com+("borsa"+OR+"finanza"+OR+"mercati")+when:1d&hl=it&gl=IT&ceid=IT:it') },
+    { name: 'Banca d\'Italia', url: rss('https://news.google.com/rss/search?q=("Banca+d+Italia"+OR+Bankitalia+OR+"spread+BTP"+OR+"titoli+di+stato")+when:3d&hl=it&gl=IT&ceid=IT:it') },
+    { name: 'CONSOB', url: rss('https://news.google.com/rss/search?q=(CONSOB+OR+"mercati+finanziari"+Italia)+when:7d&hl=it&gl=IT&ceid=IT:it') },
+  ],
+
+  // Infrastrutture & Trasporti
+  'italia-infrastrutture': [
+    { name: 'Infrastrutture', url: rss('https://news.google.com/rss/search?q=("infrastrutture+Italia"+OR+"ponte+Messina"+OR+"alta+velocità"+OR+"autostrada")+when:3d&hl=it&gl=IT&ceid=IT:it') },
+    { name: 'PNRR', url: rss('https://news.google.com/rss/search?q=(PNRR+OR+"Piano+Nazionale+Ripresa"+OR+"Recovery+Plan"+Italia)+when:3d&hl=it&gl=IT&ceid=IT:it') },
+    { name: 'Trasporti', url: rss('https://news.google.com/rss/search?q=("trasporti+Italia"+OR+"ferrovie"+OR+"porti+italiani"+OR+"aeroporti")+when:3d&hl=it&gl=IT&ceid=IT:it') },
+  ],
+
+  // Tech & Innovazione
+  'italia-tech': [
+    { name: 'Wired Italia', url: rss('https://news.google.com/rss/search?q=site:wired.it+when:2d&hl=it&gl=IT&ceid=IT:it') },
+    { name: 'StartupItalia', url: rss('https://news.google.com/rss/search?q=site:startupitalia.eu+when:3d&hl=it&gl=IT&ceid=IT:it') },
+    { name: 'Tech Italia', url: rss('https://news.google.com/rss/search?q=("startup+italiane"+OR+"innovazione+Italia"+OR+"digitale+Italia"+OR+"intelligenza+artificiale"+Italia)+when:3d&hl=it&gl=IT&ceid=IT:it') },
+    { name: 'Agenda Digitale', url: rss('https://news.google.com/rss/search?q=site:agendadigitale.eu+when:3d&hl=it&gl=IT&ceid=IT:it') },
+  ],
+
+  // Context feeds from full variant
+  gov: [
+    { name: 'Governo Italiano', url: rss('https://news.google.com/rss/search?q=("governo+italiano"+OR+"Palazzo+Chigi"+OR+"Consiglio+dei+Ministri")+when:2d&hl=it&gl=IT&ceid=IT:it') },
+    { name: 'Parlamento', url: rss('https://news.google.com/rss/search?q=("Camera+dei+Deputati"+OR+"Senato"+OR+"parlamento+italiano"+OR+"decreto+legge")+when:2d&hl=it&gl=IT&ceid=IT:it') },
+    { name: 'Gazzetta Ufficiale', url: rss('https://news.google.com/rss/search?q=("Gazzetta+Ufficiale"+OR+"decreto"+OR+"legge+approvata")+Italia+when:3d&hl=it&gl=IT&ceid=IT:it') },
+  ],
+
+  thinktanks: [
+    { name: 'ISPI', url: rss('https://news.google.com/rss/search?q=site:ispionline.it+when:7d&hl=it&gl=IT&ceid=IT:it') },
+    { name: 'IAI', url: rss('https://news.google.com/rss/search?q=site:iai.it+when:14d&hl=it&gl=IT&ceid=IT:it') },
+    { name: 'Limes', url: rss('https://news.google.com/rss/search?q=site:limesonline.com+when:7d&hl=it&gl=IT&ceid=IT:it') },
+    { name: 'CESI', url: rss('https://news.google.com/rss/search?q=site:cesi-italia.org+when:14d&hl=it&gl=IT&ceid=IT:it') },
+  ],
+
+  europe: [
+    { name: 'EuroNews Italia', url: rss('https://it.euronews.com/rss?format=xml') },
+    { name: 'EU Italia', url: rss('https://news.google.com/rss/search?q=("Unione+Europea"+OR+"Commissione+Europea"+OR+"Bruxelles")+Italia+when:2d&hl=it&gl=IT&ceid=IT:it') },
+  ],
+
+  energy: [
+    { name: 'Energia Italia', url: rss('https://news.google.com/rss/search?q=(ENI+OR+ENEL+OR+Snam+OR+Terna+OR+"energia+rinnovabile")+Italia+when:2d&hl=it&gl=IT&ceid=IT:it') },
+  ],
+};
+
 // Variant-aware exports
 export const FEEDS = SITE_VARIANT === 'tech'
   ? TECH_FEEDS
@@ -1027,7 +1123,9 @@ export const FEEDS = SITE_VARIANT === 'tech'
     ? FINANCE_FEEDS
     : SITE_VARIANT === 'happy'
       ? HAPPY_FEEDS
-      : FULL_FEEDS;
+      : SITE_VARIANT === 'italia'
+        ? ITALIA_FEEDS
+        : FULL_FEEDS;
 
 export const SOURCE_REGION_MAP: Record<string, { labelKey: string; feedKeys: string[] }> = {
   // Full (geopolitical) variant regions

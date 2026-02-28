@@ -221,6 +221,19 @@ export class EventHandlerManager implements AppModule {
       });
     }
 
+    // Glass nav variant buttons (World / Italia / Tech)
+    this.ctx.container.querySelectorAll<HTMLAnchorElement>('[data-glass-variant]').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const variant = link.dataset.glassVariant;
+        if (variant && variant !== SITE_VARIANT) {
+          trackVariantSwitch(SITE_VARIANT, variant);
+          localStorage.setItem('worldmonitor-variant', variant);
+          window.location.reload();
+        }
+      });
+    });
+
     const fullscreenBtn = document.getElementById('fullscreenBtn');
     if (!this.ctx.isDesktopApp && fullscreenBtn) {
       fullscreenBtn.addEventListener('click', () => this.toggleFullscreen());
