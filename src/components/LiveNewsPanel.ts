@@ -617,9 +617,9 @@ export class LiveNewsPanel extends Panel {
       dragStarted = false;
     });
 
-    this.createManageButton(this.channelSwitcher);
     const toolbar = document.createElement('div');
     toolbar.className = 'live-news-toolbar';
+    this.createManageButton(toolbar);
     toolbar.appendChild(this.channelSwitcher);
     this.element.insertBefore(toolbar, this.content);
   }

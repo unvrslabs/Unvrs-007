@@ -1700,8 +1700,7 @@ canvas,
 /* Live News Panel */
 .live-news-toolbar {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   gap: 4px;
   padding: 6px 8px;
   background: var(--darken-heavy);
