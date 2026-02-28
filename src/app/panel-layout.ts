@@ -628,50 +628,52 @@ export class PanelLayoutManager implements AppModule {
       this.createPanelSectionTabs(panelsGrid);
     }
 
-    // Apply default varied spans for visual variety (when user hasn't customised)
+    // Apply default varied spans for visual variety.
+    // User-customised spans (from resize) take precedence per panel.
     {
-      const savedSpansRaw = localStorage.getItem(this.ctx.PANEL_SPANS_KEY);
-      const hasSavedSpans = savedSpansRaw && Object.keys(JSON.parse(savedSpansRaw)).length > 0;
-      if (!hasSavedSpans) {
-        const defaultSpans: Record<string, number> = SITE_VARIANT === 'italia' ? {
-          'italia-politica': 2,
-          'italia-economia': 1,
-          'italia-difesa': 1,
-          'italia-energia': 1,
-          'italia-esteri': 2,
-          'italia-finanza': 1,
-          'italia-infrastrutture': 1,
-          'italia-tech': 2,
-          'gov': 1,
-          'thinktanks': 1,
-          'europe': 2,
-          'intel': 2,
-          'gdelt-intel': 1,
-          'insights': 2,
-          'strategic-posture': 1,
-          'cii': 1,
-          'strategic-risk': 2,
-          'cascade': 1,
-        } : {
-          /* Intelligence – hero cards */
-          'strategic-risk': 3,
-          'insights': 2,
-          'strategic-posture': 2,
-          'intel': 2,
-          'gdelt-intel': 2,
-          'cii': 2,
-          'cascade': 2,
-          'telegram-intel': 2,
-          'oref-sirens': 1,
-          'security-advisories': 2,
-        };
-        for (const [key, span] of Object.entries(defaultSpans)) {
-          const panel = this.ctx.panels[key];
-          if (panel && span > 1) {
-            const el = panel.getElement();
-            el.classList.remove('span-1', 'span-2', 'span-3', 'span-4');
-            el.classList.add(`span-${span}`, 'resized');
-          }
+      const savedSpans: Record<string, number> = (() => {
+        try { return JSON.parse(localStorage.getItem(this.ctx.PANEL_SPANS_KEY) ?? '{}'); }
+        catch { return {}; }
+      })();
+      const defaultSpans: Record<string, number> = SITE_VARIANT === 'italia' ? {
+        'italia-politica': 2,
+        'italia-economia': 1,
+        'italia-difesa': 1,
+        'italia-energia': 1,
+        'italia-esteri': 2,
+        'italia-finanza': 1,
+        'italia-infrastrutture': 1,
+        'italia-tech': 2,
+        'gov': 1,
+        'thinktanks': 1,
+        'europe': 2,
+        'intel': 2,
+        'gdelt-intel': 1,
+        'insights': 2,
+        'strategic-posture': 1,
+        'cii': 1,
+        'strategic-risk': 2,
+        'cascade': 1,
+      } : {
+        /* Intelligence – hero cards */
+        'strategic-risk': 3,
+        'insights': 2,
+        'strategic-posture': 2,
+        'intel': 2,
+        'gdelt-intel': 2,
+        'cii': 2,
+        'cascade': 2,
+        'telegram-intel': 2,
+        'oref-sirens': 1,
+        'security-advisories': 2,
+      };
+      for (const [key, span] of Object.entries(defaultSpans)) {
+        if (savedSpans[key]) continue; // user already customised this panel
+        const panel = this.ctx.panels[key];
+        if (panel && span > 1) {
+          const el = panel.getElement();
+          el.classList.remove('span-1', 'span-2', 'span-3', 'span-4');
+          el.classList.add(`span-${span}`, 'resized');
         }
       }
     }

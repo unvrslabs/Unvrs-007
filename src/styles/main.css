@@ -13475,7 +13475,7 @@ a.prediction-link:hover {
   position: sticky;
   top: 44px;
   z-index: 50;
-  background: var(--bg);
+  background: transparent;
 }
 .panel-section-tabs::-webkit-scrollbar { display: none; }
 
