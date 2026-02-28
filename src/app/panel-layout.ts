@@ -123,8 +123,9 @@ export class PanelLayoutManager implements AppModule {
           </select>
         </span>
         <div class="glass-nav-center-group">
-        <span id="glassNotificationsMount" class="glass-nav-notifications-mount"></span>
         <nav class="glass-nav glass-nav-main">
+            <span id="glassNotificationsMount" class="glass-nav-notifications-mount"></span>
+            <span class="glass-nav-divider"></span>
             <a href="#" class="glass-nav-item ${SITE_VARIANT === 'full' ? 'active' : ''}" data-glass-variant="full">World</a>
             <a href="#" class="glass-nav-item ${SITE_VARIANT === 'finance' ? 'active' : ''}" data-glass-variant="finance">Finance</a>
             <a href="#" class="glass-nav-item ${SITE_VARIANT === 'tech' ? 'active' : ''}" data-glass-variant="tech">Tech</a>

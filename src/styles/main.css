@@ -338,7 +338,7 @@ canvas,
   width: fit-content;
   height: 48px;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   z-index: 10;
   flex-shrink: 0;
   background: linear-gradient(
