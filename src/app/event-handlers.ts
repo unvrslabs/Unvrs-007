@@ -422,9 +422,9 @@ export class EventHandlerManager implements AppModule {
 
   setupStatusPanel(): void {
     this.ctx.statusPanel = new StatusPanel();
-    const headerLeft = this.ctx.container.querySelector('.header-left');
-    if (headerLeft) {
-      headerLeft.appendChild(this.ctx.statusPanel.getElement());
+    const mount = document.getElementById('glassStatusMount');
+    if (mount) {
+      mount.appendChild(this.ctx.statusPanel.getElement());
     }
   }
 
