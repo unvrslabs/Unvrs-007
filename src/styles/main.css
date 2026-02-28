@@ -1430,6 +1430,7 @@ canvas,
   display: flex;
   align-items: center;
   gap: 8px;
+  min-width: 0;
 }
 
 .panel-title {
@@ -1438,6 +1439,9 @@ canvas,
   text-transform: uppercase;
   letter-spacing: 1px;
   color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* LIVE badge next to panel title */
@@ -1482,6 +1486,8 @@ canvas,
   border-radius: 10px;
   border: 1px solid transparent;
   color: var(--text);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .panel-data-badge.live {
@@ -9086,10 +9092,10 @@ a.prediction-link:hover {
   font-weight: bold;
   padding: 2px 6px;
   border-radius: 10px;
-  margin-left: 8px;
   letter-spacing: 0.3px;
   text-transform: uppercase;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .panel-new-badge.pulse {

@@ -107,20 +107,20 @@ export class Panel {
       headerLeft.appendChild(infoWrapper);
     }
 
-    // Add "new" badge element (hidden by default)
-    if (options.trackActivity !== false) {
-      this.newBadgeEl = document.createElement('span');
-      this.newBadgeEl.className = 'panel-new-badge';
-      this.newBadgeEl.style.display = 'none';
-      headerLeft.appendChild(this.newBadgeEl);
-    }
-
     this.header.appendChild(headerLeft);
 
     this.statusBadgeEl = document.createElement('span');
     this.statusBadgeEl.className = 'panel-data-badge';
     this.statusBadgeEl.style.display = 'none';
     this.header.appendChild(this.statusBadgeEl);
+
+    // Add "new" badge element on the right (hidden by default)
+    if (options.trackActivity !== false) {
+      this.newBadgeEl = document.createElement('span');
+      this.newBadgeEl.className = 'panel-new-badge';
+      this.newBadgeEl.style.display = 'none';
+      this.header.appendChild(this.newBadgeEl);
+    }
 
     if (options.showCount) {
       this.countEl = document.createElement('span');
