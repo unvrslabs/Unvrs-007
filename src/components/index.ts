@@ -41,4 +41,7 @@ export * from './InvestmentsPanel';
 export * from './UnifiedSettings';
 export * from './TradePolicyPanel';
 export * from './SupplyChainPanel';
-export { AgentSidebar } from './AgentSidebar';
+export * from './SecurityAdvisoriesPanel';
+export * from './OrefSirensPanel';
+export * from './TelegramIntelPanel';
+export * from './BreakingNewsBanner';

@@ -6,6 +6,8 @@ import {
   type ListAcledEventsResponse,
   type ListUcdpEventsResponse,
   type GetHumanitarianSummaryResponse,
+  type IranEvent,
+  type ListIranEventsResponse,
 } from '@/generated/client/worldmonitor/conflict/v1/service_client';
 import type { UcdpGeoEvent, UcdpEventType } from '@/types';
 import { createCircuitBreaker } from '@/utils';
@@ -16,6 +18,11 @@ const client = new ConflictServiceClient('', { fetch: (...args) => globalThis.fe
 const acledBreaker = createCircuitBreaker<ListAcledEventsResponse>({ name: 'ACLED Conflicts', cacheTtlMs: 10 * 60 * 1000, persistCache: true });
 const ucdpBreaker = createCircuitBreaker<ListUcdpEventsResponse>({ name: 'UCDP Events', cacheTtlMs: 10 * 60 * 1000, persistCache: true });
 const hapiBreaker = createCircuitBreaker<GetHumanitarianSummaryResponse>({ name: 'HDX HAPI', cacheTtlMs: 10 * 60 * 1000, persistCache: true });
+const iranBreaker = createCircuitBreaker<ListIranEventsResponse>({ name: 'Iran Events', cacheTtlMs: 10 * 60 * 1000, persistCache: true });
+
+const emptyIranFallback: ListIranEventsResponse = { events: [], scrapedAt: 0 };
+
+export type { IranEvent };
 
 // ---- Exported Types (match legacy shapes exactly) ----
 
@@ -231,7 +238,7 @@ const emptyHapiFallback: GetHumanitarianSummaryResponse = { summary: undefined }
 
 export async function fetchConflictEvents(): Promise<ConflictData> {
   const resp = await acledBreaker.execute(async () => {
-    return client.listAcledEvents({ country: '' });
+    return client.listAcledEvents({ country: '', start: 0, end: 0, pageSize: 0, cursor: '' });
   }, emptyAcledFallback);
 
   const events = resp.events.map(toConflictEvent);
@@ -256,7 +263,7 @@ export async function fetchConflictEvents(): Promise<ConflictData> {
 
 export async function fetchUcdpClassifications(): Promise<Map<string, UcdpConflictStatus>> {
   const resp = await ucdpBreaker.execute(async () => {
-    return client.listUcdpEvents({ country: '' });
+    return client.listUcdpEvents({ country: '', start: 0, end: 0, pageSize: 0, cursor: '' });
   }, emptyUcdpFallback);
 
   // Don't let the breaker cache empty responses — clear so next call retries
@@ -297,7 +304,7 @@ interface UcdpEventsResponse {
 
 export async function fetchUcdpEvents(): Promise<UcdpEventsResponse> {
   const resp = await ucdpBreaker.execute(async () => {
-    return client.listUcdpEvents({ country: '' });
+    return client.listUcdpEvents({ country: '', start: 0, end: 0, pageSize: 0, cursor: '' });
   }, emptyUcdpFallback);
 
   // Don't let the breaker cache empty responses — clear so next call retries
@@ -363,4 +370,14 @@ export function groupByType(events: UcdpGeoEvent[]): Record<string, UcdpGeoEvent
     'non-state': events.filter(e => e.type_of_violence === 'non-state'),
     'one-sided': events.filter(e => e.type_of_violence === 'one-sided'),
   };
+}
+
+export async function fetchIranEvents(): Promise<IranEvent[]> {
+  const resp = await iranBreaker.execute(async () => {
+    // Bypass stale CDN cache from pre-Redis deployment (remove once CDN is clean)
+    const r = await globalThis.fetch('/api/conflict/v1/list-iran-events?_v=5');
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return r.json() as Promise<ListIranEventsResponse>;
+  }, emptyIranFallback);
+  return resp.events;
 }

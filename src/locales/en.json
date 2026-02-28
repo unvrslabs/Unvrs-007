@@ -36,7 +36,9 @@
       "earthquakes": "earthquakes",
       "displaced": "displaced",
       "climate": "Climate stress",
-      "conflictEvents": "conflict events"
+      "conflictEvents": "conflict events",
+      "activeStrikes": "active strikes",
+      "aviationDisruptions": "airport disruptions"
     },
     "timeAgo": {
       "m": "{{count}}m ago",
@@ -72,7 +74,8 @@
       "internetOutages": "{{count}} internet outages",
       "recentEarthquakes": "{{count}} recent earthquakes",
       "stockIndex": "Stock index: {{value}}",
-      "recentHeadlines": "**Recent headlines:**"
+      "recentHeadlines": "**Recent headlines:**",
+      "activeStrikes": "{{count}} active strikes detected"
     }
   },
   "header": {
@@ -185,6 +188,9 @@
     "displacement": "UNHCR Displacement",
     "climate": "Climate Anomalies",
     "populationExposure": "Population Exposure",
+    "securityAdvisories": "Security Advisories",
+    "orefSirens": "Israel Sirens",
+    "telegramIntel": "Telegram Intel",
     "startups": "Startups & VC",
     "vcblogs": "VC Insights & Essays",
     "regionalStartups": "Global Startup News",
@@ -451,7 +457,9 @@
         "earthquakes": "earthquakes",
         "displaced": "displaced",
         "climate": "Climate stress",
-        "conflictEvents": "conflict events"
+        "conflictEvents": "conflict events",
+        "activeStrikes": "active strikes",
+        "aviationDisruptions": "airport disruptions"
       },
       "timeAgo": {
         "m": "{{count}}m ago",
@@ -484,6 +492,7 @@
         "protestsDetected": "{{count}} active protests detected",
         "aircraftTracked": "{{count}} military aircraft tracked",
         "vesselsTracked": "{{count}} military vessels tracked",
+        "activeStrikes": "{{count}} active strikes detected",
         "internetOutages": "{{count}} internet outages",
         "recentEarthquakes": "{{count}} recent earthquakes",
         "stockIndex": "Stock index: {{value}}",
@@ -494,6 +503,7 @@
   "components": {
     "webcams": {
       "regions": {
+        "iran": "IRAN",
         "all": "ALL",
         "mideast": "MIDEAST",
         "europe": "EUROPE",
@@ -623,7 +633,8 @@
       "error": "Failed to load predictions",
       "yes": "Yes",
       "no": "No",
-      "vol": "Vol"
+      "vol": "Vol",
+      "closes": "Closes"
     },
     "stablecoins": {
       "pegHealth": "Peg Health",
@@ -829,7 +840,9 @@
         "centralBanks": "Central Banks",
         "commodityHubs": "Commodity Hubs",
         "gulfInvestments": "GCC Investments",
-        "tradeRoutes": "Trade Routes"
+        "tradeRoutes": "Trade Routes",
+        "iranAttacks": "Iran Attacks",
+        "dayNight": "Day/Night"
       },
       "tooltip": {
         "earthquake": "Earthquake",
@@ -878,7 +891,8 @@
           "geopolitical": "Geopolitical",
           "militaryStrategic": "Military & Strategic",
           "transport": "Transport",
-          "labels": "Labels"
+          "labels": "Labels",
+          "overlays": "Overlays & Labels"
         },
         "descriptions": {
           "techStartupHubs": "Major startup ecosystems (SF, NYC, London, etc.)",
@@ -931,7 +945,8 @@
           "techEvents": "Major tech conferences and events",
           "techFires": "Active wildfires near tech infrastructure",
           "financeGulfInvestments": "GCC sovereign wealth fund investments and FDI",
-          "tradeRoutes": "Major global shipping lanes connecting ports through strategic chokepoints"
+        "tradeRoutes": "Major global shipping lanes connecting ports through strategic chokepoints",
+        "dayNight": "Real-time solar terminator showing day and night zones"
         },
         "notes": {
           "timeAffects": "Affects: Earthquakes, Weather, Protests, Outages"
@@ -1082,6 +1097,39 @@
       "radiusKm": "{{km}}km radius",
       "infoTooltip": "<strong>Population Exposure Estimates</strong> Estimated population within event impact radius. Based on WorldPop country density data.<ul><li>Conflict: 50km radius</li><li>Earthquake: 100km radius</li><li>Flood: 100km radius</li><li>Wildfire: 30km radius</li></ul>"
     },
+    "securityAdvisories": {
+      "loading": "Fetching travel advisories...",
+      "noMatching": "No advisories match this filter",
+      "critical": "Critical",
+      "health": "Health",
+      "sources": "US State Dept, AU DFAT, UK FCDO, NZ MFAT, CDC, ECDC, WHO, US Embassies",
+      "refresh": "Refresh",
+      "levels": {
+        "doNotTravel": "Do Not Travel",
+        "reconsider": "Reconsider Travel",
+        "caution": "Exercise Caution",
+        "normal": "Normal",
+        "info": "Info"
+      },
+      "time": {
+        "justNow": "just now",
+        "minutesAgo": "{{count}}m ago",
+        "hoursAgo": "{{count}}h ago",
+        "daysAgo": "{{count}}d ago"
+      },
+      "infoTooltip": "<strong>Security Advisories</strong><br>Travel advisories and security alerts from government foreign affairs agencies:<br><br><strong>Sources:</strong><br>\uD83C\uDDFA\uD83C\uDDF8 US State Dept Travel Advisories<br>\uD83C\uDDE6\uD83C\uDDFA AU DFAT Smartraveller<br>\uD83C\uDDEC\uD83C\uDDE7 UK FCDO Travel Advice<br>\uD83C\uDDF3\uD83C\uDDFF NZ MFAT SafeTravel<br><br><strong>Levels:</strong><br>\uD83D\uDFE5 Do Not Travel<br>\uD83D\uDFE7 Reconsider Travel<br>\uD83D\uDFE8 Exercise Caution<br>\uD83D\uDFE9 Normal Precautions"
+    },
+    "orefSirens": {
+      "checking": "Checking siren alerts...",
+      "noAlerts": "No active sirens — all clear",
+      "notConfigured": "Sirens service not configured",
+      "activeSirens": "{{count}} active siren(s)",
+      "area": "Area",
+      "time": "Time",
+      "justNow": "just now",
+      "historyCount": "{{count}} alerts in last 24h",
+      "infoTooltip": "<strong>Israel Sirens</strong><br>Real-time rocket and missile siren alerts from Israel Home Front Command.<br><br>Data is polled every 10 seconds. A pulsing red indicator means active sirens are sounding."
+    },
     "satelliteFires": {
       "noData": "No fire data available",
       "region": "Region",
@@ -1181,7 +1229,14 @@
     "runtimeConfig": {
       "getApiKey": "Get API key"
     },
+    "breakingNews": {
+      "critical": "CRITICAL",
+      "high": "HIGH",
+      "dismiss": "Dismiss",
+      "enableNotifications": "Enable desktop notifications"
+    },
     "intelligenceFindings": {
+      "breakingAlerts": "Breaking Alerts",
       "popupAlerts": "Pop up new alerts",
       "badgeTitle": "Intelligence findings",
       "title": "Intelligence Findings",
@@ -1222,6 +1277,19 @@
     },
     "gdeltIntel": {
       "infoTooltip": "<strong>GDELT Intelligence</strong> Real-time global news monitoring:<ul><li>Curated topic categories (conflicts, cyber, etc.)</li><li>Articles from 100+ languages translated</li><li>Updates every 15 minutes</li></ul>Source: GDELT Project (gdeltproject.org)"
+    },
+    "telegramIntel": {
+      "infoTooltip": "Real-time signals from monitored Telegram OSINT channels",
+      "loading": "Connecting to Telegram relay...",
+      "empty": "No messages available",
+      "disabled": "Telegram relay not active",
+      "filterAll": "All",
+      "filterBreaking": "Breaking",
+      "filterConflict": "Conflict",
+      "filterAlerts": "Alerts",
+      "filterOsint": "OSINT",
+      "filterPolitics": "Politics",
+      "filterMiddleeast": "Middle East"
     },
     "investments": {
       "infoTooltip": "Database of Saudi Arabia and UAE foreign direct investments in global critical infrastructure. Click a row to fly to the investment on the map.",
@@ -1439,6 +1507,7 @@
       "departureDelay": "DEPARTURE DELAYS",
       "arrivalDelay": "ARRIVAL DELAYS",
       "delaysReported": "DELAYS REPORTED",
+      "closure": "AIRPORT CLOSURE",
       "delays": "DELAYS",
       "avgDelay": "AVG DELAY",
       "cancelled": "CANCELLED",
@@ -1811,6 +1880,9 @@
     "commodityHub": {
       "commodities": "COMMODITIES"
     },
+    "iranEvent": {
+      "relatedEvents": "Related Events"
+    },
     "hotspotSubtexts": {
       "conflict_zone": "Conflict Zone",
       "dprk_watch": "DPRK Watch",
@@ -2020,6 +2092,7 @@
     "currentVariant": "(current)",
     "retry": "Retry",
     "retrying": "Retrying...",
-    "refresh": "Refresh"
+    "refresh": "Refresh",
+    "all": "All"
   }
 }

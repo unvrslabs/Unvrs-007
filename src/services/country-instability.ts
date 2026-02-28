@@ -1,11 +1,13 @@
 import type { SocialUnrestEvent, MilitaryFlight, MilitaryVessel, ClusteredEvent, InternetOutage } from '@/types';
+import type { AirportDelayAlert } from '@/services/aviation';
+import { tokenizeForMatch, matchKeyword } from '@/utils/keyword-match';
 import { INTEL_HOTSPOTS, CONFLICT_ZONES, STRATEGIC_WATERWAYS } from '@/config/geo';
 import { CURATED_COUNTRIES, DEFAULT_BASELINE_RISK, DEFAULT_EVENT_MULTIPLIER, getHotspotCountries } from '@/config/countries';
 import { focalPointDetector } from './focal-point-detector';
 import type { ConflictEvent, UcdpConflictStatus, HapiConflictSummary } from './conflict';
 import type { CountryDisplacement } from '@/services/displacement';
 import type { ClimateAnomaly } from '@/services/climate';
-import { getCountryAtCoordinates, iso3ToIso2Code, nameToCountryCode, getCountryNameByCode, matchCountryNamesInText } from './country-geometry';
+import { getCountryAtCoordinates, iso3ToIso2Code, nameToCountryCode, getCountryNameByCode, matchCountryNamesInText, ME_STRIKE_BOUNDS, resolveCountryFromBounds } from './country-geometry';
 
 export interface CountryScore {
   code: string;
@@ -34,8 +36,12 @@ interface CountryData {
   militaryVessels: MilitaryVessel[];
   newsEvents: ClusteredEvent[];
   outages: InternetOutage[];
+  strikes: Array<{ severity: string; timestamp: number; lat: number; lon: number; title: string; id: string }>;
+  aviationDisruptions: AirportDelayAlert[];
   displacementOutflow: number;
   climateStress: number;
+  orefAlertCount: number;
+  orefHistoryCount24h: number;
 }
 
 export { TIER1_COUNTRIES } from '@/config/countries';
@@ -117,12 +123,15 @@ const countryDataMap = new Map<string, CountryData>();
 const previousScores = new Map<string, number>();
 
 function initCountryData(): CountryData {
-  return { protests: [], conflicts: [], ucdpStatus: null, hapiSummary: null, militaryFlights: [], militaryVessels: [], newsEvents: [], outages: [], displacementOutflow: 0, climateStress: 0 };
+  return { protests: [], conflicts: [], ucdpStatus: null, hapiSummary: null, militaryFlights: [], militaryVessels: [], newsEvents: [], outages: [], strikes: [], aviationDisruptions: [], displacementOutflow: 0, climateStress: 0, orefAlertCount: 0, orefHistoryCount24h: 0 };
 }
+
+const newsEventIndexMap = new Map<string, Map<string, number>>();
 
 export function clearCountryData(): void {
   countryDataMap.clear();
   hotspotActivityMap.clear();
+  newsEventIndexMap.clear();
 }
 
 export function getCountryData(code: string): CountryData | undefined {
@@ -136,11 +145,11 @@ export function getPreviousScores(): Map<string, number> {
 export type { CountryData };
 
 function normalizeCountryName(name: string): string | null {
-  const lower = name.toLowerCase();
+  const tokens = tokenizeForMatch(name);
   for (const [code, cfg] of Object.entries(CURATED_COUNTRIES)) {
-    if (cfg.scoringKeywords.some(kw => lower.includes(kw))) return code;
+    if (cfg.scoringKeywords.some(kw => matchKeyword(tokens, kw))) return code;
   }
-  return nameToCountryCode(lower);
+  return nameToCountryCode(name.toLowerCase());
 }
 
 export function ingestProtestsForCII(events: SocialUnrestEvent[]): void {
@@ -347,23 +356,60 @@ export function ingestMilitaryForCII(flights: MilitaryFlight[], vessels: Militar
 
 export function ingestNewsForCII(events: ClusteredEvent[]): void {
   for (const e of events) {
-    const title = e.primaryTitle.toLowerCase();
+    const tokens = tokenizeForMatch(e.primaryTitle);
     const matched = new Set<string>();
 
     for (const [code, cfg] of Object.entries(CURATED_COUNTRIES)) {
-      if (cfg.scoringKeywords.some(kw => title.includes(kw))) {
+      if (cfg.scoringKeywords.some(kw => matchKeyword(tokens, kw))) {
         matched.add(code);
       }
     }
 
-    for (const code of matchCountryNamesInText(title)) {
+    for (const code of matchCountryNamesInText(e.primaryTitle.toLowerCase())) {
       matched.add(code);
     }
 
     for (const code of matched) {
       if (!countryDataMap.has(code)) countryDataMap.set(code, initCountryData());
-      countryDataMap.get(code)!.newsEvents.push(e);
+      const cd = countryDataMap.get(code)!;
+      if (!newsEventIndexMap.has(code)) newsEventIndexMap.set(code, new Map());
+      const idx = newsEventIndexMap.get(code)!;
+      const existingIdx = idx.get(e.id);
+      if (existingIdx !== undefined) {
+        cd.newsEvents[existingIdx] = e;
+      } else {
+        idx.set(e.id, cd.newsEvents.length);
+        cd.newsEvents.push(e);
+      }
     }
+  }
+}
+
+function coordsToBoundsCountry(lat: number, lon: number): string | null {
+  return resolveCountryFromBounds(lat, lon, ME_STRIKE_BOUNDS);
+}
+
+export function ingestStrikesForCII(events: Array<{
+  id: string; category: string; severity: string;
+  latitude: number; longitude: number; timestamp: number;
+  title: string; locationName: string;
+}>): void {
+  for (const [, data] of countryDataMap) data.strikes = [];
+
+  const seen = new Set<string>();
+  for (const e of events) {
+    if (seen.has(e.id)) continue;
+    seen.add(e.id);
+    const code = getCountryAtCoordinates(e.latitude, e.longitude)?.code
+      ?? coordsToBoundsCountry(e.latitude, e.longitude);
+    if (!code || code === 'XX') continue;
+    if (!countryDataMap.has(code)) countryDataMap.set(code, initCountryData());
+    countryDataMap.get(code)!.strikes.push({
+      severity: e.severity,
+      timestamp: e.timestamp < 1e12 ? e.timestamp * 1000 : e.timestamp,
+      lat: e.latitude, lon: e.longitude,
+      title: e.title || e.locationName, id: e.id,
+    });
   }
 }
 
@@ -374,6 +420,28 @@ export function ingestOutagesForCII(outages: InternetOutage[]): void {
     if (!code) { unmappedCount++; continue; }
     if (!countryDataMap.has(code)) countryDataMap.set(code, initCountryData());
     countryDataMap.get(code)!.outages.push(o);
+  }
+}
+
+export function ingestOrefForCII(alertCount: number, historyCount24h: number): void {
+  if (!countryDataMap.has('IL')) countryDataMap.set('IL', initCountryData());
+  const data = countryDataMap.get('IL')!;
+  data.orefAlertCount = alertCount;
+  data.orefHistoryCount24h = historyCount24h;
+}
+
+function getOrefBlendBoost(code: string, data: CountryData): number {
+  if (code !== 'IL') return 0;
+  return (data.orefAlertCount > 0 ? 15 : 0) + (data.orefHistoryCount24h >= 10 ? 10 : data.orefHistoryCount24h >= 3 ? 5 : 0);
+}
+
+export function ingestAviationForCII(alerts: AirportDelayAlert[]): void {
+  for (const a of alerts) {
+    processedCount++;
+    const code = normalizeCountryName(a.country);
+    if (!code) { unmappedCount++; continue; }
+    if (!countryDataMap.has(code)) countryDataMap.set(code, initCountryData());
+    countryDataMap.get(code)!.aviationDisruptions.push(a);
   }
 }
 
@@ -412,20 +480,51 @@ function calcUnrestScore(data: CountryData, countryCode: string): number {
   return Math.min(100, baseScore + fatalityBoost + severityBoost + outageBoost);
 }
 
+function calcNewsConflictFloor(data: CountryData, multiplier: number, now = Date.now()): number {
+  const SIX_HOURS = 6 * 60 * 60 * 1000;
+  const cutoff = now - SIX_HOURS;
+
+  const recentConflictNews = data.newsEvents.filter(e =>
+    e.isAlert &&
+    e.threat &&
+    (e.threat.category === 'conflict' || e.threat.category === 'military') &&
+    e.firstSeen.getTime() >= cutoff
+  );
+
+  if (recentConflictNews.length < 2) return 0;
+
+  const domains = new Set<string>();
+  let hasTrustedSource = false;
+  for (const e of recentConflictNews) {
+    if (e.topSources) {
+      for (const s of e.topSources) {
+        domains.add(s.name);
+        if (s.tier <= 2) hasTrustedSource = true;
+      }
+    }
+  }
+
+  if (domains.size < 2 || !hasTrustedSource) return 0;
+
+  return Math.min(70, 60 * multiplier);
+}
+
 function calcConflictScore(data: CountryData, countryCode: string): number {
   const events = data.conflicts;
   const multiplier = CURATED_COUNTRIES[countryCode]?.eventMultiplier ?? DEFAULT_EVENT_MULTIPLIER;
 
-  if (events.length === 0 && !data.hapiSummary) return 0;
+  let acledScore = 0;
+  if (events.length > 0) {
+    const battleCount = events.filter(e => e.eventType === 'battle').length;
+    const explosionCount = events.filter(e => e.eventType === 'explosion' || e.eventType === 'remote_violence').length;
+    const civilianCount = events.filter(e => e.eventType === 'violence_against_civilians').length;
+    const totalFatalities = events.reduce((sum, e) => sum + e.fatalities, 0);
 
-  const battleCount = events.filter(e => e.eventType === 'battle').length;
-  const explosionCount = events.filter(e => e.eventType === 'explosion' || e.eventType === 'remote_violence').length;
-  const civilianCount = events.filter(e => e.eventType === 'violence_against_civilians').length;
-  const totalFatalities = events.reduce((sum, e) => sum + e.fatalities, 0);
-
-  const eventScore = Math.min(50, (battleCount * 3 + explosionCount * 4 + civilianCount * 5) * multiplier);
-  const fatalityScore = Math.min(40, Math.sqrt(totalFatalities) * 5 * multiplier);
-  const civilianBoost = civilianCount > 0 ? Math.min(10, civilianCount * 3) : 0;
+    const eventScore = Math.min(50, (battleCount * 3 + explosionCount * 4 + civilianCount * 5) * multiplier);
+    const fatalityScore = Math.min(40, Math.sqrt(totalFatalities) * 5 * multiplier);
+    const civilianBoost = civilianCount > 0 ? Math.min(10, civilianCount * 3) : 0;
+    acledScore = eventScore + fatalityScore + civilianBoost;
+  }
 
   let hapiFallback = 0;
   if (events.length === 0 && data.hapiSummary) {
@@ -433,7 +532,27 @@ function calcConflictScore(data: CountryData, countryCode: string): number {
     hapiFallback = Math.min(60, h.eventsPoliticalViolence * 3 * multiplier);
   }
 
-  return Math.min(100, Math.max(eventScore + fatalityScore + civilianBoost, hapiFallback));
+  let newsFloor = 0;
+  if (events.length === 0 && hapiFallback === 0) {
+    newsFloor = calcNewsConflictFloor(data, multiplier);
+  }
+
+  let strikeBoost = 0;
+  const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+  const recentStrikes = data.strikes.filter(s => s.timestamp >= sevenDaysAgo);
+  if (recentStrikes.length > 0) {
+    const highCount = recentStrikes.filter(s =>
+      s.severity.toLowerCase() === 'high' || s.severity.toLowerCase() === 'critical'
+    ).length;
+    strikeBoost = Math.min(50, recentStrikes.length * 3 + highCount * 5);
+  }
+
+  let orefBoost = 0;
+  if (countryCode === 'IL' && data.orefAlertCount > 0) {
+    orefBoost = 25 + Math.min(25, data.orefAlertCount * 5);
+  }
+
+  return Math.min(100, Math.max(acledScore, hapiFallback, newsFloor) + strikeBoost + orefBoost);
 }
 
 function getUcdpFloor(data: CountryData): number {
@@ -451,7 +570,17 @@ function calcSecurityScore(data: CountryData): number {
   const vessels = data.militaryVessels.length;
   const flightScore = Math.min(50, flights * 3);
   const vesselScore = Math.min(30, vessels * 5);
-  return Math.min(100, flightScore + vesselScore);
+
+  let aviationScore = 0;
+  for (const a of data.aviationDisruptions) {
+    if (a.delayType === 'closure') aviationScore += 20;
+    else if (a.severity === 'severe') aviationScore += 15;
+    else if (a.severity === 'major') aviationScore += 10;
+    else if (a.severity === 'moderate') aviationScore += 5;
+  }
+  aviationScore = Math.min(40, aviationScore);
+
+  return Math.min(100, flightScore + vesselScore + aviationScore);
 }
 
 function calcInformationScore(data: CountryData, countryCode: string): number {
@@ -533,7 +662,7 @@ export function calculateCII(): CountryScore[] {
       : 0;
     const climateBoost = data.climateStress;
 
-    const blendedScore = baselineRisk * 0.4 + eventScore * 0.6 + hotspotBoost + newsUrgencyBoost + focalBoost + displacementBoost + climateBoost;
+    const blendedScore = baselineRisk * 0.4 + eventScore * 0.6 + hotspotBoost + newsUrgencyBoost + focalBoost + displacementBoost + climateBoost + getOrefBlendBoost(code, data);
 
     const floor = getUcdpFloor(data);
     const score = Math.round(Math.min(100, Math.max(floor, blendedScore)));
@@ -586,7 +715,7 @@ export function getCountryScore(code: string): number | null {
     : data.displacementOutflow >= 100_000 ? 4
     : 0;
   const climateBoost = data.climateStress;
-  const blendedScore = baselineRisk * 0.4 + eventScore * 0.6 + hotspotBoost + newsUrgencyBoost + focalBoost + displacementBoost + climateBoost;
+  const blendedScore = baselineRisk * 0.4 + eventScore * 0.6 + hotspotBoost + newsUrgencyBoost + focalBoost + displacementBoost + climateBoost + getOrefBlendBoost(code, data);
 
   const floor = getUcdpFloor(data);
   return Math.round(Math.min(100, Math.max(floor, blendedScore)));
