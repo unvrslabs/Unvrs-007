@@ -47,7 +47,7 @@ Sentry.init({
     /Java bridge method invocation error/,
     /Could not compile fragment shader/,
     /can't redefine non-configurable property/,
-    /Can.t find variable: (CONFIG|currentInset|NP|webkit)/,
+    /Can.t find variable: (CONFIG|currentInset|NP)/,
     /invalid origin/,
     /\.data\.split is not a function/,
     /signal is aborted without reason/,
@@ -77,7 +77,7 @@ Sentry.init({
     /setting 'luma'/,
     /ML request .* timed out/,
     /^Element not found$/,
-    /(?:AbortError: )?The operation was aborted\.?\s*$/,
+    /^The operation was aborted\.?\s*$/,
     /Unexpected end of script/,
     /error loading dynamically imported module/,
     /Style is not done loading/,
@@ -111,18 +111,6 @@ Sentry.init({
     /isReCreate is not defined/,
     /reading 'style'.*HTMLImageElement/,
     /can't access property "write", \w+ is undefined/,
-    /AbortError: The user aborted a request/,
-    /\w+ is not a function.*\/uv\/service\//,
-    /__isInQueue__/,
-    /^(?:LIDNotify(?:Id)?|onWebViewAppeared|onGetWiFiBSSID) is not defined$/,
-    /signal timed out/,
-    /Se requiere plan premium/,
-    /hybridExecute is not defined/,
-    /reading 'postMessage'/,
-    /NotSupportedError/,
-    /appendChild.*Unexpected token/,
-    /\bmag is not defined\b/,
-    /evaluating '[^']*\.luma/,
   ],
   beforeSend(event) {
     const msg = event.exception?.values?.[0]?.value ?? '';
@@ -134,7 +122,7 @@ Sentry.init({
     }
     // Suppress any TypeError that happens entirely within maplibre or deck.gl internals
     if (/^TypeError:/.test(msg) && frames.length > 0) {
-      const nonSentryFrames = frames.filter(f => f.filename && f.filename !== '<anonymous>' && !/\/sentry-[A-Za-z0-9-]+\.js/.test(f.filename));
+      const nonSentryFrames = frames.filter(f => !/\/sentry-[A-Za-z0-9-]+\.js/.test(f.filename ?? ''));
       if (nonSentryFrames.length > 0 && nonSentryFrames.every(f => /\/(map|maplibre|deck-stack)-[A-Za-z0-9-]+\.js/.test(f.filename ?? ''))) return null;
     }
     // Suppress errors originating entirely from blob: URLs (browser extensions)
@@ -152,9 +140,9 @@ window.addEventListener('unhandledrejection', (e) => {
   if (e.reason?.name === 'NotAllowedError') e.preventDefault();
 });
 
-import { debugGetCells, getCellCount } from '@/services/geo-convergence';
+import { debugInjectTestEvents, debugGetCells, getCellCount } from '@/services/geo-convergence';
 import { initMetaTags } from '@/services/meta-tags';
-import { installRuntimeFetchPatch, installWebApiRedirect } from '@/services/runtime';
+import { installRuntimeFetchPatch } from '@/services/runtime';
 import { loadDesktopSecrets } from '@/services/runtime-config';
 import { initAnalytics, trackApiKeysSnapshot } from '@/services/analytics';
 import { applyStoredTheme } from '@/utils/theme-manager';
@@ -175,8 +163,6 @@ initMetaTags();
 
 // In desktop mode, route /api/* calls to the local Tauri sidecar backend.
 installRuntimeFetchPatch();
-// In web production, route RPC calls through api.worldmonitor.app (Cloudflare edge).
-installWebApiRedirect();
 loadDesktopSecrets().then(async () => {
   await initAnalytics();
   trackApiKeysSnapshot();
@@ -228,6 +214,7 @@ if (urlParams.get('settings') === '1') {
 
 // Debug helpers for geo-convergence testing (remove in production)
 (window as unknown as Record<string, unknown>).geoDebug = {
+  inject: debugInjectTestEvents,
   cells: debugGetCells,
   count: getCellCount,
 };

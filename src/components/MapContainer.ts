@@ -330,14 +330,6 @@ export class MapContainer {
     }
   }
 
-  public setIranEvents(events: import('@/services/conflict').IranEvent[]): void {
-    if (this.useDeckGL) {
-      this.deckGLMap?.setIranEvents(events);
-    } else {
-      this.svgMap?.setIranEvents(events);
-    }
-  }
-
   public setNewsLocations(data: Array<{ lat: number; lon: number; title: string; threatLevel: string; timestamp?: Date }>): void {
     if (this.useDeckGL) {
       this.deckGLMap?.setNewsLocations(data);

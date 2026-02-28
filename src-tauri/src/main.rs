@@ -27,7 +27,7 @@ const MENU_HELP_GITHUB_ID: &str = "help.github";
 #[cfg(feature = "devtools")]
 const MENU_HELP_DEVTOOLS_ID: &str = "help.devtools";
 const TRUSTED_WINDOWS: [&str; 3] = ["main", "settings", "live-channels"];
-const SUPPORTED_SECRET_KEYS: [&str; 23] = [
+const SUPPORTED_SECRET_KEYS: [&str; 22] = [
     "GROQ_API_KEY",
     "OPENROUTER_API_KEY",
     "FRED_API_KEY",
@@ -50,7 +50,6 @@ const SUPPORTED_SECRET_KEYS: [&str; 23] = [
     "OLLAMA_MODEL",
     "WORLDMONITOR_API_KEY",
     "WTO_API_KEY",
-    "AVIATIONSTACK_API",
 ];
 
 #[derive(Default)]
@@ -1220,11 +1219,13 @@ fn main() {
         // AppImage — the AppImage itself already provides isolation.
         if env::var_os("APPIMAGE").is_some() {
             // WebKitGTK 2.39.3+ deprecated WEBKIT_FORCE_SANDBOX and now expects
-            // WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS=1 instead.  Setting the
-            // old variable on newer WebKitGTK triggers a noisy deprecation
-            // warning in the system journal, so only set the new one.
+            // WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS=1 instead.
             if env::var_os("WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS").is_none() {
                 unsafe { env::set_var("WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS", "1") };
+            }
+            // Keep the legacy var for older WebKitGTK releases that still use it.
+            if env::var_os("WEBKIT_FORCE_SANDBOX").is_none() {
+                unsafe { env::set_var("WEBKIT_FORCE_SANDBOX", "0") };
             }
             // Prevent GTK from loading host input-method modules that may
             // link against incompatible library versions.

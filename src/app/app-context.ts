@@ -1,6 +1,4 @@
 import type { NewsItem, Monitor, PanelConfig, MapLayers, InternetOutage, SocialUnrestEvent, MilitaryFlight, MilitaryFlightCluster, MilitaryVessel, MilitaryVesselCluster, CyberThreat, USNIFleetReport } from '@/types';
-import type { AirportDelayAlert } from '@/services/aviation';
-import type { IranEvent } from '@/generated/client/worldmonitor/conflict/v1/service_client';
 import type { MapContainer, Panel, NewsPanel, SignalModal, StatusPanel, SearchModal } from '@/components';
 import type { IntelligenceGapBadge } from '@/components';
 import type { MarketData, ClusteredEvent } from '@/types';
@@ -23,7 +21,7 @@ import type { GoodThingsDigestPanel } from '@/components/GoodThingsDigestPanel';
 import type { SpeciesComebackPanel } from '@/components/SpeciesComebackPanel';
 import type { RenewableEnergyPanel } from '@/components/RenewableEnergyPanel';
 import type { TvModeController } from '@/services/tv-mode';
-import type { BreakingNewsBanner } from '@/components/BreakingNewsBanner';
+import type { AgentSidebar } from '@/components/AgentSidebar';
 
 export interface CountryBriefSignals {
   protests: number;
@@ -34,22 +32,15 @@ export interface CountryBriefSignals {
   displacementOutflow: number;
   climateStress: number;
   conflictEvents: number;
-  activeStrikes: number;
-  orefSirens: number;
-  orefHistory24h: number;
-  aviationDisruptions: number;
   isTier1: boolean;
 }
 
 export interface IntelligenceCache {
-  flightDelays?: AirportDelayAlert[];
   outages?: InternetOutage[];
   protests?: { events: SocialUnrestEvent[]; sources: { acled: number; gdelt: number } };
   military?: { flights: MilitaryFlight[]; flightClusters: MilitaryFlightCluster[]; vessels: MilitaryVessel[]; vesselClusters: MilitaryVesselCluster[] };
   earthquakes?: Earthquake[];
   usniFleet?: USNIFleetReport;
-  iranEvents?: IranEvent[];
-  orefAlerts?: { alertCount: number; historyCount24h: number };
 }
 
 export interface AppModule {
@@ -87,8 +78,8 @@ export interface AppContext {
   signalModal: SignalModal | null;
   statusPanel: StatusPanel | null;
   searchModal: SearchModal | null;
+  agentSidebar: AgentSidebar | null;
   findingsBadge: IntelligenceGapBadge | null;
-  breakingBanner: BreakingNewsBanner | null;
   playbackControl: PlaybackControl | null;
   exportPanel: ExportPanel | null;
   unifiedSettings: UnifiedSettings | null;

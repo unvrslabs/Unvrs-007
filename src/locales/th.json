@@ -203,10 +203,7 @@
     "techReadiness": "ดัชนีความพร้อมด้านเทคโนโลยี",
     "gccInvestments": "การลงทุน GCC",
     "geoHubs": "ศูนย์กลางภูมิรัฐศาสตร์",
-    "liveWebcams": "เว็บแคมสด",
-    "securityAdvisories": "คำเตือนด้านความปลอดภัย",
-    "orefSirens": "Israel Sirens",
-    "telegramIntel": "ข่าวกรอง Telegram"
+    "liveWebcams": "เว็บแคมสด"
   },
   "modals": {
     "search": {
@@ -468,7 +465,6 @@
   "components": {
     "webcams": {
       "regions": {
-        "iran": "IRAN",
         "all": "ทั้งหมด",
         "mideast": "ตะวันออกกลาง",
         "europe": "ยุโรป",
@@ -581,8 +577,7 @@
       "error": "ไม่สามารถโหลดการพยากรณ์ได้",
       "yes": "ใช่",
       "no": "ไม่",
-      "vol": "ปริมาณ",
-      "closes": "ปิด"
+      "vol": "ปริมาณ"
     },
     "stablecoins": {
       "pegHealth": "สุขภาพ Peg",
@@ -788,8 +783,7 @@
         "centralBanks": "ธนาคารกลาง",
         "commodityHubs": "ศูนย์กลางสินค้าโภคภัณฑ์",
         "gulfInvestments": "การลงทุน GCC",
-        "tradeRoutes": "เส้นทางการค้า",
-        "dayNight": "กลางวัน/กลางคืน"
+        "tradeRoutes": "เส้นทางการค้า"
       },
       "tooltip": {
         "earthquake": "แผ่นดินไหว",
@@ -838,8 +832,7 @@
           "geopolitical": "ภูมิรัฐศาสตร์",
           "militaryStrategic": "ทหารและยุทธศาสตร์",
           "transport": "การขนส่ง",
-          "labels": "ป้ายกำกับ",
-          "overlays": "ภาพซ้อนทับและป้ายกำกับ"
+          "labels": "ป้ายกำกับ"
         },
         "descriptions": {
           "techStartupHubs": "ระบบนิเวศสตาร์ทอัพสำคัญ (SF, NYC, ลอนดอน ฯลฯ)",
@@ -881,8 +874,7 @@
           "transportDelays": "ความล่าช้าของสนามบินและการหยุดบินภาคพื้น (FAA)",
           "naturalEventsFull": "แผ่นดินไหว (USGS) + พายุ ไฟ ภูเขาไฟ น้ำท่วม (NASA EONET)",
           "waterwaysLabels": "ป้ายกำกับจุดคอขวดยุทธศาสตร์",
-          "tradeRoutes": "เส้นทางเดินเรือหลักของโลกที่เชื่อมต่อท่าเรือผ่านจุดยุทธศาสตร์",
-          "dayNight": "เส้นแบ่งเขตแสงอาทิตย์แบบเรียลไทม์แสดงโซนกลางวันและกลางคืน"
+          "tradeRoutes": "เส้นทางเดินเรือหลักของโลกที่เชื่อมต่อท่าเรือผ่านจุดยุทธศาสตร์"
         },
         "notes": {
           "timeAffects": "ส่งผลต่อ: แผ่นดินไหว, สภาพอากาศ, การประท้วง, การหยุดชะงัก"
@@ -1142,19 +1134,6 @@
     "gdeltIntel": {
       "infoTooltip": "<strong>ข่าวกรอง GDELT</strong> การเฝ้าระวังข่าวทั่วโลกเรียลไทม์:<ul><li>หมวดหมู่หัวข้อที่คัดสรร (ความขัดแย้ง, ไซเบอร์ ฯลฯ)</li><li>บทความจาก 100+ ภาษาที่แปลแล้ว</li><li>อัปเดตทุก 15 นาที</li></ul>แหล่งที่มา: GDELT Project (gdeltproject.org)"
     },
-    "telegramIntel": {
-      "infoTooltip": "สัญญาณเรียลไทม์จากช่อง OSINT บน Telegram ที่ถูกติดตาม",
-      "loading": "กำลังเชื่อมต่อรีเลย์ Telegram...",
-      "empty": "ไม่มีข้อความ",
-      "disabled": "รีเลย์ Telegram ไม่ทำงาน",
-      "filterAll": "ทั้งหมด",
-      "filterBreaking": "ด่วน",
-      "filterConflict": "ความขัดแย้ง",
-      "filterAlerts": "แจ้งเตือน",
-      "filterOsint": "OSINT",
-      "filterPolitics": "การเมือง",
-      "filterMiddleeast": "ตะวันออกกลาง"
-    },
     "investments": {
       "infoTooltip": "ฐานข้อมูลการลงทุนโดยตรงจากต่างประเทศของซาอุดีอาระเบียและ UAE ในโครงสร้างพื้นฐานสำคัญระดับโลก คลิกแถวเพื่อบินไปยังการลงทุนบนแผนที่",
       "searchPlaceholder": "ค้นหาสินทรัพย์, ประเทศ, หน่วยงาน…",
@@ -1306,39 +1285,6 @@
       "regionAsia": "เอเชีย",
       "regionMiddleEast": "ตะวันออกกลาง",
       "regionAfrica": "แอฟริกา"
-    },
-    "securityAdvisories": {
-      "loading": "กำลังโหลดคำเตือนการเดินทาง...",
-      "noMatching": "ไม่พบคำเตือนสำหรับตัวกรองนี้",
-      "critical": "วิกฤต",
-      "health": "สุขภาพ",
-      "sources": "US State Dept, AU DFAT, UK FCDO, NZ MFAT, CDC, ECDC, WHO, US Embassies",
-      "refresh": "รีเฟรช",
-      "levels": {
-        "doNotTravel": "ห้ามเดินทาง",
-        "reconsider": "ทบทวนการเดินทาง",
-        "caution": "ระวัง",
-        "normal": "ปกติ",
-        "info": "ข้อมูล"
-      },
-      "time": {
-        "justNow": "เมื่อสักครู่",
-        "minutesAgo": "{{count}} นาทีที่แล้ว",
-        "hoursAgo": "{{count}} ชั่วโมงที่แล้ว",
-        "daysAgo": "{{count}} วันที่แล้ว"
-      },
-      "infoTooltip": "<strong>คำเตือนด้านความปลอดภัย</strong><br>คำเตือนการเดินทางและความปลอดภัยจากหน่วยงานรัฐบาล."
-    },
-    "orefSirens": {
-      "checking": "Checking siren alerts...",
-      "noAlerts": "No active sirens — all clear",
-      "notConfigured": "Sirens service not configured",
-      "activeSirens": "{{count}} active siren(s)",
-      "area": "Area",
-      "time": "Time",
-      "justNow": "just now",
-      "historyCount": "{{count}} alerts in last 24h",
-      "infoTooltip": "<strong>Israel Sirens</strong><br>Real-time rocket and missile siren alerts from Israel Home Front Command.<br><br>Data is polled every 10 seconds. A pulsing red indicator means active sirens are sounding."
     }
   },
   "popups": {
@@ -1398,7 +1344,6 @@
       "departureDelay": "ดีเลย์ขาออก",
       "arrivalDelay": "ดีเลย์ขาเข้า",
       "delaysReported": "รายงานดีเลย์",
-      "closure": "ปิดสนามบิน",
       "delays": "ดีเลย์",
       "avgDelay": "ดีเลย์เฉลี่ย",
       "cancelled": "ยกเลิก",
@@ -1977,7 +1922,6 @@
     "close": "ปิด",
     "currentVariant": "(ปัจจุบัน)",
     "retry": "ลองใหม่",
-    "refresh": "รีเฟรช",
-    "all": "ทั้งหมด"
+    "refresh": "รีเฟรช"
   }
 }

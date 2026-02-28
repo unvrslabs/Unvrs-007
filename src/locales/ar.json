@@ -203,10 +203,7 @@
     "techReadiness": "مؤشر الجاهزية التقنية",
     "gccInvestments": "استثمارات دول الخليج",
     "geoHubs": "مراكز جيوسياسية",
-    "liveWebcams": "كاميرات مباشرة",
-    "securityAdvisories": "تنبيهات أمنية",
-    "orefSirens": "Israel Sirens",
-    "telegramIntel": "استخبارات Telegram"
+    "liveWebcams": "كاميرات مباشرة"
   },
   "modals": {
     "search": {
@@ -468,7 +465,6 @@
   "components": {
     "webcams": {
       "regions": {
-        "iran": "IRAN",
         "all": "الكل",
         "mideast": "الشرق الأوسط",
         "europe": "أوروبا",
@@ -581,8 +577,7 @@
       "error": "فشل تحميل التنبؤات",
       "yes": "نعم",
       "no": "لا",
-      "vol": "الحجم",
-      "closes": "يغلق"
+      "vol": "الحجم"
     },
     "stablecoins": {
       "pegHealth": "صحة الربط",
@@ -788,8 +783,7 @@
         "centralBanks": "بنوك مركزية",
         "commodityHubs": "مراكز سلعية",
         "gulfInvestments": "استثمارات دول الخليج",
-        "tradeRoutes": "طرق التجارة",
-        "dayNight": "نهار/ليل"
+        "tradeRoutes": "طرق التجارة"
       },
       "tooltip": {
         "earthquake": "زلزال",
@@ -838,8 +832,7 @@
           "geopolitical": "جيوسياسي",
           "militaryStrategic": "عسكري واستراتيجي",
           "transport": "النقل",
-          "labels": "التسميات",
-          "overlays": "التراكبات والتسميات"
+          "labels": "التسميات"
         },
         "descriptions": {
           "techStartupHubs": "أنظمة بيئية رئيسية للشركات الناشئة (سان فرانسيسكو، نيويورك، لندن، إلخ.)",
@@ -881,8 +874,7 @@
           "transportDelays": "تأخيرات المطارات والتوقفات الأرضية (FAA)",
           "naturalEventsFull": "زلازل (USGS) + عواصف وحرائق وبراكين وفيضانات (NASA EONET)",
           "waterwaysLabels": "تسميات نقاط الاختناق الاستراتيجية",
-          "tradeRoutes": "خطوط الشحن العالمية الرئيسية التي تربط الموانئ عبر نقاط الاختناق الاستراتيجية",
-          "dayNight": "خط الفاصل الشمسي في الوقت الفعلي يُظهر مناطق النهار والليل"
+          "tradeRoutes": "خطوط الشحن العالمية الرئيسية التي تربط الموانئ عبر نقاط الاختناق الاستراتيجية"
         },
         "notes": {
           "timeAffects": "يؤثر على: الزلازل، الطقس، الاحتجاجات، الانقطاعات"
@@ -1142,19 +1134,6 @@
     "gdeltIntel": {
       "infoTooltip": "<strong>استخبارات GDELT</strong> مراقبة أخبار عالمية فورية:<ul><li>فئات مواضيع منتقاة (نزاعات، سيبرانية، إلخ.)</li><li>مقالات من 100+ لغة مترجمة</li><li>تُحدّث كل 15 دقيقة</li></ul>المصدر: مشروع GDELT (gdeltproject.org)"
     },
-    "telegramIntel": {
-      "infoTooltip": "إشارات فورية من قنوات OSINT المراقبة على Telegram",
-      "loading": "جارٍ الاتصال بمرحّل Telegram...",
-      "empty": "لا توجد رسائل متاحة",
-      "disabled": "مرحّل Telegram غير نشط",
-      "filterAll": "الكل",
-      "filterBreaking": "عاجل",
-      "filterConflict": "نزاعات",
-      "filterAlerts": "تنبيهات",
-      "filterOsint": "OSINT",
-      "filterPolitics": "سياسة",
-      "filterMiddleeast": "الشرق الأوسط"
-    },
     "investments": {
       "infoTooltip": "قاعدة بيانات الاستثمارات الأجنبية المباشرة للمملكة العربية السعودية والإمارات في البنية التحتية الحيوية العالمية. انقر على صف للانتقال إلى موقع الاستثمار على الخريطة.",
       "searchPlaceholder": "Search assets, countries, entities…",
@@ -1306,39 +1285,6 @@
       "regionAsia": "آسيا",
       "regionMiddleEast": "الشرق الأوسط",
       "regionAfrica": "أفريقيا"
-    },
-    "securityAdvisories": {
-      "loading": "جاري جلب التحذيرات الأمنية...",
-      "noMatching": "لا توجد تحذيرات مطابقة لهذا الفلتر",
-      "critical": "حرج",
-      "health": "صحة",
-      "sources": "وزارة الخارجية الأمريكية، DFAT الأسترالية، FCDO البريطانية، MFAT النيوزيلندية, CDC, ECDC, WHO, US Embassies",
-      "refresh": "تحديث",
-      "levels": {
-        "doNotTravel": "لا تسافر",
-        "reconsider": "أعد التفكير في السفر",
-        "caution": "توخي الحذر",
-        "normal": "عادي",
-        "info": "معلومات"
-      },
-      "time": {
-        "justNow": "الآن",
-        "minutesAgo": "منذ {{count}} دقيقة",
-        "hoursAgo": "منذ {{count}} ساعة",
-        "daysAgo": "منذ {{count}} يوم"
-      },
-      "infoTooltip": "<strong>تنبيهات أمنية</strong><br>تحذيرات السفر والتنبيهات الأمنية من الوكالات الحكومية."
-    },
-    "orefSirens": {
-      "checking": "Checking siren alerts...",
-      "noAlerts": "No active sirens — all clear",
-      "notConfigured": "Sirens service not configured",
-      "activeSirens": "{{count}} active siren(s)",
-      "area": "Area",
-      "time": "Time",
-      "justNow": "just now",
-      "historyCount": "{{count}} alerts in last 24h",
-      "infoTooltip": "<strong>Israel Sirens</strong><br>Real-time rocket and missile siren alerts from Israel Home Front Command.<br><br>Data is polled every 10 seconds. A pulsing red indicator means active sirens are sounding."
     }
   },
   "popups": {
@@ -1398,7 +1344,6 @@
       "departureDelay": "تأخيرات المغادرة",
       "arrivalDelay": "تأخيرات الوصول",
       "delaysReported": "تأخيرات مُبلّغة",
-      "closure": "إغلاق المطار",
       "delays": "تأخيرات",
       "avgDelay": "متوسط التأخير",
       "cancelled": "ملغاة",
@@ -1771,9 +1716,6 @@
     "commodityHub": {
       "commodities": "السلع"
     },
-    "iranEvent": {
-      "relatedEvents": "أحداث ذات صلة"
-    },
     "hotspotSubtexts": {
       "conflict_zone": "منطقة نزاع",
       "dprk_watch": "مراقبة كوريا الشمالية",
@@ -1980,7 +1922,6 @@
     "close": "إغلاق",
     "currentVariant": "(الحالي)",
     "retry": "Retry",
-    "refresh": "Refresh",
-    "all": "الكل"
+    "refresh": "Refresh"
   }
 }

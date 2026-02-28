@@ -23,7 +23,6 @@ export async function getAircraftDetails(
   _ctx: ServerContext,
   req: GetAircraftDetailsRequest,
 ): Promise<GetAircraftDetailsResponse> {
-  if (!req.icao24) return { details: undefined, configured: false };
   const apiKey = process.env.WINGBITS_API_KEY;
   if (!apiKey) return { details: undefined, configured: false };
 

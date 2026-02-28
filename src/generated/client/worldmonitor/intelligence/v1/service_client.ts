@@ -194,9 +194,7 @@ export class IntelligenceServiceClient {
 
   async getRiskScores(req: GetRiskScoresRequest, options?: IntelligenceServiceCallOptions): Promise<GetRiskScoresResponse> {
     let path = "/api/intelligence/v1/get-risk-scores";
-    const params = new URLSearchParams();
-    if (req.region != null && req.region !== "") params.set("region", String(req.region));
-    const url = this.baseURL + path + (params.toString() ? "?" + params.toString() : "");
+    const url = this.baseURL + path;
 
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
@@ -205,8 +203,9 @@ export class IntelligenceServiceClient {
     };
 
     const resp = await this.fetchFn(url, {
-      method: "GET",
+      method: "POST",
       headers,
+      body: JSON.stringify(req),
       signal: options?.signal,
     });
 
@@ -219,9 +218,7 @@ export class IntelligenceServiceClient {
 
   async getPizzintStatus(req: GetPizzintStatusRequest, options?: IntelligenceServiceCallOptions): Promise<GetPizzintStatusResponse> {
     let path = "/api/intelligence/v1/get-pizzint-status";
-    const params = new URLSearchParams();
-    if (req.includeGdelt) params.set("include_gdelt", String(req.includeGdelt));
-    const url = this.baseURL + path + (params.toString() ? "?" + params.toString() : "");
+    const url = this.baseURL + path;
 
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
@@ -230,8 +227,9 @@ export class IntelligenceServiceClient {
     };
 
     const resp = await this.fetchFn(url, {
-      method: "GET",
+      method: "POST",
       headers,
+      body: JSON.stringify(req),
       signal: options?.signal,
     });
 
@@ -267,10 +265,8 @@ export class IntelligenceServiceClient {
   }
 
   async getCountryIntelBrief(req: GetCountryIntelBriefRequest, options?: IntelligenceServiceCallOptions): Promise<GetCountryIntelBriefResponse> {
-    const path = "/api/intelligence/v1/get-country-intel-brief";
-    const params = new URLSearchParams();
-    if (req.countryCode != null && req.countryCode !== "") params.set("country_code", req.countryCode);
-    const url = this.baseURL + path + (params.toString() ? "?" + params.toString() : "");
+    let path = "/api/intelligence/v1/get-country-intel-brief";
+    const url = this.baseURL + path;
 
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
@@ -279,8 +275,9 @@ export class IntelligenceServiceClient {
     };
 
     const resp = await this.fetchFn(url, {
-      method: "GET",
+      method: "POST",
       headers,
+      body: JSON.stringify(req),
       signal: options?.signal,
     });
 
@@ -293,13 +290,7 @@ export class IntelligenceServiceClient {
 
   async searchGdeltDocuments(req: SearchGdeltDocumentsRequest, options?: IntelligenceServiceCallOptions): Promise<SearchGdeltDocumentsResponse> {
     let path = "/api/intelligence/v1/search-gdelt-documents";
-    const params = new URLSearchParams();
-    if (req.query != null && req.query !== "") params.set("query", String(req.query));
-    if (req.maxRecords != null && req.maxRecords !== 0) params.set("max_records", String(req.maxRecords));
-    if (req.timespan != null && req.timespan !== "") params.set("timespan", String(req.timespan));
-    if (req.toneFilter != null && req.toneFilter !== "") params.set("tone_filter", String(req.toneFilter));
-    if (req.sort != null && req.sort !== "") params.set("sort", String(req.sort));
-    const url = this.baseURL + path + (params.toString() ? "?" + params.toString() : "");
+    const url = this.baseURL + path;
 
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
@@ -308,8 +299,9 @@ export class IntelligenceServiceClient {
     };
 
     const resp = await this.fetchFn(url, {
-      method: "GET",
+      method: "POST",
       headers,
+      body: JSON.stringify(req),
       signal: options?.signal,
     });
 

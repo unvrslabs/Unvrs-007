@@ -203,10 +203,7 @@
     "techReadiness": "Δείκτης Τεχνολογικής Ετοιμότητας",
     "gccInvestments": "Επενδύσεις GCC",
     "geoHubs": "Γεωπολιτικά Κέντρα",
-    "liveWebcams": "Ζωντανές Κάμερες",
-    "securityAdvisories": "Προειδοποιήσεις Ασφαλείας",
-    "orefSirens": "Israel Sirens",
-    "telegramIntel": "Πληροφορίες Telegram"
+    "liveWebcams": "Ζωντανές Κάμερες"
   },
   "modals": {
     "search": {
@@ -495,7 +492,6 @@
   "components": {
     "webcams": {
       "regions": {
-        "iran": "IRAN",
         "all": "ΟΛΑ",
         "mideast": "Μ. ΑΝΑΤΟΛΗ",
         "europe": "ΕΥΡΩΠΗ",
@@ -609,8 +605,7 @@
       "error": "Αποτυχία φόρτωσης προβλέψεων",
       "yes": "Ναι",
       "no": "Όχι",
-      "vol": "Όγκ",
-      "closes": "Κλείνει"
+      "vol": "Όγκ"
     },
     "stablecoins": {
       "pegHealth": "Υγεία Σύνδεσης",
@@ -816,8 +811,7 @@
         "centralBanks": "Κεντρικές Τράπεζες",
         "commodityHubs": "Κέντρα Εμπορευμάτων",
         "gulfInvestments": "Επενδύσεις GCC",
-        "tradeRoutes": "Εμπορικές Διαδρομές",
-        "dayNight": "Ημέρα/Νύχτα"
+        "tradeRoutes": "Εμπορικές Διαδρομές"
       },
       "tooltip": {
         "earthquake": "Σεισμός",
@@ -866,8 +860,7 @@
           "geopolitical": "Γεωπολιτικά",
           "militaryStrategic": "Στρατιωτικά & Στρατηγικά",
           "transport": "Μεταφορές",
-          "labels": "Ετικέτες",
-          "overlays": "Επικαλύψεις και ετικέτες"
+          "labels": "Ετικέτες"
         },
         "descriptions": {
           "techStartupHubs": "Σημαντικά οικοσυστήματα startups (SF, NYC, Λονδίνο, κ.λπ.)",
@@ -920,8 +913,7 @@
           "techEvents": "Σημαντικά συνέδρια τεχνολογίας και εκδηλώσεις",
           "techFires": "Ενεργές πυρκαγιές κοντά σε τεχνολογικές υποδομές",
           "financeGulfInvestments": "Επενδύσεις κρατικών ταμείων πλούτου GCC και ΑΞΕ",
-          "tradeRoutes": "Κύριες παγκόσμιες ναυτιλιακές γραμμές που συνδέουν λιμάνια μέσω στρατηγικών σημείων",
-          "dayNight": "Ηλιακός τερματισμός σε πραγματικό χρόνο που δείχνει ζώνες ημέρας και νύχτας"
+          "tradeRoutes": "Κύριες παγκόσμιες ναυτιλιακές γραμμές που συνδέουν λιμάνια μέσω στρατηγικών σημείων"
         },
         "notes": {
           "timeAffects": "Επηρεάζει: Σεισμούς, Καιρό, Διαμαρτυρίες, Διακοπές"
@@ -1182,19 +1174,6 @@
     "gdeltIntel": {
       "infoTooltip": "<strong>Πληροφορίες GDELT</strong> Παρακολούθηση παγκόσμιων ειδήσεων σε πραγματικό χρόνο:<ul><li>Επιμελημένες κατηγορίες θεμάτων (συγκρούσεις, κυβερνοαπειλές, κ.λπ.)</li><li>Άρθρα από 100+ γλώσσες μεταφρασμένα</li><li>Ενημερώσεις κάθε 15 λεπτά</li></ul>Πηγή: GDELT Project (gdeltproject.org)"
     },
-    "telegramIntel": {
-      "infoTooltip": "Σήματα σε πραγματικό χρόνο από παρακολουθούμενα κανάλια OSINT στο Telegram",
-      "loading": "Σύνδεση στο αναμεταδότη Telegram...",
-      "empty": "Δεν υπάρχουν μηνύματα",
-      "disabled": "Ο αναμεταδότης Telegram δεν είναι ενεργός",
-      "filterAll": "Όλα",
-      "filterBreaking": "Έκτακτο",
-      "filterConflict": "Συγκρούσεις",
-      "filterAlerts": "Ειδοποιήσεις",
-      "filterOsint": "OSINT",
-      "filterPolitics": "Πολιτική",
-      "filterMiddleeast": "Μέση Ανατολή"
-    },
     "investments": {
       "infoTooltip": "Βάση δεδομένων άμεσων ξένων επενδύσεων Σαουδικής Αραβίας και ΗΑΕ σε παγκόσμιες κρίσιμες υποδομές. Κάντε κλικ σε μια γραμμή για μετάβαση στην επένδυση στον χάρτη.",
       "searchPlaceholder": "Αναζήτηση στοιχείων, χωρών, οντοτήτων…",
@@ -1333,39 +1312,6 @@
       "regionAsia": "Ασία",
       "regionMiddleEast": "Μέση Ανατολή",
       "regionAfrica": "Αφρική"
-    },
-    "securityAdvisories": {
-      "loading": "Φόρτωση ταξιδιωτικών οδηγιών...",
-      "noMatching": "Δεν βρέθηκαν οδηγίες για αυτό το φίλτρο",
-      "critical": "Κρίσιμο",
-      "health": "Υγεία",
-      "sources": "US State Dept, AU DFAT, UK FCDO, NZ MFAT, CDC, ECDC, WHO, US Embassies",
-      "refresh": "Ανανέωση",
-      "levels": {
-        "doNotTravel": "Μην ταξιδεύετε",
-        "reconsider": "Επανεξετάστε",
-        "caution": "Προσοχή",
-        "normal": "Κανονικό",
-        "info": "Πληροφορία"
-      },
-      "time": {
-        "justNow": "μόλις τώρα",
-        "minutesAgo": "{{count}} λεπτά πριν",
-        "hoursAgo": "{{count}} ώρες πριν",
-        "daysAgo": "{{count}} ημέρες πριν"
-      },
-      "infoTooltip": "<strong>Προειδοποιήσεις Ασφαλείας</strong><br>Ταξιδιωτικές οδηγίες και προειδοποιήσεις ασφαλείας."
-    },
-    "orefSirens": {
-      "checking": "Checking siren alerts...",
-      "noAlerts": "No active sirens — all clear",
-      "notConfigured": "Sirens service not configured",
-      "activeSirens": "{{count}} active siren(s)",
-      "area": "Area",
-      "time": "Time",
-      "justNow": "just now",
-      "historyCount": "{{count}} alerts in last 24h",
-      "infoTooltip": "<strong>Israel Sirens</strong><br>Real-time rocket and missile siren alerts from Israel Home Front Command.<br><br>Data is polled every 10 seconds. A pulsing red indicator means active sirens are sounding."
     }
   },
   "popups": {
@@ -1425,7 +1371,6 @@
       "departureDelay": "ΚΑΘΥΣΤΕΡΗΣΕΙΣ ΑΝΑΧΩΡΗΣΗΣ",
       "arrivalDelay": "ΚΑΘΥΣΤΕΡΗΣΕΙΣ ΑΦΙΞΗΣ",
       "delaysReported": "ΑΝΑΦΕΡΘΗΚΑΝ ΚΑΘΥΣΤΕΡΗΣΕΙΣ",
-      "closure": "ΚΛΕΙΣΙΜΟ ΑΕΡΟΔΡΟΜΙΟΥ",
       "delays": "ΚΑΘΥΣΤΕΡΗΣΕΙΣ",
       "avgDelay": "ΜΕΣ. ΚΑΘΥΣΤΕΡΗΣΗ",
       "cancelled": "ΑΚΥΡΩΘΗΚΑΝ",
@@ -2004,7 +1949,6 @@
     "close": "Κλείσιμο",
     "currentVariant": "(τρέχον)",
     "retry": "Επανάληψη",
-    "refresh": "Ανανέωση",
-    "all": "Όλα"
+    "refresh": "Ανανέωση"
   }
 }

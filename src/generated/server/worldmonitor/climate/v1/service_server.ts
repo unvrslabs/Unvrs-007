@@ -2,9 +2,13 @@
 // source: worldmonitor/climate/v1/service.proto
 
 export interface ListClimateAnomaliesRequest {
+  pagination?: PaginationRequest;
+  minSeverity: AnomalySeverity;
+}
+
+export interface PaginationRequest {
   pageSize: number;
   cursor: string;
-  minSeverity: AnomalySeverity;
 }
 
 export interface ListClimateAnomaliesResponse {
@@ -90,18 +94,12 @@ export function createClimateServiceRoutes(
 ): RouteDescriptor[] {
   return [
     {
-      method: "GET",
+      method: "POST",
       path: "/api/climate/v1/list-climate-anomalies",
       handler: async (req: Request): Promise<Response> => {
         try {
           const pathParams: Record<string, string> = {};
-          const url = new URL(req.url, "http://localhost");
-          const params = url.searchParams;
-          const body: ListClimateAnomaliesRequest = {
-            pageSize: Number(params.get("page_size") ?? "0"),
-            cursor: params.get("cursor") ?? "",
-            minSeverity: (params.get("min_severity") ?? "ANOMALY_SEVERITY_UNSPECIFIED") as AnomalySeverity,
-          };
+          const body = await req.json() as ListClimateAnomaliesRequest;
           if (options?.validateRequest) {
             const bodyViolations = options.validateRequest("listClimateAnomalies", body);
             if (bodyViolations) {

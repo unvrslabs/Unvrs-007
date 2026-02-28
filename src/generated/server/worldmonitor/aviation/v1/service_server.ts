@@ -2,10 +2,14 @@
 // source: worldmonitor/aviation/v1/service.proto
 
 export interface ListAirportDelaysRequest {
-  pageSize: number;
-  cursor: string;
+  pagination?: PaginationRequest;
   region: AirportRegion;
   minSeverity: FlightDelaySeverity;
+}
+
+export interface PaginationRequest {
+  pageSize: number;
+  cursor: string;
 }
 
 export interface ListAirportDelaysResponse {
@@ -49,7 +53,7 @@ export type FlightDelaySeverity = "FLIGHT_DELAY_SEVERITY_UNSPECIFIED" | "FLIGHT_
 
 export type FlightDelaySource = "FLIGHT_DELAY_SOURCE_UNSPECIFIED" | "FLIGHT_DELAY_SOURCE_FAA" | "FLIGHT_DELAY_SOURCE_EUROCONTROL" | "FLIGHT_DELAY_SOURCE_COMPUTED";
 
-export type FlightDelayType = "FLIGHT_DELAY_TYPE_UNSPECIFIED" | "FLIGHT_DELAY_TYPE_GROUND_STOP" | "FLIGHT_DELAY_TYPE_GROUND_DELAY" | "FLIGHT_DELAY_TYPE_DEPARTURE_DELAY" | "FLIGHT_DELAY_TYPE_ARRIVAL_DELAY" | "FLIGHT_DELAY_TYPE_GENERAL" | "FLIGHT_DELAY_TYPE_CLOSURE";
+export type FlightDelayType = "FLIGHT_DELAY_TYPE_UNSPECIFIED" | "FLIGHT_DELAY_TYPE_GROUND_STOP" | "FLIGHT_DELAY_TYPE_GROUND_DELAY" | "FLIGHT_DELAY_TYPE_DEPARTURE_DELAY" | "FLIGHT_DELAY_TYPE_ARRIVAL_DELAY" | "FLIGHT_DELAY_TYPE_GENERAL";
 
 export interface FieldViolation {
   field: string;
@@ -105,19 +109,12 @@ export function createAviationServiceRoutes(
 ): RouteDescriptor[] {
   return [
     {
-      method: "GET",
+      method: "POST",
       path: "/api/aviation/v1/list-airport-delays",
       handler: async (req: Request): Promise<Response> => {
         try {
           const pathParams: Record<string, string> = {};
-          const url = new URL(req.url, "http://localhost");
-          const params = url.searchParams;
-          const body: ListAirportDelaysRequest = {
-            pageSize: Number(params.get("page_size") ?? "0"),
-            cursor: params.get("cursor") ?? "",
-            region: (params.get("region") ?? "AIRPORT_REGION_UNSPECIFIED") as AirportRegion,
-            minSeverity: (params.get("min_severity") ?? "FLIGHT_DELAY_SEVERITY_UNSPECIFIED") as FlightDelaySeverity,
-          };
+          const body = await req.json() as ListAirportDelaysRequest;
           if (options?.validateRequest) {
             const bodyViolations = options.validateRequest("listAirportDelays", body);
             if (bodyViolations) {

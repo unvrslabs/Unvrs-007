@@ -148,7 +148,6 @@ export async function getHumanitarianSummary(
   _ctx: ServerContext,
   req: GetHumanitarianSummaryRequest,
 ): Promise<GetHumanitarianSummaryResponse> {
-  if (!req.countryCode) return { summary: undefined };
   try {
     const cacheKey = `${REDIS_CACHE_KEY}:${req.countryCode || 'all'}`;
 

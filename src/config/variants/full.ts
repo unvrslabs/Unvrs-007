@@ -17,36 +17,49 @@ export * from '../entities';
 
 // Panel configuration for geopolitical analysis
 export const DEFAULT_PANELS: Record<string, PanelConfig> = {
+  // ── MAPPA ──────────────────────────────────────────────────
   map: { name: 'Global Map', enabled: true, priority: 1 },
+
+  // ── INTELLIGENCE (real-time) ────────────────────────────────
   'live-news': { name: 'Live News', enabled: true, priority: 1 },
   intel: { name: 'Intel Feed', enabled: true, priority: 1 },
   'gdelt-intel': { name: 'Live Intelligence', enabled: true, priority: 1 },
+  'strategic-risk': { name: 'Strategic Risk Overview', enabled: true, priority: 1 },
   cii: { name: 'Country Instability', enabled: true, priority: 1 },
   cascade: { name: 'Infrastructure Cascade', enabled: true, priority: 1 },
-  'strategic-risk': { name: 'Strategic Risk Overview', enabled: true, priority: 1 },
+
+  // ── GEOPOLITICA (per regione) ───────────────────────────────
   politics: { name: 'World News', enabled: true, priority: 1 },
   us: { name: 'United States', enabled: true, priority: 1 },
   europe: { name: 'Europe', enabled: true, priority: 1 },
   middleeast: { name: 'Middle East', enabled: true, priority: 1 },
+  asia: { name: 'Asia-Pacific', enabled: true, priority: 1 },
   africa: { name: 'Africa', enabled: true, priority: 1 },
   latam: { name: 'Latin America', enabled: true, priority: 1 },
-  asia: { name: 'Asia-Pacific', enabled: true, priority: 1 },
-  energy: { name: 'Energy & Resources', enabled: true, priority: 1 },
+
+  // ── ANALISI ─────────────────────────────────────────────────
   gov: { name: 'Government', enabled: true, priority: 1 },
   thinktanks: { name: 'Think Tanks', enabled: true, priority: 1 },
+  energy: { name: 'Energy & Resources', enabled: true, priority: 1 },
   polymarket: { name: 'Predictions', enabled: true, priority: 1 },
-  commodities: { name: 'Commodities', enabled: true, priority: 1 },
-  markets: { name: 'Markets', enabled: true, priority: 1 },
-  economic: { name: 'Economic Indicators', enabled: true, priority: 1 },
-  finance: { name: 'Financial', enabled: true, priority: 1 },
-  tech: { name: 'Technology', enabled: true, priority: 2 },
-  crypto: { name: 'Crypto', enabled: true, priority: 2 },
-  heatmap: { name: 'Sector Heatmap', enabled: true, priority: 2 },
-  ai: { name: 'AI/ML', enabled: true, priority: 2 },
-  layoffs: { name: 'Layoffs Tracker', enabled: false, priority: 2 },
+
+  // ── MERCATI ─────────────────────────────────────────────────
+  markets: { name: 'Markets', enabled: true, priority: 2 },
+  economic: { name: 'Economic Indicators', enabled: true, priority: 2 },
+  commodities: { name: 'Commodities', enabled: true, priority: 2 },
+  finance: { name: 'Financial', enabled: true, priority: 2 },
   'macro-signals': { name: 'Market Radar', enabled: true, priority: 2 },
+  heatmap: { name: 'Sector Heatmap', enabled: true, priority: 2 },
+
+  // ── CRYPTO / TECH ────────────────────────────────────────────
+  crypto: { name: 'Crypto', enabled: true, priority: 2 },
   'etf-flows': { name: 'BTC ETF Tracker', enabled: true, priority: 2 },
   stablecoins: { name: 'Stablecoins', enabled: true, priority: 2 },
+  ai: { name: 'AI/ML', enabled: true, priority: 2 },
+  tech: { name: 'Technology', enabled: true, priority: 2 },
+  layoffs: { name: 'Layoffs Tracker', enabled: false, priority: 2 },
+
+  // ── PERSONALE ────────────────────────────────────────────────
   monitors: { name: 'My Monitors', enabled: true, priority: 2 },
 };
 
@@ -96,8 +109,6 @@ export const DEFAULT_MAP_LAYERS: MapLayers = {
   speciesRecovery: false,
   renewableInstallations: false,
   tradeRoutes: false,
-  iranAttacks: false,
-  dayNight: false,
 };
 
 // Mobile-specific defaults for geopolitical
@@ -146,8 +157,6 @@ export const MOBILE_DEFAULT_MAP_LAYERS: MapLayers = {
   speciesRecovery: false,
   renewableInstallations: false,
   tradeRoutes: false,
-  iranAttacks: false,
-  dayNight: false,
 };
 
 export const VARIANT_CONFIG: VariantConfig = {

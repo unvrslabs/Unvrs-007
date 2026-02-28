@@ -203,10 +203,7 @@
     "techReadiness": "Chỉ số Sẵn sàng Công nghệ",
     "gccInvestments": "Đầu tư GCC",
     "geoHubs": "Trung tâm Địa chính trị",
-    "liveWebcams": "Webcam Trực tiếp",
-    "securityAdvisories": "Cảnh báo An ninh",
-    "orefSirens": "Israel Sirens",
-    "telegramIntel": "Tình báo Telegram"
+    "liveWebcams": "Webcam Trực tiếp"
   },
   "modals": {
     "search": {
@@ -468,7 +465,6 @@
   "components": {
     "webcams": {
       "regions": {
-        "iran": "IRAN",
         "all": "TẤT CẢ",
         "mideast": "TRUNG ĐÔNG",
         "europe": "CHÂU ÂU",
@@ -581,8 +577,7 @@
       "error": "Không thể tải dự đoán",
       "yes": "Có",
       "no": "Không",
-      "vol": "KL",
-      "closes": "Đóng"
+      "vol": "KL"
     },
     "stablecoins": {
       "pegHealth": "Sức khỏe Neo giá",
@@ -788,8 +783,7 @@
         "centralBanks": "Ngân hàng Trung ương",
         "commodityHubs": "Trung tâm Hàng hóa",
         "gulfInvestments": "Đầu tư GCC",
-        "tradeRoutes": "Tuyến Thương mại",
-        "dayNight": "Ngày/Đêm"
+        "tradeRoutes": "Tuyến Thương mại"
       },
       "tooltip": {
         "earthquake": "Động đất",
@@ -838,8 +832,7 @@
           "geopolitical": "Địa chính trị",
           "militaryStrategic": "Quân sự & Chiến lược",
           "transport": "Vận tải",
-          "labels": "Nhãn",
-          "overlays": "Lớp phủ và nhãn"
+          "labels": "Nhãn"
         },
         "descriptions": {
           "techStartupHubs": "Hệ sinh thái khởi nghiệp lớn (SF, NYC, London, v.v.)",
@@ -881,8 +874,7 @@
           "transportDelays": "Chậm trễ sân bay và dừng mặt đất (FAA)",
           "naturalEventsFull": "Động đất (USGS) + bão, cháy, núi lửa, lũ lụt (NASA EONET)",
           "waterwaysLabels": "Nhãn điểm nghẽn chiến lược",
-          "tradeRoutes": "Các tuyến vận tải biển chính toàn cầu kết nối các cảng qua các điểm chiến lược",
-          "dayNight": "Đường phân chia mặt trời thời gian thực hiển thị vùng ngày và đêm"
+          "tradeRoutes": "Các tuyến vận tải biển chính toàn cầu kết nối các cảng qua các điểm chiến lược"
         },
         "notes": {
           "timeAffects": "Ảnh hưởng: Động đất, Thời tiết, Biểu tình, Gián đoạn"
@@ -1142,19 +1134,6 @@
     "gdeltIntel": {
       "infoTooltip": "<strong>Tình báo GDELT</strong> Giám sát tin tức toàn cầu thời gian thực:<ul><li>Danh mục chủ đề được chọn lọc (xung đột, mạng, v.v.)</li><li>Bài viết từ hơn 100 ngôn ngữ được dịch</li><li>Cập nhật mỗi 15 phút</li></ul>Nguồn: GDELT Project (gdeltproject.org)"
     },
-    "telegramIntel": {
-      "infoTooltip": "Tín hiệu thời gian thực từ các kênh OSINT Telegram được giám sát",
-      "loading": "Đang kết nối đến relay Telegram...",
-      "empty": "Không có tin nhắn",
-      "disabled": "Relay Telegram không hoạt động",
-      "filterAll": "Tất cả",
-      "filterBreaking": "Nóng",
-      "filterConflict": "Xung đột",
-      "filterAlerts": "Cảnh báo",
-      "filterOsint": "OSINT",
-      "filterPolitics": "Chính trị",
-      "filterMiddleeast": "Trung Đông"
-    },
     "investments": {
       "infoTooltip": "Cơ sở dữ liệu đầu tư trực tiếp nước ngoài của Ả Rập Saudi và UAE vào hạ tầng quan trọng toàn cầu. Nhấp vào hàng để bay đến vị trí đầu tư trên bản đồ.",
       "searchPlaceholder": "Tìm tài sản, quốc gia, thực thể…",
@@ -1306,39 +1285,6 @@
       "regionAsia": "Châu Á",
       "regionMiddleEast": "Trung Đông",
       "regionAfrica": "Châu Phi"
-    },
-    "securityAdvisories": {
-      "loading": "Đang tải cảnh báo du lịch...",
-      "noMatching": "Không có cảnh báo cho bộ lọc này",
-      "critical": "Nghiêm trọng",
-      "health": "Sức khỏe",
-      "sources": "US State Dept, AU DFAT, UK FCDO, NZ MFAT, CDC, ECDC, WHO, US Embassies",
-      "refresh": "Làm mới",
-      "levels": {
-        "doNotTravel": "Không du lịch",
-        "reconsider": "Cân nhắc lại",
-        "caution": "Thận trọng",
-        "normal": "Bình thường",
-        "info": "Thông tin"
-      },
-      "time": {
-        "justNow": "vừa xong",
-        "minutesAgo": "{{count}} phút trước",
-        "hoursAgo": "{{count}} giờ trước",
-        "daysAgo": "{{count}} ngày trước"
-      },
-      "infoTooltip": "<strong>Cảnh báo An ninh</strong><br>Cảnh báo du lịch và an ninh từ các cơ quan chính phủ."
-    },
-    "orefSirens": {
-      "checking": "Checking siren alerts...",
-      "noAlerts": "No active sirens — all clear",
-      "notConfigured": "Sirens service not configured",
-      "activeSirens": "{{count}} active siren(s)",
-      "area": "Area",
-      "time": "Time",
-      "justNow": "just now",
-      "historyCount": "{{count}} alerts in last 24h",
-      "infoTooltip": "<strong>Israel Sirens</strong><br>Real-time rocket and missile siren alerts from Israel Home Front Command.<br><br>Data is polled every 10 seconds. A pulsing red indicator means active sirens are sounding."
     }
   },
   "popups": {
@@ -1398,7 +1344,6 @@
       "departureDelay": "TRÌ HOÃN KHỞI HÀNH",
       "arrivalDelay": "TRÌ HOÃN ĐẾN",
       "delaysReported": "BÁO CÁO TRÌ HOÃN",
-      "closure": "ĐÓNG CỬA SÂN BAY",
       "delays": "TRÌ HOÃN",
       "avgDelay": "TRÌ HOÃN TB",
       "cancelled": "HỦY CHUYẾN",
@@ -1977,7 +1922,6 @@
     "close": "Đóng",
     "currentVariant": "(hiện tại)",
     "retry": "Thử lại",
-    "refresh": "Làm mới",
-    "all": "Tất cả"
+    "refresh": "Làm mới"
   }
 }
