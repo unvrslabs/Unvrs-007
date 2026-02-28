@@ -13456,68 +13456,22 @@ a.prediction-link:hover {
   display: none;
 }
 
-/* Panel section tab bar (full/world variant) */
+/* Panel section tab bar — mirrors .glass-nav + .glass-nav-item exactly */
 .panel-section-tabs {
   display: flex;
-  gap: 6px;
-  padding: 8px 8px;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 8px;
+  height: 48px;
   overflow-x: auto;
   scrollbar-width: none;
   position: sticky;
   top: 44px;
   z-index: 50;
   background: var(--bg);
-  border-bottom: 1px solid hsl(0 0% 100% / 0.07);
 }
 .panel-section-tabs::-webkit-scrollbar { display: none; }
-
-.panel-section-tab {
-  padding: 7px 20px;
-  font-family: inherit;
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.3px;
-  color: hsl(0 0% 100% / 0.45);
-  border: 1px solid hsl(0 0% 100% / 0.08);
-  border-radius: 999px;
-  background: linear-gradient(135deg, hsl(0 0% 100% / 0.06) 0%, hsl(0 0% 100% / 0.02) 100%);
-  backdrop-filter: blur(20px) saturate(140%);
-  -webkit-backdrop-filter: blur(20px) saturate(140%);
-  box-shadow: inset 0 1px 0 0 hsl(0 0% 100% / 0.08), inset 0 -1px 0 0 hsl(0 0% 0% / 0.03);
-  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-  position: relative;
-  cursor: pointer;
-  white-space: nowrap;
-  overflow: hidden;
-}
-.panel-section-tab::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 50%;
-  background: linear-gradient(180deg, hsl(0 0% 100% / 0.08) 0%, transparent 100%);
-  border-radius: 999px 999px 0 0;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.panel-section-tab:hover {
-  color: hsl(0 0% 100% / 0.85);
-  background: linear-gradient(135deg, hsl(0 0% 100% / 0.14) 0%, hsl(0 0% 100% / 0.07) 50%, hsl(0 0% 100% / 0.04) 100%);
-  border-color: hsl(0 0% 100% / 0.18);
-  box-shadow: 0 4px 16px hsl(0 0% 0% / 0.12), inset 0 1px 0 0 hsl(0 0% 100% / 0.15), inset 0 -1px 0 0 hsl(0 0% 0% / 0.04);
-}
-.panel-section-tab:hover::before { opacity: 1; }
-.panel-section-tab.active {
-  color: #fff;
-  background: linear-gradient(135deg, hsl(0 0% 100% / 0.24) 0%, hsl(0 0% 100% / 0.14) 50%, hsl(0 0% 100% / 0.08) 100%);
-  border: 1px solid hsl(0 0% 100% / 0.3);
-  box-shadow: 0 6px 24px hsl(0 0% 0% / 0.2), 0 0 0 1px hsl(210 80% 60% / 0.15), inset 0 1px 0 0 hsl(0 0% 100% / 0.3), inset 0 -1px 0 0 hsl(0 0% 0% / 0.06);
-}
-.panel-section-tab.active::before {
-  opacity: 1;
-  background: linear-gradient(180deg, hsl(0 0% 100% / 0.12) 0%, transparent 100%);
-}
 
 /* Hide panels filtered out by the section tab bar */
 .panel.tab-hidden {

@@ -931,12 +931,14 @@ export class PanelLayoutManager implements AppModule {
     wrapper.className = 'panel-section-tabs';
 
     this.PANEL_SECTION_TABS_DEF.forEach(tab => {
-      const btn = document.createElement('button');
-      btn.className = 'panel-section-tab' + (tab.key === saved ? ' active' : '');
+      const btn = document.createElement('a');
+      btn.href = '#';
+      btn.className = 'glass-nav-item' + (tab.key === saved ? ' active' : '');
       btn.dataset.tab = tab.key;
       btn.textContent = tab.label;
-      btn.addEventListener('click', () => {
-        wrapper.querySelectorAll('.panel-section-tab').forEach(b => b.classList.remove('active'));
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        wrapper.querySelectorAll('.glass-nav-item').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         localStorage.setItem(this.PANEL_SECTION_TAB_KEY, tab.key);
         this.applyPanelTabFilter(tab.key, PINNED);
