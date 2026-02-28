@@ -12831,6 +12831,67 @@ a.prediction-link:hover {
   height: 100%;
 }
 
+/* Region selector inside map — bottom-right corner */
+.map-region-select-wrap {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  z-index: 500;
+  pointer-events: auto;
+}
+
+.map-region-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background: linear-gradient(135deg, hsl(0 0% 100% / 0.14) 0%, hsl(0 0% 100% / 0.07) 100%);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border: 1px solid hsl(0 0% 100% / 0.2);
+  outline: none;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  color: hsl(0 0% 98%);
+  padding: 6px 28px 6px 12px;
+  cursor: pointer;
+  border-radius: 999px;
+  box-shadow: 0 4px 12px hsl(0 0% 0% / 0.12), inset 0 1px 0 hsl(0 0% 100% / 0.12);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23ccc' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+}
+
+.map-region-select:hover {
+  color: #fff;
+  background-color: hsl(0 0% 100% / 0.18);
+  border-color: hsl(0 0% 100% / 0.25);
+  box-shadow: 0 4px 16px hsl(0 0% 0% / 0.15), inset 0 1px 0 hsl(0 0% 100% / 0.18);
+}
+
+.map-region-select option {
+  background: hsl(215 35% 12%);
+  color: hsl(0 0% 98%);
+}
+
+[data-theme="light"] .map-region-select {
+  background: hsl(0 0% 100% / 0.75);
+  border-color: hsl(0 0% 0% / 0.12);
+  color: hsl(215 25% 15%);
+  box-shadow: 0 4px 12px hsl(0 0% 0% / 0.08), inset 0 1px 0 hsl(0 0% 100% / 0.5);
+}
+
+[data-theme="light"] .map-region-select:hover {
+  background: hsl(0 0% 100% / 0.9);
+  border-color: hsl(0 0% 0% / 0.2);
+}
+
+[data-theme="light"] .map-region-select option {
+  background: #fff;
+  color: hsl(215 25% 15%);
+}
+
 .deckgl-map-wrapper {
   position: absolute;
   top: 0;

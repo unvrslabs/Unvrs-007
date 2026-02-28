@@ -110,19 +110,7 @@ export class PanelLayoutManager implements AppModule {
         <div class="header-right"></div>
       </div>
       <div class="glass-nav-row">
-        <span class="glass-nav-left-mount">
-          <select id="regionSelect" class="glass-nav-select">
-            <option value="global">${t('components.deckgl.views.global')}</option>
-            <option value="italia" ${SITE_VARIANT === 'italia' ? 'selected' : ''}>Italia</option>
-            <option value="america">${t('components.deckgl.views.americas')}</option>
-            <option value="mena">${t('components.deckgl.views.mena')}</option>
-            <option value="eu">${t('components.deckgl.views.europe')}</option>
-            <option value="asia">${t('components.deckgl.views.asia')}</option>
-            <option value="latam">${t('components.deckgl.views.latam')}</option>
-            <option value="africa">${t('components.deckgl.views.africa')}</option>
-            <option value="oceania">${t('components.deckgl.views.oceania')}</option>
-          </select>
-        </span>
+        <span class="glass-nav-left-mount"></span>
         <div class="glass-nav-center-group">
         <nav class="glass-nav glass-nav-main">
             <span id="glassNotificationsMount" class="glass-nav-notifications-mount"></span>
@@ -156,7 +144,21 @@ export class PanelLayoutManager implements AppModule {
               </svg>
             </button>
           </div>
-          <div class="map-container" id="mapContainer"></div>
+          <div class="map-container" id="mapContainer">
+            <div class="map-region-select-wrap">
+              <select id="regionSelect" class="map-region-select">
+                <option value="global">${t('components.deckgl.views.global')}</option>
+                <option value="italia" ${SITE_VARIANT === 'italia' ? 'selected' : ''}>Italia</option>
+                <option value="america">${t('components.deckgl.views.americas')}</option>
+                <option value="mena">${t('components.deckgl.views.mena')}</option>
+                <option value="eu">${t('components.deckgl.views.europe')}</option>
+                <option value="asia">${t('components.deckgl.views.asia')}</option>
+                <option value="latam">${t('components.deckgl.views.latam')}</option>
+                <option value="africa">${t('components.deckgl.views.africa')}</option>
+                <option value="oceania">${t('components.deckgl.views.oceania')}</option>
+              </select>
+            </div>
+          </div>
           ${SITE_VARIANT === 'happy' ? '<button class="tv-exit-btn" id="tvExitBtn">Exit TV Mode</button>' : ''}
           <div class="map-resize-handle" id="mapResizeHandle"></div>
         </div>
