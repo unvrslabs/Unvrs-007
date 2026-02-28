@@ -632,60 +632,54 @@ export class PanelLayoutManager implements AppModule {
         try { return JSON.parse(localStorage.getItem(this.ctx.PANEL_SPANS_KEY) ?? '{}'); }
         catch { return {}; }
       })();
-      const defaultSpans: Record<string, { row: number; col?: number }> = SITE_VARIANT === 'italia' ? {
-        'italia-politica': { row: 2 },
-        'italia-economia': { row: 1 },
-        'italia-difesa': { row: 1 },
-        'italia-energia': { row: 1 },
-        'italia-esteri': { row: 2 },
-        'italia-finanza': { row: 1 },
-        'italia-infrastrutture': { row: 1 },
-        'italia-tech': { row: 2 },
-        'gov': { row: 1 },
-        'thinktanks': { row: 1 },
-        'europe': { row: 2 },
-        'intel': { row: 2 },
-        'gdelt-intel': { row: 1 },
-        'insights': { row: 2 },
-        'strategic-posture': { row: 1 },
-        'cii': { row: 1 },
-        'strategic-risk': { row: 2 },
-        'cascade': { row: 1 },
+      const defaultSpans: Record<string, number> = SITE_VARIANT === 'italia' ? {
+        'italia-politica': 2,
+        'italia-economia': 1,
+        'italia-difesa': 1,
+        'italia-energia': 1,
+        'italia-esteri': 2,
+        'italia-finanza': 1,
+        'italia-infrastrutture': 1,
+        'italia-tech': 2,
+        'gov': 1,
+        'thinktanks': 1,
+        'europe': 2,
+        'intel': 2,
+        'gdelt-intel': 1,
+        'insights': 2,
+        'strategic-posture': 1,
+        'cii': 1,
+        'strategic-risk': 2,
+        'cascade': 1,
       } : {
         /* Intelligence – hero cards */
-        'strategic-risk': { row: 3, col: 2 },
-        'insights': { row: 2 },
-        'strategic-posture': { row: 2 },
-        'intel': { row: 2 },
-        'gdelt-intel': { row: 2 },
-        'cii': { row: 2 },
-        'cascade': { row: 2 },
-        'telegram-intel': { row: 2 },
-        'oref-sirens': { row: 1 },
-        'security-advisories': { row: 2 },
-        /* News – mosaic layout */
-        'politics': { row: 2 },
-        'us': { row: 2 },
-        'europe': { row: 3, col: 2 },
-        'middleeast': { row: 3 },
-        'africa': { row: 2 },
-        'latam': { row: 2 },
-        'asia': { row: 2, col: 2 },
-        'energy': { row: 2, col: 2 },
+        'strategic-risk': 3,
+        'insights': 2,
+        'strategic-posture': 2,
+        'intel': 2,
+        'gdelt-intel': 2,
+        'cii': 2,
+        'cascade': 2,
+        'telegram-intel': 2,
+        'oref-sirens': 1,
+        'security-advisories': 2,
+        /* News – varied layout */
+        'politics': 2,
+        'us': 2,
+        'europe': 3,
+        'middleeast': 2,
+        'africa': 1,
+        'latam': 1,
+        'asia': 2,
+        'energy': 2,
       };
       for (const [key, span] of Object.entries(defaultSpans)) {
         if (savedSpans[key]) continue; // user already customised this panel
         const panel = this.ctx.panels[key];
-        if (!panel) continue;
-        const el = panel.getElement();
-        // Row span
-        if (span.row > 1) {
+        if (panel && span > 1) {
+          const el = panel.getElement();
           el.classList.remove('span-1', 'span-2', 'span-3', 'span-4');
-          el.classList.add(`span-${span.row}`, 'resized');
-        }
-        // Column span
-        if (span.col && span.col > 1) {
-          el.classList.add('col-2');
+          el.classList.add(`span-${span}`, 'resized');
         }
       }
     }
