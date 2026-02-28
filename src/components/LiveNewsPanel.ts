@@ -75,14 +75,17 @@ const TECH_LIVE_CHANNELS: LiveChannel[] = [
   { id: 'nasa', name: 'Sen Space Live', handle: '@NASA', fallbackVideoId: 'fO9e9jnhYK8', useFallbackOnly: true },
 ];
 
-// Italia variant: Italian news channels
+// Italia variant: Italian TV channels
 const ITALIA_LIVE_CHANNELS: LiveChannel[] = [
-  { id: 'sky-tg24', name: 'Sky TG24', handle: '@SkyTG24', fallbackVideoId: 'yAoQDz2GJoI' },
-  { id: 'rai-news-24', name: 'Rai News 24', handle: '@RaiNews', fallbackVideoId: 'XOY2MG1Yxmc' },
   { id: 'tgcom24', name: 'TGCOM24', handle: '@tgcom24', fallbackVideoId: 'hWeGaR28z5E' },
-  { id: 'euronews-it', name: 'Euronews IT', handle: '@euabortnews', fallbackVideoId: 'pykpO5kQJ98' },
-  { id: 'france24', name: 'France24', handle: '@FRANCE24English', fallbackVideoId: 'Ap-UM1O9RBU' },
-  { id: 'bloomberg', name: 'Bloomberg', handle: '@Bloomberg', fallbackVideoId: 'iEpJwprxDdk' },
+  { id: 'sky-tg24', name: 'Sky TG24', handle: '@SkyTG24', fallbackVideoId: 'yAoQDz2GJoI' },
+  { id: 'rai-1', name: 'Rai 1', handle: '@Rai', fallbackVideoId: 'gSL3sM7sIKA', useFallbackOnly: true },
+  { id: 'rai-2', name: 'Rai 2', handle: '@Rai', fallbackVideoId: 'qDBvNJUa4lg', useFallbackOnly: true },
+  { id: 'rai-3', name: 'Rai 3', handle: '@Rai', fallbackVideoId: 'JYRVNSf1Q90', useFallbackOnly: true },
+  { id: 'rete-4', name: 'Rete 4', handle: '@Mediaset', fallbackVideoId: 'ICr2bpAJb2Q', useFallbackOnly: true },
+  { id: 'canale-5', name: 'Canale 5', handle: '@Mediaset', fallbackVideoId: 'G4SiCo6nRBo', useFallbackOnly: true },
+  { id: 'italia-1', name: 'Italia 1', handle: '@Mediaset', fallbackVideoId: 'IgzAsBYw6SM', useFallbackOnly: true },
+  { id: 'la7', name: 'La7', handle: '@La7tv', fallbackVideoId: 'RGvmxSWCaFE' },
 ];
 
 // Optional channels users can add from the "Available Channels" tab UI
