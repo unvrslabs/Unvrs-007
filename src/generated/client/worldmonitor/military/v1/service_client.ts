@@ -2,25 +2,14 @@
 // source: worldmonitor/military/v1/service.proto
 
 export interface ListMilitaryFlightsRequest {
-  pagination?: PaginationRequest;
-  boundingBox?: BoundingBox;
-  operator: MilitaryOperator;
-  aircraftType: MilitaryAircraftType;
-}
-
-export interface PaginationRequest {
   pageSize: number;
   cursor: string;
-}
-
-export interface BoundingBox {
-  northEast?: GeoCoordinates;
-  southWest?: GeoCoordinates;
-}
-
-export interface GeoCoordinates {
-  latitude: number;
-  longitude: number;
+  neLat: number;
+  neLon: number;
+  swLat: number;
+  swLon: number;
+  operator: MilitaryOperator;
+  aircraftType: MilitaryAircraftType;
 }
 
 export interface ListMilitaryFlightsResponse {
@@ -53,6 +42,11 @@ export interface MilitaryFlight {
   isInteresting: boolean;
   note: string;
   enrichment?: FlightEnrichment;
+}
+
+export interface GeoCoordinates {
+  latitude: number;
+  longitude: number;
 }
 
 export interface FlightEnrichment {
@@ -194,6 +188,50 @@ export interface USNIStrikeGroup {
   escorts: string[];
 }
 
+export interface ListMilitaryBasesRequest {
+  neLat: number;
+  neLon: number;
+  swLat: number;
+  swLon: number;
+  zoom: number;
+  type: string;
+  kind: string;
+  country: string;
+}
+
+export interface ListMilitaryBasesResponse {
+  bases: MilitaryBaseEntry[];
+  clusters: MilitaryBaseCluster[];
+  totalInView: number;
+  truncated: boolean;
+}
+
+export interface MilitaryBaseEntry {
+  id: string;
+  name: string;
+  latitude: number;
+  longitude: number;
+  kind: string;
+  countryIso2: string;
+  type: string;
+  tier: number;
+  catAirforce: boolean;
+  catNaval: boolean;
+  catNuclear: boolean;
+  catSpace: boolean;
+  catTraining: boolean;
+  branch: string;
+  status: string;
+}
+
+export interface MilitaryBaseCluster {
+  latitude: number;
+  longitude: number;
+  count: number;
+  dominantType: string;
+  expansionZoom: number;
+}
+
 export type MilitaryActivityType = "MILITARY_ACTIVITY_TYPE_UNSPECIFIED" | "MILITARY_ACTIVITY_TYPE_EXERCISE" | "MILITARY_ACTIVITY_TYPE_PATROL" | "MILITARY_ACTIVITY_TYPE_TRANSPORT" | "MILITARY_ACTIVITY_TYPE_DEPLOYMENT" | "MILITARY_ACTIVITY_TYPE_TRANSIT" | "MILITARY_ACTIVITY_TYPE_UNKNOWN";
 
 export type MilitaryAircraftType = "MILITARY_AIRCRAFT_TYPE_UNSPECIFIED" | "MILITARY_AIRCRAFT_TYPE_FIGHTER" | "MILITARY_AIRCRAFT_TYPE_BOMBER" | "MILITARY_AIRCRAFT_TYPE_TRANSPORT" | "MILITARY_AIRCRAFT_TYPE_TANKER" | "MILITARY_AIRCRAFT_TYPE_AWACS" | "MILITARY_AIRCRAFT_TYPE_RECONNAISSANCE" | "MILITARY_AIRCRAFT_TYPE_HELICOPTER" | "MILITARY_AIRCRAFT_TYPE_DRONE" | "MILITARY_AIRCRAFT_TYPE_PATROL" | "MILITARY_AIRCRAFT_TYPE_SPECIAL_OPS" | "MILITARY_AIRCRAFT_TYPE_VIP" | "MILITARY_AIRCRAFT_TYPE_UNKNOWN";
@@ -252,7 +290,16 @@ export class MilitaryServiceClient {
 
   async listMilitaryFlights(req: ListMilitaryFlightsRequest, options?: MilitaryServiceCallOptions): Promise<ListMilitaryFlightsResponse> {
     let path = "/api/military/v1/list-military-flights";
-    const url = this.baseURL + path;
+    const params = new URLSearchParams();
+    if (req.pageSize != null && req.pageSize !== 0) params.set("page_size", String(req.pageSize));
+    if (req.cursor != null && req.cursor !== "") params.set("cursor", String(req.cursor));
+    if (req.neLat != null && req.neLat !== 0) params.set("ne_lat", String(req.neLat));
+    if (req.neLon != null && req.neLon !== 0) params.set("ne_lon", String(req.neLon));
+    if (req.swLat != null && req.swLat !== 0) params.set("sw_lat", String(req.swLat));
+    if (req.swLon != null && req.swLon !== 0) params.set("sw_lon", String(req.swLon));
+    if (req.operator != null && (req.operator as string) !== "") params.set("operator", String(req.operator));
+    if (req.aircraftType != null && (req.aircraftType as string) !== "") params.set("aircraft_type", String(req.aircraftType));
+    const url = this.baseURL + path + (params.toString() ? "?" + params.toString() : "");
 
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
@@ -261,9 +308,8 @@ export class MilitaryServiceClient {
     };
 
     const resp = await this.fetchFn(url, {
-      method: "POST",
+      method: "GET",
       headers,
-      body: JSON.stringify(req),
       signal: options?.signal,
     });
 
@@ -276,7 +322,9 @@ export class MilitaryServiceClient {
 
   async getTheaterPosture(req: GetTheaterPostureRequest, options?: MilitaryServiceCallOptions): Promise<GetTheaterPostureResponse> {
     let path = "/api/military/v1/get-theater-posture";
-    const url = this.baseURL + path;
+    const params = new URLSearchParams();
+    if (req.theater != null && req.theater !== "") params.set("theater", String(req.theater));
+    const url = this.baseURL + path + (params.toString() ? "?" + params.toString() : "");
 
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
@@ -285,9 +333,8 @@ export class MilitaryServiceClient {
     };
 
     const resp = await this.fetchFn(url, {
-      method: "POST",
+      method: "GET",
       headers,
-      body: JSON.stringify(req),
       signal: options?.signal,
     });
 
@@ -300,7 +347,9 @@ export class MilitaryServiceClient {
 
   async getAircraftDetails(req: GetAircraftDetailsRequest, options?: MilitaryServiceCallOptions): Promise<GetAircraftDetailsResponse> {
     let path = "/api/military/v1/get-aircraft-details";
-    const url = this.baseURL + path;
+    const params = new URLSearchParams();
+    if (req.icao24 != null && req.icao24 !== "") params.set("icao24", String(req.icao24));
+    const url = this.baseURL + path + (params.toString() ? "?" + params.toString() : "");
 
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
@@ -309,9 +358,8 @@ export class MilitaryServiceClient {
     };
 
     const resp = await this.fetchFn(url, {
-      method: "POST",
+      method: "GET",
       headers,
-      body: JSON.stringify(req),
       signal: options?.signal,
     });
 
@@ -346,7 +394,7 @@ export class MilitaryServiceClient {
     return await resp.json() as GetAircraftDetailsBatchResponse;
   }
 
-  async getWingbitsStatus(req: GetWingbitsStatusRequest, options?: MilitaryServiceCallOptions): Promise<GetWingbitsStatusResponse> {
+  async getWingbitsStatus(_req: GetWingbitsStatusRequest, options?: MilitaryServiceCallOptions): Promise<GetWingbitsStatusResponse> {
     let path = "/api/military/v1/get-wingbits-status";
     const url = this.baseURL + path;
 
@@ -357,9 +405,8 @@ export class MilitaryServiceClient {
     };
 
     const resp = await this.fetchFn(url, {
-      method: "POST",
+      method: "GET",
       headers,
-      body: JSON.stringify(req),
       signal: options?.signal,
     });
 
@@ -372,7 +419,9 @@ export class MilitaryServiceClient {
 
   async getUSNIFleetReport(req: GetUSNIFleetReportRequest, options?: MilitaryServiceCallOptions): Promise<GetUSNIFleetReportResponse> {
     let path = "/api/military/v1/get-usni-fleet-report";
-    const url = this.baseURL + path;
+    const params = new URLSearchParams();
+    if (req.forceRefresh) params.set("force_refresh", String(req.forceRefresh));
+    const url = this.baseURL + path + (params.toString() ? "?" + params.toString() : "");
 
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
@@ -381,9 +430,8 @@ export class MilitaryServiceClient {
     };
 
     const resp = await this.fetchFn(url, {
-      method: "POST",
+      method: "GET",
       headers,
-      body: JSON.stringify(req),
       signal: options?.signal,
     });
 
@@ -392,6 +440,38 @@ export class MilitaryServiceClient {
     }
 
     return await resp.json() as GetUSNIFleetReportResponse;
+  }
+
+  async listMilitaryBases(req: ListMilitaryBasesRequest, options?: MilitaryServiceCallOptions): Promise<ListMilitaryBasesResponse> {
+    let path = "/api/military/v1/list-military-bases";
+    const params = new URLSearchParams();
+    if (req.neLat != null && req.neLat !== 0) params.set("ne_lat", String(req.neLat));
+    if (req.neLon != null && req.neLon !== 0) params.set("ne_lon", String(req.neLon));
+    if (req.swLat != null && req.swLat !== 0) params.set("sw_lat", String(req.swLat));
+    if (req.swLon != null && req.swLon !== 0) params.set("sw_lon", String(req.swLon));
+    if (req.zoom != null && req.zoom !== 0) params.set("zoom", String(req.zoom));
+    if (req.type != null && req.type !== "") params.set("type", String(req.type));
+    if (req.kind != null && req.kind !== "") params.set("kind", String(req.kind));
+    if (req.country != null && req.country !== "") params.set("country", String(req.country));
+    const url = this.baseURL + path + (params.toString() ? "?" + params.toString() : "");
+
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+      ...this.defaultHeaders,
+      ...options?.headers,
+    };
+
+    const resp = await this.fetchFn(url, {
+      method: "GET",
+      headers,
+      signal: options?.signal,
+    });
+
+    if (!resp.ok) {
+      return this.handleError(resp);
+    }
+
+    return await resp.json() as ListMilitaryBasesResponse;
   }
 
   private async handleError(resp: Response): Promise<never> {

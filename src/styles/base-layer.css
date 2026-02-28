@@ -1,8 +1,8 @@
 /*
- * Import main.css directly (unlayered) so liquid-glass styles have full
- * cascade weight and aren't overridden by happy-theme.css.
+ * Cascade layer wrapper — places ALL of main.css into @layer base.
+ * Variant theme CSS (happy-theme.css etc.) stays unlayered and therefore
+ * always wins the cascade, regardless of specificity or source order.
  *
- * happy-theme.css rules all use [data-variant="happy"] selectors, so they
- * only apply when the happy variant is active and win via specificity.
+ * See: https://developer.mozilla.org/en-US/docs/Web/CSS/@layer
  */
-@import url('./main.css');
+@import url('./main.css') layer(base);

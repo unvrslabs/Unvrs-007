@@ -12,32 +12,6 @@ import { CHROME_UA, yahooGate } from '../../../_shared/constants';
 
 export const UPSTREAM_TIMEOUT_MS = 10_000;
 
-const delay = (ms: number) => new Promise<void>(r => setTimeout(r, ms));
-
-/**
- * Fetch multiple Finnhub quotes in small parallel batches to avoid hitting the
- * free-tier rate limit (60 req/min). Fires `batchSize` calls concurrently,
- * waits `batchDelayMs` between batches.
- */
-export async function fetchFinnhubQuotesBatch(
-  symbols: string[],
-  apiKey: string,
-  batchSize = 3,
-  batchDelayMs = 700,
-): Promise<Map<string, { price: number; changePercent: number }>> {
-  const results = new Map<string, { price: number; changePercent: number }>();
-  for (let i = 0; i < symbols.length; i += batchSize) {
-    const batch = symbols.slice(i, i + batchSize);
-    const batchResults = await Promise.all(batch.map((s) => fetchFinnhubQuote(s, apiKey)));
-    for (let j = 0; j < batch.length; j++) {
-      const r = batchResults[j];
-      if (r) results.set(batch[j]!, { price: r.price, changePercent: r.changePercent });
-    }
-    if (i + batchSize < symbols.length) await delay(batchDelayMs);
-  }
-  return results;
-}
-
 export async function fetchYahooQuotesBatch(
   symbols: string[],
 ): Promise<{ results: Map<string, { price: number; change: number; sparkline: number[] }>; rateLimited: boolean }> {

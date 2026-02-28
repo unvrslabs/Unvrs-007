@@ -1,19 +1,10 @@
-import { defineConfig, loadEnv, type Plugin } from 'vite';
+import { defineConfig, type Plugin } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 import { resolve, dirname, extname } from 'path';
 import { mkdir, readFile, writeFile } from 'fs/promises';
 import { brotliCompress } from 'zlib';
 import { promisify } from 'util';
 import pkg from './package.json';
-
-// Load ALL env vars from .env/.env.local (not just VITE_*) into process.env
-// so server-side handlers (FRED, EIA, etc.) can read their API keys.
-const allEnv = loadEnv('development', process.cwd(), '');
-for (const [key, value] of Object.entries(allEnv)) {
-  if (process.env[key] === undefined) {
-    process.env[key] = value;
-  }
-}
 
 const isE2E = process.env.VITE_E2E === '1';
 const isDesktopBuild = process.env.VITE_DESKTOP_RUNTIME === '1';
@@ -195,12 +186,6 @@ function htmlVariantPlugin(): Plugin {
         result = result.replace(
           /if\(v\)document\.documentElement\.dataset\.variant=v;/,
           `v='${activeVariant}';document.documentElement.dataset.variant=v;`
-        );
-      } else {
-        // For 'full' variant: clear stale localStorage variant and force 'full'
-        result = result.replace(
-          /if\(v\)document\.documentElement\.dataset\.variant=v;/,
-          `v='full';document.documentElement.dataset.variant=v;`
         );
       }
 
@@ -512,7 +497,7 @@ const RSS_PROXY_ALLOWED_DOMAINS = new Set([
   'www.fema.gov', 'www.dhs.gov', 'www.thedrive.com', 'krebsonsecurity.com',
   'finance.yahoo.com', 'thediplomat.com', 'venturebeat.com', 'foreignpolicy.com',
   'www.ft.com', 'openai.com', 'www.reutersagency.com', 'feeds.reuters.com',
-  'rsshub.app', 'asia.nikkei.com', 'www.cfr.org', 'www.csis.org', 'www.politico.com',
+  'asia.nikkei.com', 'www.cfr.org', 'www.csis.org', 'www.politico.com',
   'www.brookings.edu', 'layoffs.fyi', 'www.defensenews.com', 'www.militarytimes.com',
   'taskandpurpose.com', 'news.usni.org', 'www.oryxspioenkop.com', 'www.gov.uk',
   'www.foreignaffairs.com', 'www.atlanticcouncil.org',
@@ -521,7 +506,7 @@ const RSS_PROXY_ALLOWED_DOMAINS = new Set([
   'rss.politico.com', 'www.anandtech.com', 'www.tomshardware.com', 'www.semianalysis.com',
   'feed.infoq.com', 'thenewstack.io', 'devops.com', 'dev.to', 'lobste.rs', 'changelog.com',
   'seekingalpha.com', 'news.crunchbase.com', 'www.saastr.com', 'feeds.feedburner.com',
-  'www.producthunt.com', 'www.axios.com', 'github.blog', 'githubnext.com',
+  'www.producthunt.com', 'www.axios.com', 'api.axios.com', 'github.blog', 'githubnext.com',
   'mshibanami.github.io', 'www.engadget.com', 'news.mit.edu', 'dev.events',
   'www.ycombinator.com', 'a16z.com', 'review.firstround.com', 'www.sequoiacap.com',
   'www.nfx.com', 'www.aaronsw.com', 'bothsidesofthetable.com', 'www.lennysnewsletter.com',
@@ -981,12 +966,6 @@ export default defineConfig({
         target: 'https://feeds.npr.org',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/rss\/npr/, ''),
-      },
-      // RSS Feeds - AP News
-      '/rss/apnews': {
-        target: 'https://rsshub.app/apnews',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/rss\/apnews/, ''),
       },
       // RSS Feeds - Al Jazeera
       '/rss/aljazeera': {

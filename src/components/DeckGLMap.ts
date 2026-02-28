@@ -5,7 +5,7 @@
  */
 import { MapboxOverlay } from '@deck.gl/mapbox';
 import type { Layer, LayersList, PickingInfo } from '@deck.gl/core';
-import { GeoJsonLayer, ScatterplotLayer, PathLayer, IconLayer, TextLayer } from '@deck.gl/layers';
+import { GeoJsonLayer, ScatterplotLayer, PathLayer, IconLayer, TextLayer, PolygonLayer } from '@deck.gl/layers';
 import maplibregl from 'maplibre-gl';
 import Supercluster from 'supercluster';
 import type {
@@ -33,8 +33,11 @@ import type {
   MapDatacenterCluster,
   CyberThreat,
   CableHealthRecord,
+  MilitaryBaseEnriched,
 } from '@/types';
+import { fetchMilitaryBases, type MilitaryBaseCluster as ServerBaseCluster } from '@/services/military-bases';
 import type { AirportDelayAlert } from '@/services/aviation';
+import type { IranEvent } from '@/services/conflict';
 import type { DisplacementFlow } from '@/services/displacement';
 import type { Earthquake } from '@/services/earthquakes';
 import type { ClimateAnomaly } from '@/services/climate';
@@ -42,6 +45,7 @@ import { ArcLayer } from '@deck.gl/layers';
 import { HeatmapLayer } from '@deck.gl/aggregation-layers';
 import type { WeatherAlert } from '@/services/weather';
 import { escapeHtml } from '@/utils/sanitize';
+import { tokenizeForMatch, matchKeyword, matchesAnyKeyword, findMatchingKeywords } from '@/utils/keyword-match';
 import { t } from '@/services/i18n';
 import { debounce, rafSchedule, getCurrentTheme } from '@/utils/index';
 import {
@@ -260,6 +264,7 @@ export class DeckGLMap {
   private weatherAlerts: WeatherAlert[] = [];
   private outages: InternetOutage[] = [];
   private cyberThreats: CyberThreat[] = [];
+  private iranEvents: IranEvent[] = [];
   private aisDisruptions: AisDisruptionEvent[] = [];
   private aisDensity: AisDensityZone[] = [];
   private cableAdvisories: CableAdvisory[] = [];
@@ -270,6 +275,9 @@ export class DeckGLMap {
   private militaryFlightClusters: MilitaryFlightCluster[] = [];
   private militaryVessels: MilitaryVessel[] = [];
   private militaryVesselClusters: MilitaryVesselCluster[] = [];
+  private serverBases: MilitaryBaseEnriched[] = [];
+  private serverBaseClusters: ServerBaseCluster[] = [];
+  private serverBasesLoaded = false;
   private naturalEvents: NaturalEvent[] = [];
   private firmsFireData: Array<{ lat: number; lon: number; brightness: number; frp: number; confidence: number; region: string; acq_date: string; daynight: string }> = [];
   private techEvents: TechEventMarker[] = [];
@@ -334,11 +342,14 @@ export class DeckGLMap {
   private lastSCMask = '';
   private protestSuperclusterSource: SocialUnrestEvent[] = [];
   private newsPulseIntervalId: ReturnType<typeof setInterval> | null = null;
+  private dayNightIntervalId: ReturnType<typeof setInterval> | null = null;
+  private cachedNightPolygon: [number, number][] | null = null;
   private readonly startupTime = Date.now();
   private lastCableHighlightSignature = '';
   private lastCableHealthSignature = '';
   private lastPipelineHighlightSignature = '';
   private debouncedRebuildLayers: () => void;
+  private debouncedFetchBases: () => void;
   private rafUpdateLayers: () => void;
   private moveTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
@@ -352,6 +363,7 @@ export class DeckGLMap {
       this.maplibreMap.resize();
       try { this.deckOverlay?.setProps({ layers: this.buildLayers() }); } catch { /* map mid-teardown */ }
     }, 150);
+    this.debouncedFetchBases = debounce(() => this.fetchServerBases(), 300);
     this.rafUpdateLayers = rafSchedule(() => {
       if (this.renderPaused || this.webglLost || !this.maplibreMap) return;
       try { this.deckOverlay?.setProps({ layers: this.buildLayers() }); } catch { /* map mid-teardown */ }
@@ -375,6 +387,7 @@ export class DeckGLMap {
       this.rebuildDatacenterSupercluster();
       this.initDeck();
       this.loadCountryBoundaries();
+      this.fetchServerBases();
       this.render();
     });
 
@@ -384,6 +397,28 @@ export class DeckGLMap {
     this.createTimeSlider();
     this.createLayerToggles();
     this.createLegend();
+
+    // Start day/night timer only if layer is initially enabled
+    if (this.state.layers.dayNight) {
+      this.startDayNightTimer();
+    }
+  }
+
+  private startDayNightTimer(): void {
+    if (this.dayNightIntervalId) return;
+    this.cachedNightPolygon = this.computeNightPolygon();
+    this.dayNightIntervalId = setInterval(() => {
+      this.cachedNightPolygon = this.computeNightPolygon();
+      this.render();
+    }, 5 * 60 * 1000);
+  }
+
+  private stopDayNightTimer(): void {
+    if (this.dayNightIntervalId) {
+      clearInterval(this.dayNightIntervalId);
+      this.dayNightIntervalId = null;
+    }
+    this.cachedNightPolygon = null;
   }
 
   private setupDOM(): void {
@@ -467,6 +502,7 @@ export class DeckGLMap {
     this.maplibreMap.on('moveend', () => {
       this.lastSCZoom = -1;
       this.rafUpdateLayers();
+      this.debouncedFetchBases();
     });
 
     this.maplibreMap.on('move', () => {
@@ -951,6 +987,15 @@ export class DeckGLMap {
     const filteredMilitaryVesselClusters = this.filterMilitaryVesselClustersByTime(this.militaryVesselClusters);
     const filteredUcdpEvents = this.filterByTime(this.ucdpEvents, (event) => event.date_start);
 
+    // Day/night overlay (rendered first as background)
+    if (mapLayers.dayNight) {
+      if (!this.dayNightIntervalId) this.startDayNightTimer();
+      layers.push(this.createDayNightLayer());
+    } else {
+      if (this.dayNightIntervalId) this.stopDayNightTimer();
+      this.layerCache.delete('day-night-layer');
+    }
+
     // Undersea cables layer
     if (mapLayers.cables) {
       layers.push(this.createCablesLayer());
@@ -970,10 +1015,12 @@ export class DeckGLMap {
       layers.push(this.createConflictZonesLayer());
     }
 
-    // Military bases layer — hidden at low zoom (E: progressive disclosure) + ghost
+    // Military bases layer — hidden at low zoom (E: progressive disclosure) + ghost + clusters
     if (mapLayers.bases && this.isLayerVisible('bases')) {
       layers.push(this.createBasesLayer());
-      layers.push(this.createGhostLayer('bases-layer', MILITARY_BASES, d => [d.lon, d.lat], { radiusMinPixels: 12 }));
+      layers.push(...this.createBasesClusterLayer());
+      const basesData = this.getBasesData();
+      layers.push(this.createGhostLayer('bases-layer', basesData, d => [d.lon, d.lat], { radiusMinPixels: 12 }));
     }
 
     // Nuclear facilities layer — hidden at low zoom + ghost
@@ -1021,6 +1068,12 @@ export class DeckGLMap {
     // Satellite fires layer (NASA FIRMS)
     if (mapLayers.fires && this.firmsFireData.length > 0) {
       layers.push(this.createFiresLayer());
+    }
+
+    // Iran events layer
+    if (mapLayers.iranAttacks && this.iranEvents.length > 0) {
+      layers.push(this.createIranEventsLayer());
+      layers.push(this.createGhostLayer('iran-events-layer', this.iranEvents, d => [d.longitude, d.latitude], { radiusMinPixels: 12 }));
     }
 
     // Weather alerts layer
@@ -1316,32 +1369,33 @@ export class DeckGLMap {
     return layer;
   }
 
+  private getBasesData(): MilitaryBaseEnriched[] {
+    return this.serverBasesLoaded ? this.serverBases : MILITARY_BASES as MilitaryBaseEnriched[];
+  }
+
+  private getBaseColor(type: string, a: number): [number, number, number, number] {
+    switch (type) {
+      case 'us-nato': return [68, 136, 255, a];
+      case 'russia': return [255, 68, 68, a];
+      case 'china': return [255, 136, 68, a];
+      case 'uk': return [68, 170, 255, a];
+      case 'france': return [0, 85, 164, a];
+      case 'india': return [255, 153, 51, a];
+      case 'japan': return [188, 0, 45, a];
+      default: return [136, 136, 136, a];
+    }
+  }
+
   private createBasesLayer(): IconLayer {
     const highlightedBases = this.highlightedAssets.base;
-
-    // Base colors by operator type - semi-transparent for layering
-    // F: Fade in bases as you zoom — subtle at zoom 3, full at zoom 5+
     const zoom = this.maplibreMap?.getZoom() || 3;
-    const alphaScale = Math.min(1, (zoom - 2.5) / 2.5); // 0.2 at zoom 3, 1.0 at zoom 5
+    const alphaScale = Math.min(1, (zoom - 2.5) / 2.5);
     const a = Math.round(160 * Math.max(0.3, alphaScale));
+    const data = this.getBasesData();
 
-    const getBaseColor = (type: string): [number, number, number, number] => {
-      switch (type) {
-        case 'us-nato': return [68, 136, 255, a];
-        case 'russia': return [255, 68, 68, a];
-        case 'china': return [255, 136, 68, a];
-        case 'uk': return [68, 170, 255, a];
-        case 'france': return [0, 85, 164, a];
-        case 'india': return [255, 153, 51, a];
-        case 'japan': return [188, 0, 45, a];
-        default: return [136, 136, 136, a];
-      }
-    };
-
-    // Military bases: TRIANGLE icons - color by operator, semi-transparent
     return new IconLayer({
       id: 'bases-layer',
-      data: MILITARY_BASES,
+      data,
       getPosition: (d) => [d.lon, d.lat],
       getIcon: () => 'triangleUp',
       iconAtlas: MARKER_ICONS.triangleUp,
@@ -1351,13 +1405,45 @@ export class DeckGLMap {
         if (highlightedBases.has(d.id)) {
           return [255, 100, 100, 220] as [number, number, number, number];
         }
-        return getBaseColor(d.type);
+        return this.getBaseColor(d.type, a);
       },
       sizeScale: 1,
       sizeMinPixels: 6,
       sizeMaxPixels: 16,
       pickable: true,
     });
+  }
+
+  private createBasesClusterLayer(): Layer[] {
+    if (this.serverBaseClusters.length === 0) return [];
+    const zoom = this.maplibreMap?.getZoom() || 3;
+    const alphaScale = Math.min(1, (zoom - 2.5) / 2.5);
+    const a = Math.round(180 * Math.max(0.3, alphaScale));
+
+    const scatterLayer = new ScatterplotLayer<ServerBaseCluster>({
+      id: 'bases-cluster-layer',
+      data: this.serverBaseClusters,
+      getPosition: (d) => [d.longitude, d.latitude],
+      getRadius: (d) => Math.max(8000, Math.log2(d.count) * 6000),
+      getFillColor: (d) => this.getBaseColor(d.dominantType, a),
+      radiusMinPixels: 10,
+      radiusMaxPixels: 40,
+      pickable: true,
+    });
+
+    const textLayer = new TextLayer<ServerBaseCluster>({
+      id: 'bases-cluster-text',
+      data: this.serverBaseClusters,
+      getPosition: (d) => [d.longitude, d.latitude],
+      getText: (d) => String(d.count),
+      getSize: 12,
+      getColor: [255, 255, 255, 220],
+      fontWeight: 'bold',
+      getTextAnchor: 'middle',
+      getAlignmentBaseline: 'center',
+    });
+
+    return [scatterLayer, textLayer];
   }
 
   private createNuclearLayer(): IconLayer {
@@ -1445,14 +1531,16 @@ export class DeckGLMap {
       data: delays,
       getPosition: (d) => [d.lon, d.lat],
       getRadius: (d) => {
-        if (d.severity === 'GDP') return 15000; // Ground Delay Program
-        if (d.severity === 'GS') return 12000; // Ground Stop
+        if (d.severity === 'severe') return 15000;
+        if (d.severity === 'major') return 12000;
+        if (d.severity === 'moderate') return 10000;
         return 8000;
       },
       getFillColor: (d) => {
-        if (d.severity === 'GS') return [255, 50, 50, 200] as [number, number, number, number]; // Red for ground stops
-        if (d.severity === 'GDP') return [255, 150, 0, 200] as [number, number, number, number]; // Orange for delays
-        return [255, 200, 100, 180] as [number, number, number, number]; // Yellow
+        if (d.severity === 'severe') return [255, 50, 50, 200] as [number, number, number, number];
+        if (d.severity === 'major') return [255, 150, 0, 200] as [number, number, number, number];
+        if (d.severity === 'moderate') return [255, 200, 100, 180] as [number, number, number, number];
+        return [180, 180, 180, 150] as [number, number, number, number];
       },
       radiusMinPixels: 4,
       radiusMaxPixels: 15,
@@ -1550,6 +1638,23 @@ export class DeckGLMap {
       },
       radiusMinPixels: 3,
       radiusMaxPixels: 12,
+      pickable: true,
+    });
+  }
+
+  private createIranEventsLayer(): ScatterplotLayer {
+    return new ScatterplotLayer({
+      id: 'iran-events-layer',
+      data: this.iranEvents,
+      getPosition: (d: IranEvent) => [d.longitude, d.latitude],
+      getRadius: (d: IranEvent) => d.severity === 'high' ? 20000 : d.severity === 'medium' ? 15000 : 10000,
+      getFillColor: (d: IranEvent) => {
+        if (d.category === 'military') return [255, 50, 50, 220] as [number, number, number, number];
+        if (d.category === 'politics' || d.category === 'diplomacy') return [255, 165, 0, 200] as [number, number, number, number];
+        return [255, 255, 0, 180] as [number, number, number, number];
+      },
+      radiusMinPixels: 4,
+      radiusMaxPixels: 16,
       pickable: true,
     });
   }
@@ -2597,7 +2702,9 @@ export class DeckGLMap {
         }
         return { html: `<div class="deckgl-tooltip"><strong>${t('components.deckgl.tooltip.dataCentersCount', { count: String(obj.count) })}</strong><br/>${text(obj.country)}</div>` };
       case 'bases-layer':
-        return { html: `<div class="deckgl-tooltip"><strong>${text(obj.name)}</strong><br/>${text(obj.country)}</div>` };
+        return { html: `<div class="deckgl-tooltip"><strong>${text(obj.name)}</strong><br/>${text(obj.country)}${obj.kind ? ` · ${text(obj.kind)}` : ''}</div>` };
+      case 'bases-cluster-layer':
+        return { html: `<div class="deckgl-tooltip"><strong>${obj.count} bases</strong></div>` };
       case 'nuclear-layer':
         return { html: `<div class="deckgl-tooltip"><strong>${text(obj.name)}</strong><br/>${text(obj.type)}</div>` };
       case 'datacenters-layer':
@@ -2654,7 +2761,7 @@ export class DeckGLMap {
         return { html: `<div class="deckgl-tooltip"><strong>${typeIcon} ${text(obj.name)}</strong><br/>${text(obj.type || t('components.deckgl.tooltip.port'))} - ${text(obj.country)}</div>` };
       }
       case 'flight-delays-layer':
-        return { html: `<div class="deckgl-tooltip"><strong>${text(obj.airport)}</strong><br/>${text(obj.severity)}: ${text(obj.reason)}</div>` };
+        return { html: `<div class="deckgl-tooltip"><strong>${text(obj.name)} (${text(obj.iata)})</strong><br/>${text(obj.severity)}: ${text(obj.reason)}</div>` };
       case 'apt-groups-layer':
         return { html: `<div class="deckgl-tooltip"><strong>${text(obj.name)}</strong><br/>${text(obj.aka)}<br/>${t('popups.sponsor')}: ${text(obj.sponsor)}</div>` };
       case 'minerals-layer':
@@ -2676,6 +2783,8 @@ export class DeckGLMap {
         return { html: `<div class="deckgl-tooltip"><strong>${text(obj.asn || t('components.deckgl.tooltip.internetOutage'))}</strong><br/>${text(obj.country)}</div>` };
       case 'cyber-threats-layer':
         return { html: `<div class="deckgl-tooltip"><strong>${t('popups.cyberThreat.title')}</strong><br/>${text(obj.severity || t('components.deckgl.tooltip.medium'))} · ${text(obj.country || t('popups.unknown'))}</div>` };
+      case 'iran-events-layer':
+        return { html: `<div class="deckgl-tooltip"><strong>${t('components.deckgl.layers.iranAttacks')}: ${text(obj.category || '')}</strong><br/>${text((obj.title || '').slice(0, 80))}</div>` };
       case 'news-locations-layer':
         return { html: `<div class="deckgl-tooltip"><strong>📰 ${t('components.deckgl.tooltip.news')}</strong><br/>${text(obj.title?.slice(0, 80) || '')}</div>` };
       case 'positive-events-layer': {
@@ -2861,6 +2970,7 @@ export class DeckGLMap {
       'weather-layer': 'weather',
       'outages-layer': 'outage',
       'cyber-threats-layer': 'cyberThreat',
+      'iran-events-layer': 'iranEvent',
       'protests-layer': 'protest',
       'military-flights-layer': 'militaryFlight',
       'military-vessels-layer': 'militaryVessel',
@@ -2898,6 +3008,17 @@ export class DeckGLMap {
       const conflictId = info.object.properties.id;
       const fullConflict = CONFLICT_ZONES.find(c => c.id === conflictId);
       if (fullConflict) data = fullConflict;
+    }
+
+    // Enrich iran events with related events from same location
+    if (popupType === 'iranEvent' && data.locationName) {
+      const clickedId = data.id;
+      const normalizedLoc = data.locationName.trim().toLowerCase();
+      const related = this.iranEvents
+        .filter(e => e.id !== clickedId && e.locationName && e.locationName.trim().toLowerCase() === normalizedLoc)
+        .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
+        .slice(0, 5);
+      data = { ...data, relatedEvents: related };
     }
 
     // Get click coordinates relative to container
@@ -3017,6 +3138,7 @@ export class DeckGLMap {
         { key: 'techEvents', label: t('components.deckgl.layers.techEvents'), icon: '&#128197;' },
         { key: 'natural', label: t('components.deckgl.layers.naturalEvents'), icon: '&#127755;' },
         { key: 'fires', label: t('components.deckgl.layers.fires'), icon: '&#128293;' },
+        { key: 'dayNight', label: t('components.deckgl.layers.dayNight'), icon: '&#127763;' },
       ]
       : SITE_VARIANT === 'finance'
       ? [
@@ -3034,6 +3156,7 @@ export class DeckGLMap {
           { key: 'waterways', label: t('components.deckgl.layers.strategicWaterways'), icon: '&#9875;' },
           { key: 'natural', label: t('components.deckgl.layers.naturalEvents'), icon: '&#127755;' },
           { key: 'cyberThreats', label: t('components.deckgl.layers.cyberThreats'), icon: '&#128737;' },
+          { key: 'dayNight', label: t('components.deckgl.layers.dayNight'), icon: '&#127763;' },
         ]
       : SITE_VARIANT === 'happy'
       ? [
@@ -3044,6 +3167,7 @@ export class DeckGLMap {
           { key: 'renewableInstallations', label: 'Clean Energy', icon: '&#9889;' },
         ]
       : [
+        { key: 'iranAttacks', label: t('components.deckgl.layers.iranAttacks'), icon: '&#127919;' },
         { key: 'hotspots', label: t('components.deckgl.layers.intelHotspots'), icon: '&#127919;' },
         { key: 'conflicts', label: t('components.deckgl.layers.conflictZones'), icon: '&#9876;' },
         { key: 'bases', label: t('components.deckgl.layers.militaryBases'), icon: '&#127963;' },
@@ -3069,6 +3193,7 @@ export class DeckGLMap {
         { key: 'waterways', label: t('components.deckgl.layers.strategicWaterways'), icon: '&#9875;' },
         { key: 'economic', label: t('components.deckgl.layers.economicCenters'), icon: '&#128176;' },
         { key: 'minerals', label: t('components.deckgl.layers.criticalMinerals'), icon: '&#128142;' },
+        { key: 'dayNight', label: t('components.deckgl.layers.dayNight'), icon: '&#127763;' },
       ];
 
     toggles.innerHTML = `
@@ -3174,6 +3299,7 @@ export class DeckGLMap {
           helpItem(label('naturalEvents'), 'naturalEventsTech'),
           helpItem(label('fires'), 'techFires'),
           helpItem(staticLabel('countries'), 'countriesOverlay'),
+          helpItem(label('dayNight'), 'dayNight'),
         ])}
       </div>
     `;
@@ -3200,6 +3326,7 @@ export class DeckGLMap {
           helpItem(label('strategicWaterways'), 'macroWaterways'),
           helpItem(label('weatherAlerts'), 'weatherAlertsMarket'),
           helpItem(label('naturalEvents'), 'naturalEventsMacro'),
+          helpItem(label('dayNight'), 'dayNight'),
         ])}
       </div>
     `;
@@ -3246,7 +3373,8 @@ export class DeckGLMap {
           helpItem(label('economicCenters'), 'economicCenters'),
           helpItem(label('criticalMinerals'), 'mineralsFull'),
         ])}
-        ${helpSection('labels', [
+        ${helpSection('overlays', [
+          helpItem(label('dayNight'), 'dayNight'),
           helpItem(staticLabel('countries'), 'countriesOverlay'),
           helpItem(label('strategicWaterways'), 'waterwaysLabels'),
         ])}
@@ -3358,10 +3486,12 @@ export class DeckGLMap {
     this.renderPaused = paused;
     if (paused) {
       this.stopPulseAnimation();
+      this.stopDayNightTimer();
       return;
     }
 
     this.syncPulseAnimation();
+    if (this.state.layers.dayNight) this.startDayNightTimer();
     if (!paused && this.renderPending) {
       this.renderPending = false;
       this.render();
@@ -3573,6 +3703,88 @@ export class DeckGLMap {
     });
   }
 
+  /**
+   * Compute the solar terminator polygon (night side of the Earth).
+   * Uses standard astronomical formulas to find the subsolar point,
+   * then traces the terminator line and closes around the dark pole.
+   */
+  private computeNightPolygon(): [number, number][] {
+    const now = new Date();
+    const JD = now.getTime() / 86400000 + 2440587.5;
+    const D = JD - 2451545.0; // Days since J2000.0
+
+    // Solar mean anomaly (radians)
+    const g = ((357.529 + 0.98560028 * D) % 360) * Math.PI / 180;
+
+    // Solar ecliptic longitude (degrees)
+    const q = (280.459 + 0.98564736 * D) % 360;
+    const L = q + 1.915 * Math.sin(g) + 0.020 * Math.sin(2 * g);
+    const LRad = L * Math.PI / 180;
+
+    // Obliquity of ecliptic (radians)
+    const eRad = (23.439 - 0.00000036 * D) * Math.PI / 180;
+
+    // Solar declination (radians)
+    const decl = Math.asin(Math.sin(eRad) * Math.sin(LRad));
+
+    // Solar right ascension (radians)
+    const RA = Math.atan2(Math.cos(eRad) * Math.sin(LRad), Math.cos(LRad));
+
+    // Greenwich Mean Sidereal Time (degrees)
+    const GMST = ((18.697374558 + 24.06570982441908 * D) % 24) * 15;
+
+    // Sub-solar longitude (degrees, normalized to [-180, 180])
+    let sunLng = RA * 180 / Math.PI - GMST;
+    sunLng = ((sunLng % 360) + 540) % 360 - 180;
+
+    // Trace terminator line (1° steps for smooth curve at high zoom)
+    const tanDecl = Math.tan(decl);
+    const points: [number, number][] = [];
+
+    // Near equinox (|tanDecl| ≈ 0), the terminator is nearly a great circle
+    // through the poles — use a vertical line at the subsolar meridian ±90°
+    if (Math.abs(tanDecl) < 1e-6) {
+      for (let lat = -90; lat <= 90; lat += 1) {
+        points.push([sunLng + 90, lat]);
+      }
+      for (let lat = 90; lat >= -90; lat -= 1) {
+        points.push([sunLng - 90, lat]);
+      }
+      return points;
+    }
+
+    for (let lng = -180; lng <= 180; lng += 1) {
+      const ha = (lng - sunLng) * Math.PI / 180;
+      const lat = Math.atan(-Math.cos(ha) / tanDecl) * 180 / Math.PI;
+      points.push([lng, lat]);
+    }
+
+    // Close polygon around the dark pole
+    const darkPoleLat = decl > 0 ? -90 : 90;
+    points.push([180, darkPoleLat]);
+    points.push([-180, darkPoleLat]);
+
+    return points;
+  }
+
+  private createDayNightLayer(): PolygonLayer {
+    const nightPolygon = this.cachedNightPolygon ?? (this.cachedNightPolygon = this.computeNightPolygon());
+    const isLight = getCurrentTheme() === 'light';
+
+    return new PolygonLayer({
+      id: 'day-night-layer',
+      data: [{ polygon: nightPolygon }],
+      getPolygon: (d: { polygon: [number, number][] }) => d.polygon,
+      getFillColor: isLight ? [0, 0, 40, 35] : [0, 0, 20, 55],
+      filled: true,
+      stroked: true,
+      getLineColor: isLight ? [100, 100, 100, 40] : [200, 200, 255, 25],
+      getLineWidth: 1,
+      lineWidthUnits: 'pixels' as const,
+      pickable: false,
+    });
+  }
+
   // Data setters - all use render() for debouncing
   public setEarthquakes(earthquakes: Earthquake[]): void {
     this.earthquakes = earthquakes;
@@ -3581,8 +3793,6 @@ export class DeckGLMap {
 
   public setWeatherAlerts(alerts: WeatherAlert[]): void {
     this.weatherAlerts = alerts;
-    const withCentroid = alerts.filter(a => a.centroid && a.centroid.length === 2).length;
-    console.log(`[DeckGLMap] Weather alerts: ${alerts.length} total, ${withCentroid} with coordinates`);
     this.render();
   }
 
@@ -3593,6 +3803,11 @@ export class DeckGLMap {
 
   public setCyberThreats(threats: CyberThreat[]): void {
     this.cyberThreats = threats;
+    this.render();
+  }
+
+  public setIranEvents(events: IranEvent[]): void {
+    this.iranEvents = events;
     this.render();
   }
 
@@ -3636,6 +3851,26 @@ export class DeckGLMap {
     this.militaryVessels = vessels;
     this.militaryVesselClusters = clusters;
     this.render();
+  }
+
+  private fetchServerBases(): void {
+    if (!this.maplibreMap) return;
+    const mapLayers = this.state.layers;
+    if (!mapLayers.bases) return;
+    const zoom = this.maplibreMap.getZoom();
+    if (zoom < 3) return;
+    const bounds = this.maplibreMap.getBounds();
+    const sw = bounds.getSouthWest();
+    const ne = bounds.getNorthEast();
+    fetchMilitaryBases(sw.lat, sw.lng, ne.lat, ne.lng, zoom).then((result) => {
+      if (!result) return;
+      this.serverBases = result.bases;
+      this.serverBaseClusters = result.clusters;
+      this.serverBasesLoaded = true;
+      this.render();
+    }).catch((err) => {
+      console.error('[bases] fetch error', err);
+    });
   }
 
   public setNaturalEvents(events: NaturalEvent[]): void {
@@ -3730,10 +3965,9 @@ export class DeckGLMap {
     const matchCounts = new Map<string, number>();
 
     recentNews.forEach(item => {
+      const tokens = tokenizeForMatch(item.title);
       this.hotspots.forEach(hotspot => {
-        if (hotspot.keywords.some(kw =>
-          item.title.toLowerCase().includes(kw.toLowerCase())
-        )) {
+        if (matchesAnyKeyword(tokens, hotspot.keywords)) {
           breakingKeywords.add(hotspot.id);
           matchCounts.set(hotspot.id, (matchCounts.get(hotspot.id) || 0) + 1);
         }
@@ -3754,32 +3988,27 @@ export class DeckGLMap {
 
   /** Get news items related to a hotspot by keyword matching */
   private getRelatedNews(hotspot: Hotspot): NewsItem[] {
-    // High-priority conflict keywords that indicate the news is really about another topic
-    const conflictTopics = ['gaza', 'ukraine', 'russia', 'israel', 'iran', 'china', 'taiwan', 'korea', 'syria'];
+    const conflictTopics = ['gaza', 'ukraine', 'ukrainian', 'russia', 'russian', 'israel', 'israeli', 'iran', 'iranian', 'china', 'chinese', 'taiwan', 'taiwanese', 'korea', 'korean', 'syria', 'syrian'];
 
     return this.news
       .map((item) => {
-        const titleLower = item.title.toLowerCase();
-        const matchedKeywords = hotspot.keywords.filter((kw) => titleLower.includes(kw.toLowerCase()));
+        const tokens = tokenizeForMatch(item.title);
+        const matchedKeywords = findMatchingKeywords(tokens, hotspot.keywords);
 
         if (matchedKeywords.length === 0) return null;
 
-        // Check if this news mentions other hotspot conflict topics
         const conflictMatches = conflictTopics.filter(t =>
-          titleLower.includes(t) && !hotspot.keywords.some(k => k.toLowerCase().includes(t))
+          matchKeyword(tokens, t) && !hotspot.keywords.some(k => k.toLowerCase().includes(t))
         );
 
-        // If article mentions a major conflict topic that isn't this hotspot, deprioritize heavily
         if (conflictMatches.length > 0) {
-          // Only include if it ALSO has a strong local keyword (city name, agency)
           const strongLocalMatch = matchedKeywords.some(kw =>
             kw.toLowerCase() === hotspot.name.toLowerCase() ||
-            hotspot.agencies?.some(a => titleLower.includes(a.toLowerCase()))
+            hotspot.agencies?.some(a => matchKeyword(tokens, a))
           );
           if (!strongLocalMatch) return null;
         }
 
-        // Score: more keyword matches = more relevant
         const score = matchedKeywords.length;
         return { item, score };
       })
@@ -3906,7 +4135,6 @@ export class DeckGLMap {
 
   // Toggle layer on/off programmatically
   public toggleLayer(layer: keyof MapLayers): void {
-    console.log(`[DeckGLMap.toggleLayer] ${layer}: ${this.state.layers[layer]} -> ${!this.state.layers[layer]}`);
     this.state.layers[layer] = !this.state.layers[layer];
     const toggle = this.container.querySelector(`.layer-toggle[data-layer="${layer}"] input`) as HTMLInputElement;
     if (toggle) toggle.checked = this.state.layers[layer];
@@ -3960,9 +4188,8 @@ export class DeckGLMap {
   }
 
   public triggerBaseClick(id: string): void {
-    const base = MILITARY_BASES.find(b => b.id === id);
+    const base = this.serverBases.find(b => b.id === id) || MILITARY_BASES.find(b => b.id === id);
     if (base) {
-      // Don't pan - show popup at projected screen position or center
       const screenPos = this.projectToScreen(base.lat, base.lon);
       const { x, y } = screenPos || this.getContainerCenter();
       this.popup.show({ type: 'base', data: base, x, y });
@@ -4149,7 +4376,6 @@ export class DeckGLMap {
         if (!this.countryHoverSetup) this.setupCountryHover();
         this.updateCountryLayerPaint(getCurrentTheme());
         if (this.highlightedCountryCode) this.highlightCountry(this.highlightedCountryCode);
-        console.log('[DeckGLMap] Country boundaries loaded');
       })
       .catch((err) => console.warn('[DeckGLMap] Failed to load country boundaries:', err));
   }
@@ -4240,6 +4466,7 @@ export class DeckGLMap {
     }
 
     this.stopPulseAnimation();
+    this.stopDayNightTimer();
 
     if (this.resizeObserver) {
       this.resizeObserver.disconnect();

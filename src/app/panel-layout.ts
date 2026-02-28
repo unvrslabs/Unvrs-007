@@ -33,6 +33,9 @@ import {
   InvestmentsPanel,
   TradePolicyPanel,
   SupplyChainPanel,
+  SecurityAdvisoriesPanel,
+  OrefSirensPanel,
+  TelegramIntelPanel,
 } from '@/components';
 import { SatelliteFiresPanel } from '@/components/SatelliteFiresPanel';
 import { PositiveNewsFeedPanel } from '@/components/PositiveNewsFeedPanel';
@@ -54,7 +57,7 @@ import {
   STORAGE_KEYS,
   SITE_VARIANT,
 } from '@/config';
-import { BETA_MODE as _BETA_MODE } from '@/config/beta'; // kept for future use
+import { BETA_MODE } from '@/config/beta';
 import { t } from '@/services/i18n';
 import { getCurrentTheme } from '@/utils';
 import { trackCriticalBannerAction } from '@/services/analytics';
@@ -63,6 +66,7 @@ export interface PanelLayoutCallbacks {
   openCountryStory: (code: string, name: string) => void;
   loadAllData: () => Promise<void>;
   updateMonitorResults: () => void;
+  loadSecurityAdvisories?: () => Promise<void>;
 }
 
 export class PanelLayoutManager implements AppModule {
@@ -105,16 +109,63 @@ export class PanelLayoutManager implements AppModule {
 
   renderLayout(): void {
     this.ctx.container.innerHTML = `
-      <div class="header" style="display:none">
-        <div class="header-left"></div>
-        <div class="header-right"></div>
-      </div>
-      <div class="glass-nav-row">
-        <span id="glassPizzintMount" class="glass-nav-left-mount"></span>
-        <div class="glass-nav-center-group">
-        <span id="glassStatusMount" class="glass-nav-status-mount"></span>
-        <nav class="glass-nav glass-nav-main">
-            <select id="regionSelect" class="glass-nav-select">
+      <div class="header">
+        <div class="header-left">
+          <div class="variant-switcher">${(() => {
+            const local = this.ctx.isDesktopApp || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+            const vHref = (v: string, prod: string) => local || SITE_VARIANT === v ? '#' : prod;
+            const vTarget = (v: string) => !local && SITE_VARIANT !== v ? 'target="_blank" rel="noopener"' : '';
+            return `
+            <a href="${vHref('full', 'https://worldmonitor.app')}"
+               class="variant-option ${SITE_VARIANT === 'full' ? 'active' : ''}"
+               data-variant="full"
+               ${vTarget('full')}
+               title="${t('header.world')}${SITE_VARIANT === 'full' ? ` ${t('common.currentVariant')}` : ''}">
+              <span class="variant-icon">🌍</span>
+              <span class="variant-label">${t('header.world')}</span>
+            </a>
+            <span class="variant-divider"></span>
+            <a href="${vHref('tech', 'https://tech.worldmonitor.app')}"
+               class="variant-option ${SITE_VARIANT === 'tech' ? 'active' : ''}"
+               data-variant="tech"
+               ${vTarget('tech')}
+               title="${t('header.tech')}${SITE_VARIANT === 'tech' ? ` ${t('common.currentVariant')}` : ''}">
+              <span class="variant-icon">💻</span>
+              <span class="variant-label">${t('header.tech')}</span>
+            </a>
+            <span class="variant-divider"></span>
+            <a href="${vHref('finance', 'https://finance.worldmonitor.app')}"
+               class="variant-option ${SITE_VARIANT === 'finance' ? 'active' : ''}"
+               data-variant="finance"
+               ${vTarget('finance')}
+               title="${t('header.finance')}${SITE_VARIANT === 'finance' ? ` ${t('common.currentVariant')}` : ''}">
+              <span class="variant-icon">📈</span>
+              <span class="variant-label">${t('header.finance')}</span>
+            </a>
+            ${SITE_VARIANT === 'happy' ? `<span class="variant-divider"></span>
+            <a href="${vHref('happy', 'https://happy.worldmonitor.app')}"
+               class="variant-option active"
+               data-variant="happy"
+               ${vTarget('happy')}
+               title="Good News ${t('common.currentVariant')}">
+              <span class="variant-icon">☀️</span>
+              <span class="variant-label">Good News</span>
+            </a>` : ''}`;
+          })()}</div>
+          <span class="logo">MONITOR</span><span class="version">v${__APP_VERSION__}</span>${BETA_MODE ? '<span class="beta-badge">BETA</span>' : ''}
+          <a href="https://x.com/eliehabib" target="_blank" rel="noopener" class="credit-link">
+            <svg class="x-logo" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            <span class="credit-text">@eliehabib</span>
+          </a>
+          <a href="https://github.com/koala73/worldmonitor" target="_blank" rel="noopener" class="github-link" title="${t('header.viewOnGitHub')}">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          </a>
+          <div class="status-indicator">
+            <span class="status-dot"></span>
+            <span>${t('header.live')}</span>
+          </div>
+          <div class="region-selector">
+            <select id="regionSelect" class="region-select">
               <option value="global">${t('components.deckgl.views.global')}</option>
               <option value="america">${t('components.deckgl.views.americas')}</option>
               <option value="mena">${t('components.deckgl.views.mena')}</option>
@@ -124,28 +175,20 @@ export class PanelLayoutManager implements AppModule {
               <option value="africa">${t('components.deckgl.views.africa')}</option>
               <option value="oceania">${t('components.deckgl.views.oceania')}</option>
             </select>
-            <span class="glass-nav-divider"></span>
-            <a href="#" class="glass-nav-item ${SITE_VARIANT === 'full' ? 'active' : ''}" data-glass-variant="full">World</a>
-            <a href="#" class="glass-nav-item ${SITE_VARIANT === 'finance' ? 'active' : ''}" data-glass-variant="finance">Finance</a>
-            <a href="#" class="glass-nav-item ${SITE_VARIANT === 'tech' ? 'active' : ''}" data-glass-variant="tech">Tech</a>
-            <span class="glass-nav-divider"></span>
-            <button class="glass-nav-item glass-nav-agent" id="glassAgentBtn">⬡ Agent</button>
-        </nav>
+          </div>
         </div>
-        <div class="glass-nav-tools">
-            <span id="glassNotificationsMount"></span>
-            <button class="glass-nav-icon" id="searchBtn" title="${t('header.search')}">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            </button>
-            <button class="glass-nav-icon" id="headerThemeToggle" title="${t('header.toggleTheme')}">
-              ${getCurrentTheme() === 'dark'
-          ? '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>'
-          : '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>'}
-            </button>
-            ${this.ctx.isDesktopApp ? '' : `<button class="glass-nav-icon" id="fullscreenBtn" title="${t('header.fullscreen')}">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
-            </button>`}
-            <span id="unifiedSettingsMount"></span>
+        <div class="header-right">
+          <!-- TODO: Add "Download App" link here for non-desktop users (this.ctx.isDesktopApp === false) -->
+          <button class="search-btn" id="searchBtn"><kbd>⌘K</kbd> ${t('header.search')}</button>
+          ${this.ctx.isDesktopApp ? '' : `<button class="copy-link-btn" id="copyLinkBtn">${t('header.copyLink')}</button>`}
+          <button class="theme-toggle-btn" id="headerThemeToggle" title="${t('header.toggleTheme')}">
+            ${getCurrentTheme() === 'dark'
+        ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>'
+        : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>'}
+          </button>
+          ${this.ctx.isDesktopApp ? '' : `<button class="fullscreen-btn" id="fullscreenBtn" title="${t('header.fullscreen')}">⛶</button>`}
+          ${SITE_VARIANT === 'happy' ? `<button class="tv-mode-btn" id="tvModeBtn" title="TV Mode (Shift+T)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></button>` : ''}
+          <span id="unifiedSettingsMount"></span>
         </div>
       </div>
       <div class="main-content">
@@ -502,6 +545,18 @@ export class PanelLayoutManager implements AppModule {
 
       const populationExposurePanel = new PopulationExposurePanel();
       this.ctx.panels['population-exposure'] = populationExposurePanel;
+
+      const securityAdvisoriesPanel = new SecurityAdvisoriesPanel();
+      securityAdvisoriesPanel.setRefreshHandler(() => {
+        void this.callbacks.loadSecurityAdvisories?.();
+      });
+      this.ctx.panels['security-advisories'] = securityAdvisoriesPanel;
+
+      const orefSirensPanel = new OrefSirensPanel();
+      this.ctx.panels['oref-sirens'] = orefSirensPanel;
+
+      const telegramIntelPanel = new TelegramIntelPanel();
+      this.ctx.panels['telegram-intel'] = telegramIntelPanel;
     }
 
     if (SITE_VARIANT === 'finance') {
@@ -781,7 +836,12 @@ export class PanelLayoutManager implements AppModule {
       if (e.button !== 0) return;
       const target = e.target as HTMLElement;
       if (el.dataset.resizing === 'true') return;
-      if (target.classList?.contains('panel-resize-handle') || target.closest?.('.panel-resize-handle')) return;
+      if (
+        target.classList?.contains('panel-resize-handle') ||
+        target.closest?.('.panel-resize-handle') ||
+        target.classList?.contains('panel-col-resize-handle') ||
+        target.closest?.('.panel-col-resize-handle')
+      ) return;
       if (target.closest('button, a, input, select, textarea, .panel-content')) return;
 
       isDragging = true;

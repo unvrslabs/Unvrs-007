@@ -1,5 +1,6 @@
 import { getRecentSignals, type CorrelationSignal } from '@/services/correlation';
 import { getRecentAlerts, type UnifiedAlert } from '@/services/cross-module-integration';
+import { getAlertSettings, updateAlertSettings } from '@/services/breaking-news-alerts';
 import { t } from '@/services/i18n';
 import { getSignalContext } from '@/utils/analysis-constants';
 import { escapeHtml } from '@/utils/sanitize';
@@ -8,7 +9,7 @@ import { trackFindingClicked } from '@/services/analytics';
 const LOW_COUNT_THRESHOLD = 3;
 const MAX_VISIBLE_FINDINGS = 10;
 const SORT_TIME_TOLERANCE_MS = 60000;
-const REFRESH_INTERVAL_MS = 10000;
+const REFRESH_INTERVAL_MS = 60000;
 const ALERT_HOURS = 6;
 const STORAGE_KEY = 'worldmonitor-intel-findings';
 const POPUP_STORAGE_KEY = 'wm-alert-popup-enabled';
@@ -37,6 +38,14 @@ export class IntelligenceFindingsBadge {
   private onAlertClick: ((alert: UnifiedAlert) => void) | null = null;
   private findings: UnifiedFinding[] = [];
   private boundCloseDropdown = () => this.closeDropdown();
+  private pendingUpdateFrame = 0;
+  private boundUpdate = () => {
+    if (this.pendingUpdateFrame) return;
+    this.pendingUpdateFrame = requestAnimationFrame(() => {
+      this.pendingUpdateFrame = 0;
+      this.update();
+    });
+  };
   private audio: HTMLAudioElement | null = null;
   private audioEnabled = true;
   private enabled: boolean;
@@ -70,8 +79,8 @@ export class IntelligenceFindingsBadge {
     this.dropdown.addEventListener('click', (e) => {
       const target = e.target as HTMLElement;
 
-      // Handle popup toggle click
-      if (target.closest('.popup-toggle-row')) {
+      const toggleAttr = target.closest('[data-toggle]')?.getAttribute('data-toggle');
+      if (toggleAttr === 'popup') {
         e.stopPropagation();
         this.popupEnabled = !this.popupEnabled;
         if (this.popupEnabled) {
@@ -79,6 +88,13 @@ export class IntelligenceFindingsBadge {
         } else {
           localStorage.removeItem(POPUP_STORAGE_KEY);
         }
+        this.renderDropdown();
+        return;
+      }
+      if (toggleAttr === 'breaking-alerts') {
+        e.stopPropagation();
+        const settings = getAlertSettings();
+        updateAlertSettings({ enabled: !settings.enabled });
         this.renderDropdown();
         return;
       }
@@ -163,6 +179,7 @@ export class IntelligenceFindingsBadge {
     } else {
       localStorage.setItem(STORAGE_KEY, 'hidden');
       document.removeEventListener('click', this.boundCloseDropdown);
+      document.removeEventListener('wm:intelligence-updated', this.boundUpdate);
       if (this.refreshInterval) {
         clearInterval(this.refreshInterval);
         this.refreshInterval = null;
@@ -203,20 +220,16 @@ export class IntelligenceFindingsBadge {
   }
 
   private mount(): void {
-    this.badge.appendChild(this.dropdown);
-    const glassMount = document.getElementById('glassNotificationsMount');
-    if (glassMount) {
-      glassMount.appendChild(this.badge);
-    } else {
-      const headerRight = document.querySelector('.header-right');
-      if (headerRight) {
-        headerRight.insertBefore(this.badge, headerRight.firstChild);
-      }
+    const headerRight = document.querySelector('.header-right');
+    if (headerRight) {
+      this.badge.appendChild(this.dropdown);
+      headerRight.insertBefore(this.badge, headerRight.firstChild);
     }
   }
 
   private startRefresh(): void {
-    this.refreshInterval = setInterval(() => this.update(), REFRESH_INTERVAL_MS);
+    document.addEventListener('wm:intelligence-updated', this.boundUpdate);
+    this.refreshInterval = setInterval(this.boundUpdate, REFRESH_INTERVAL_MS);
   }
 
   public update(): void {
@@ -309,9 +322,15 @@ export class IntelligenceFindingsBadge {
   private renderPopupToggle(): string {
     const label = t('components.intelligenceFindings.popupAlerts');
     const checked = this.popupEnabled;
-    return `<div class="popup-toggle-row">
+    const breakingSettings = getAlertSettings();
+    const breakingLabel = t('components.intelligenceFindings.breakingAlerts');
+    return `<div class="popup-toggle-row" data-toggle="popup">
         <span class="popup-toggle-label">🔔 ${escapeHtml(label)}</span>
         <span class="popup-toggle-switch${checked ? ' on' : ''}"><span class="popup-toggle-knob"></span></span>
+      </div>
+      <div class="popup-toggle-row" data-toggle="breaking-alerts">
+        <span class="popup-toggle-label">🚨 ${escapeHtml(breakingLabel)}</span>
+        <span class="popup-toggle-switch${breakingSettings.enabled ? ' on' : ''}"><span class="popup-toggle-knob"></span></span>
       </div>`;
   }
 
@@ -521,6 +540,10 @@ export class IntelligenceFindingsBadge {
     if (this.refreshInterval) {
       clearInterval(this.refreshInterval);
     }
+    if (this.pendingUpdateFrame) {
+      cancelAnimationFrame(this.pendingUpdateFrame);
+    }
+    document.removeEventListener('wm:intelligence-updated', this.boundUpdate);
     document.removeEventListener('click', this.boundCloseDropdown);
     this.badge.remove();
   }
