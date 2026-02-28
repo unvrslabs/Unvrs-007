@@ -422,56 +422,113 @@ canvas,
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.3px;
-  color: hsl(0 0% 100% / 0.4);
+  color: hsl(0 0% 100% / 0.45);
   text-decoration: none;
-  border: 1px solid transparent;
+  border: 1px solid hsl(0 0% 100% / 0.08);
   border-radius: 999px;
-  background: none;
-  box-shadow: none;
+  background: linear-gradient(
+    135deg,
+    hsl(0 0% 100% / 0.06) 0%,
+    hsl(0 0% 100% / 0.02) 100%
+  );
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  box-shadow:
+    inset 0 1px 0 0 hsl(0 0% 100% / 0.08),
+    inset 0 -1px 0 0 hsl(0 0% 0% / 0.03);
   transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
   cursor: pointer;
   white-space: nowrap;
+  overflow: hidden;
+}
+
+.glass-nav-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(180deg, hsl(0 0% 100% / 0.08) 0%, transparent 100%);
+  border-radius: 999px 999px 0 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .glass-nav-item:hover {
-  color: hsl(0 0% 100% / 0.8);
-  background: hsl(0 0% 100% / 0.08);
-  border-color: hsl(0 0% 100% / 0.1);
+  color: hsl(0 0% 100% / 0.85);
+  background: linear-gradient(
+    135deg,
+    hsl(0 0% 100% / 0.14) 0%,
+    hsl(0 0% 100% / 0.07) 50%,
+    hsl(0 0% 100% / 0.04) 100%
+  );
+  border-color: hsl(0 0% 100% / 0.18);
+  box-shadow:
+    0 4px 16px hsl(0 0% 0% / 0.12),
+    inset 0 1px 0 0 hsl(0 0% 100% / 0.15),
+    inset 0 -1px 0 0 hsl(0 0% 0% / 0.04);
+}
+
+.glass-nav-item:hover::before {
+  opacity: 1;
 }
 
 .glass-nav-item.active {
   color: #fff;
   background: linear-gradient(
     135deg,
-    hsl(0 0% 100% / 0.22) 0%,
-    hsl(0 0% 100% / 0.12) 50%,
-    hsl(0 0% 100% / 0.06) 100%
+    hsl(0 0% 100% / 0.24) 0%,
+    hsl(0 0% 100% / 0.14) 50%,
+    hsl(0 0% 100% / 0.08) 100%
   );
-  border: 1px solid hsl(0 0% 100% / 0.25);
+  border: 1px solid hsl(0 0% 100% / 0.3);
   box-shadow:
-    0 4px 16px hsl(0 0% 0% / 0.18),
-    0 0 0 1px hsl(38 92% 50% / 0.1),
-    inset 0 1px 0 0 hsl(0 0% 100% / 0.25),
-    inset 0 -1px 0 0 hsl(0 0% 0% / 0.05);
+    0 6px 24px hsl(0 0% 0% / 0.2),
+    0 0 0 1px hsl(210 80% 60% / 0.15),
+    inset 0 1px 0 0 hsl(0 0% 100% / 0.3),
+    inset 0 -1px 0 0 hsl(0 0% 0% / 0.06);
+}
+
+.glass-nav-item.active::before {
+  opacity: 1;
+  background: linear-gradient(180deg, hsl(0 0% 100% / 0.12) 0%, transparent 100%);
 }
 
 .glass-nav-agent {
   color: hsl(0 0% 100% / 0.9);
   font-size: 12px;
   letter-spacing: 1px;
-  border-color: hsl(0 0% 100% / 0.1);
-  background: hsl(0 0% 100% / 0.06);
+  border-color: hsl(210 80% 60% / 0.2);
+  background: linear-gradient(
+    135deg,
+    hsl(210 80% 60% / 0.12) 0%,
+    hsl(210 60% 50% / 0.06) 50%,
+    hsl(0 0% 100% / 0.04) 100%
+  );
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  box-shadow:
+    0 2px 8px hsl(0 0% 0% / 0.1),
+    inset 0 1px 0 0 hsl(210 80% 70% / 0.15),
+    inset 0 -1px 0 0 hsl(0 0% 0% / 0.03);
 }
 
 .glass-nav-agent:hover {
   color: #fff;
-  background: hsl(0 0% 100% / 0.14);
-  border-color: hsl(0 0% 100% / 0.22);
+  background: linear-gradient(
+    135deg,
+    hsl(210 80% 60% / 0.2) 0%,
+    hsl(210 60% 50% / 0.1) 50%,
+    hsl(0 0% 100% / 0.06) 100%
+  );
+  border-color: hsl(210 80% 60% / 0.3);
   box-shadow:
-    inset 0 1px 0 hsl(0 0% 100% / 0.12),
-    0 4px 16px hsl(0 0% 0% / 0.1),
-    0 0 0 1px hsl(38 92% 50% / 0.08);
+    0 6px 24px hsl(210 80% 60% / 0.15),
+    inset 0 1px 0 hsl(0 0% 100% / 0.18),
+    inset 0 -1px 0 hsl(0 0% 0% / 0.04);
 }
 
 /* Glass icon buttons (right side tools) */
@@ -1376,6 +1433,32 @@ canvas,
   color: var(--text);
 }
 
+/* LIVE badge next to panel title */
+.live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #ff4444;
+  margin-left: 8px;
+  text-transform: uppercase;
+}
+
+.live-dot {
+  width: 7px;
+  height: 7px;
+  background: #ff4444;
+  border-radius: 50%;
+  animation: live-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes live-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.8); }
+}
+
 .panel-count {
   font-size: 10px;
   color: var(--text-dim);
@@ -1641,28 +1724,57 @@ canvas,
 }
 
 .live-channel-btn {
-  padding: 4px 8px;
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--text-dim);
+  padding: 5px 12px;
+  background: linear-gradient(
+    135deg,
+    hsl(0 0% 100% / 0.1) 0%,
+    hsl(0 0% 100% / 0.04) 100%
+  );
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid hsl(0 0% 100% / 0.12);
+  border-radius: 999px;
+  color: hsl(0 0% 100% / 0.55);
   font-family: inherit;
   font-size: 10px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   white-space: nowrap;
+  box-shadow:
+    inset 0 1px 0 0 hsl(0 0% 100% / 0.1),
+    inset 0 -1px 0 0 hsl(0 0% 0% / 0.03),
+    0 2px 8px hsl(0 0% 0% / 0.08);
 }
 
 .live-channel-btn:hover {
-  border-color: var(--text-dim);
-  color: var(--text);
+  color: hsl(0 0% 100% / 0.85);
+  background: linear-gradient(
+    135deg,
+    hsl(0 0% 100% / 0.18) 0%,
+    hsl(0 0% 100% / 0.08) 100%
+  );
+  border-color: hsl(0 0% 100% / 0.22);
+  box-shadow:
+    0 4px 16px hsl(0 0% 0% / 0.15),
+    inset 0 1px 0 0 hsl(0 0% 100% / 0.18),
+    inset 0 -1px 0 0 hsl(0 0% 0% / 0.04);
 }
 
 .live-channel-btn.active {
-  background: var(--red);
-  border-color: var(--red);
-  color: white;
+  color: #fff;
+  background: linear-gradient(
+    135deg,
+    hsl(0 80% 55% / 0.4) 0%,
+    hsl(0 70% 45% / 0.25) 50%,
+    hsl(0 0% 100% / 0.08) 100%
+  );
+  border-color: hsl(0 80% 55% / 0.5);
+  box-shadow:
+    0 4px 20px hsl(0 80% 55% / 0.25),
+    inset 0 1px 0 0 hsl(0 0% 100% / 0.25),
+    inset 0 -1px 0 0 hsl(0 0% 0% / 0.05);
 }
 
 .live-channel-btn.loading {
@@ -1691,22 +1803,41 @@ canvas,
 
 /* Live News – Channel settings button (same style as webcam view buttons) */
 .live-news-settings-btn {
-  padding: 4px 8px;
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--text-dim);
+  padding: 5px 12px;
+  background: linear-gradient(
+    135deg,
+    hsl(0 0% 100% / 0.1) 0%,
+    hsl(0 0% 100% / 0.04) 100%
+  );
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid hsl(0 0% 100% / 0.12);
+  border-radius: 999px;
+  color: hsl(0 0% 100% / 0.55);
   font-family: inherit;
   font-size: 10px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  box-shadow:
+    inset 0 1px 0 0 hsl(0 0% 100% / 0.1),
+    inset 0 -1px 0 0 hsl(0 0% 0% / 0.03),
+    0 2px 8px hsl(0 0% 0% / 0.08);
 }
 .live-news-settings-btn:hover {
-  border-color: var(--text-dim);
-  color: var(--text);
+  color: hsl(0 0% 100% / 0.85);
+  background: linear-gradient(
+    135deg,
+    hsl(0 0% 100% / 0.18) 0%,
+    hsl(0 0% 100% / 0.08) 100%
+  );
+  border-color: hsl(0 0% 100% / 0.22);
+  box-shadow:
+    0 4px 16px hsl(0 0% 0% / 0.15),
+    inset 0 1px 0 0 hsl(0 0% 100% / 0.18);
 }
 
 /* Channel management list: same layout as LIVE panel channel switcher */
@@ -2313,38 +2444,62 @@ canvas,
 
 .webcam-region-btn,
 .webcam-view-btn {
-  padding: 4px 8px;
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--text-dim);
+  padding: 5px 12px;
+  background: linear-gradient(
+    135deg,
+    hsl(0 0% 100% / 0.1) 0%,
+    hsl(0 0% 100% / 0.04) 100%
+  );
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid hsl(0 0% 100% / 0.12);
+  border-radius: 999px;
+  color: hsl(0 0% 100% / 0.55);
   font-family: inherit;
   font-size: 10px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   white-space: nowrap;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow:
+    inset 0 1px 0 0 hsl(0 0% 100% / 0.1),
+    inset 0 -1px 0 0 hsl(0 0% 0% / 0.03),
+    0 2px 8px hsl(0 0% 0% / 0.08);
 }
 
 .webcam-region-btn:hover,
 .webcam-view-btn:hover {
-  border-color: var(--text-dim);
-  color: var(--text);
+  color: hsl(0 0% 100% / 0.85);
+  background: linear-gradient(
+    135deg,
+    hsl(0 0% 100% / 0.18) 0%,
+    hsl(0 0% 100% / 0.08) 100%
+  );
+  border-color: hsl(0 0% 100% / 0.22);
+  box-shadow:
+    0 4px 16px hsl(0 0% 0% / 0.15),
+    inset 0 1px 0 0 hsl(0 0% 100% / 0.18),
+    inset 0 -1px 0 0 hsl(0 0% 0% / 0.04);
 }
 
-.webcam-region-btn.active {
-  background: var(--red);
-  border-color: var(--red);
-  color: white;
-}
-
+.webcam-region-btn.active,
 .webcam-view-btn.active {
-  background: var(--red);
-  border-color: var(--red);
-  color: white;
+  color: #fff;
+  background: linear-gradient(
+    135deg,
+    hsl(0 80% 55% / 0.4) 0%,
+    hsl(0 70% 45% / 0.25) 50%,
+    hsl(0 0% 100% / 0.08) 100%
+  );
+  border-color: hsl(0 80% 55% / 0.5);
+  box-shadow:
+    0 4px 20px hsl(0 80% 55% / 0.25),
+    inset 0 1px 0 0 hsl(0 0% 100% / 0.25),
+    inset 0 -1px 0 0 hsl(0 0% 0% / 0.05);
 }
 
 .webcam-grid {
@@ -2431,27 +2586,56 @@ canvas,
 }
 
 .webcam-feed-btn {
-  padding: 4px 8px;
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--text-dim);
+  padding: 5px 12px;
+  background: linear-gradient(
+    135deg,
+    hsl(0 0% 100% / 0.1) 0%,
+    hsl(0 0% 100% / 0.04) 100%
+  );
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid hsl(0 0% 100% / 0.12);
+  border-radius: 999px;
+  color: hsl(0 0% 100% / 0.55);
   font-family: inherit;
   font-size: 10px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  box-shadow:
+    inset 0 1px 0 0 hsl(0 0% 100% / 0.1),
+    inset 0 -1px 0 0 hsl(0 0% 0% / 0.03),
+    0 2px 8px hsl(0 0% 0% / 0.08);
 }
 
 .webcam-feed-btn:hover {
-  border-color: var(--text-dim);
-  color: var(--text);
+  color: hsl(0 0% 100% / 0.85);
+  background: linear-gradient(
+    135deg,
+    hsl(0 0% 100% / 0.18) 0%,
+    hsl(0 0% 100% / 0.08) 100%
+  );
+  border-color: hsl(0 0% 100% / 0.22);
+  box-shadow:
+    0 4px 16px hsl(0 0% 0% / 0.15),
+    inset 0 1px 0 0 hsl(0 0% 100% / 0.18),
+    inset 0 -1px 0 0 hsl(0 0% 0% / 0.04);
 }
 
 .webcam-feed-btn.active {
-  background: var(--red);
-  border-color: var(--red);
-  color: white;
+  color: #fff;
+  background: linear-gradient(
+    135deg,
+    hsl(0 80% 55% / 0.4) 0%,
+    hsl(0 70% 45% / 0.25) 50%,
+    hsl(0 0% 100% / 0.08) 100%
+  );
+  border-color: hsl(0 80% 55% / 0.5);
+  box-shadow:
+    0 4px 20px hsl(0 80% 55% / 0.25),
+    inset 0 1px 0 0 hsl(0 0% 100% / 0.25),
+    inset 0 -1px 0 0 hsl(0 0% 0% / 0.05);
 }
 
 .webcam-back-btn {
