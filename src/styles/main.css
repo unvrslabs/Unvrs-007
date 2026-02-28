@@ -13458,10 +13458,9 @@ a.prediction-link:hover {
 
 /* Panel section tab bar (full/world variant) */
 .panel-section-tabs {
-  grid-column: 1 / -1;
   display: flex;
   gap: 6px;
-  padding: 8px 4px;
+  padding: 8px 8px;
   overflow-x: auto;
   scrollbar-width: none;
   position: sticky;
@@ -13469,7 +13468,6 @@ a.prediction-link:hover {
   z-index: 50;
   background: var(--bg);
   border-bottom: 1px solid hsl(0 0% 100% / 0.07);
-  margin-bottom: 2px;
 }
 .panel-section-tabs::-webkit-scrollbar { display: none; }
 

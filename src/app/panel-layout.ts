@@ -944,13 +944,8 @@ export class PanelLayoutManager implements AppModule {
       wrapper.appendChild(btn);
     });
 
-    const anchorEl = this.ctx.panels['live-webcams']?.getElement()
-      ?? this.ctx.panels['live-news']?.getElement();
-    if (anchorEl && anchorEl.parentElement === grid) {
-      anchorEl.insertAdjacentElement('afterend', wrapper);
-    } else {
-      grid.prepend(wrapper);
-    }
+    // Insert as a sibling before the grid so it is not subject to grid-auto-rows sizing
+    grid.parentElement!.insertBefore(wrapper, grid);
 
     this.applyPanelTabFilter(saved, PINNED);
   }
