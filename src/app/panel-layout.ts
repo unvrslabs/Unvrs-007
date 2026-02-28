@@ -621,6 +621,10 @@ export class PanelLayoutManager implements AppModule {
       }
     });
 
+    if (SITE_VARIANT === 'full') {
+      this.createPanelSectionTabs(panelsGrid);
+    }
+
     // Italia variant: apply default varied spans for visual variety
     if (SITE_VARIANT === 'italia') {
       const savedSpansRaw = localStorage.getItem(this.ctx.PANEL_SPANS_KEY);
@@ -905,6 +909,60 @@ export class PanelLayoutManager implements AppModule {
       if (cursorPos < targetMid) {
         grid.insertBefore(dragging, targetPanel);
       }
+    }
+  }
+
+  private readonly PANEL_SECTION_TAB_KEY = 'worldmonitor-panel-section-tab';
+
+  private readonly PANEL_SECTION_TABS_DEF = [
+    { key: 'all', label: 'All' },
+    { key: 'intelligence', label: 'Intelligence', panels: ['insights', 'strategic-posture', 'cii', 'strategic-risk', 'intel', 'gdelt-intel', 'cascade', 'telegram-intel', 'oref-sirens', 'security-advisories'] },
+    { key: 'news', label: 'News', panels: ['politics', 'us', 'europe', 'middleeast', 'africa', 'latam', 'asia', 'energy'] },
+    { key: 'markets', label: 'Markets', panels: ['commodities', 'markets', 'economic', 'trade-policy', 'supply-chain', 'finance', 'polymarket', 'macro-signals', 'etf-flows', 'stablecoins', 'crypto', 'heatmap'] },
+    { key: 'topics', label: 'Topics', panels: ['gov', 'thinktanks', 'tech', 'ai', 'layoffs'] },
+    { key: 'tracking', label: 'Tracking', panels: ['monitors', 'satellite-fires', 'ucdp-events', 'displacement', 'climate', 'population-exposure'] },
+  ];
+
+  private createPanelSectionTabs(grid: HTMLElement): void {
+    const PINNED = new Set(['live-news', 'live-webcams']);
+    const saved = localStorage.getItem(this.PANEL_SECTION_TAB_KEY) ?? 'all';
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'panel-section-tabs';
+
+    this.PANEL_SECTION_TABS_DEF.forEach(tab => {
+      const btn = document.createElement('button');
+      btn.className = 'panel-section-tab' + (tab.key === saved ? ' active' : '');
+      btn.dataset.tab = tab.key;
+      btn.textContent = tab.label;
+      btn.addEventListener('click', () => {
+        wrapper.querySelectorAll('.panel-section-tab').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        localStorage.setItem(this.PANEL_SECTION_TAB_KEY, tab.key);
+        this.applyPanelTabFilter(tab.key, PINNED);
+      });
+      wrapper.appendChild(btn);
+    });
+
+    const anchorEl = this.ctx.panels['live-webcams']?.getElement()
+      ?? this.ctx.panels['live-news']?.getElement();
+    if (anchorEl && anchorEl.parentElement === grid) {
+      anchorEl.insertAdjacentElement('afterend', wrapper);
+    } else {
+      grid.prepend(wrapper);
+    }
+
+    this.applyPanelTabFilter(saved, PINNED);
+  }
+
+  private applyPanelTabFilter(activeTab: string, pinned: Set<string>): void {
+    const tabDef = this.PANEL_SECTION_TABS_DEF.find(t => t.key === activeTab);
+    const allowedSet = tabDef && 'panels' in tabDef ? new Set(tabDef.panels) : null;
+    for (const [key, panel] of Object.entries(this.ctx.panels)) {
+      if (pinned.has(key)) continue;
+      const el = panel?.getElement();
+      if (!el) continue;
+      el.classList.toggle('tab-hidden', allowedSet !== null && !allowedSet.has(key));
     }
   }
 
