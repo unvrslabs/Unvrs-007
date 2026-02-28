@@ -195,6 +195,17 @@
   box-sizing: border-box;
 }
 
+/* ── Global: hide all scrollbars, keep scroll functional ── */
+*,
+*::before,
+*::after {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+*::-webkit-scrollbar {
+  display: none !important;
+}
+
 html {
   height: 100%;
   width: 100%;
@@ -1692,18 +1703,6 @@ canvas,
   padding: 8px;
 }
 
-.panel-content::-webkit-scrollbar {
-  width: 4px;
-}
-
-.panel-content::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.panel-content::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 2px;
-}
 
 /* Wide panel (spans 2 columns and 2 rows for video content) */
 .panel-wide {
@@ -16982,8 +16981,6 @@ body.has-critical-banner .panels-grid {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  scrollbar-width: thin;
-  scrollbar-color: var(--scrollbar-thumb) transparent;
 }
 .agent-msg {
   display: flex;
