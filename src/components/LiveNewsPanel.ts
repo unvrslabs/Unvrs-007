@@ -487,8 +487,8 @@ export class LiveNewsPanel extends Panel {
       this.togglePlayback();
     });
 
-    const header = this.element.querySelector('.panel-header');
-    header?.appendChild(this.liveBtn);
+    const headerLeft = this.element.querySelector('.panel-header-left');
+    headerLeft?.appendChild(this.liveBtn);
   }
 
   private updateLiveIndicator(): void {
@@ -617,14 +617,14 @@ export class LiveNewsPanel extends Panel {
       dragStarted = false;
     });
 
+    this.createManageButton(this.channelSwitcher);
     const toolbar = document.createElement('div');
     toolbar.className = 'live-news-toolbar';
     toolbar.appendChild(this.channelSwitcher);
-    this.createManageButton(toolbar);
     this.element.insertBefore(toolbar, this.content);
   }
 
-  private createManageButton(toolbar: HTMLElement): void {
+  private createManageButton(container: HTMLElement): void {
     const openBtn = document.createElement('button');
     openBtn.type = 'button';
     openBtn.className = 'live-news-settings-btn';
@@ -634,7 +634,7 @@ export class LiveNewsPanel extends Panel {
     openBtn.addEventListener('click', () => {
       this.openChannelManagementModal();
     });
-    toolbar.appendChild(openBtn);
+    container.appendChild(openBtn);
   }
 
   private openChannelManagementModal(): void {

@@ -55,7 +55,7 @@ type RegionFilter = 'all' | WebcamRegion;
 
 export class LiveWebcamsPanel extends Panel {
   private viewMode: ViewMode = 'grid';
-  private regionFilter: RegionFilter = 'iran';
+  private regionFilter: RegionFilter = 'all';
   private activeFeed: WebcamFeed = WEBCAM_FEEDS[0]!;
   private toolbar: HTMLElement | null = null;
   private iframes: HTMLIFrameElement[] = [];
@@ -100,12 +100,12 @@ export class LiveWebcamsPanel extends Panel {
     regionGroup.className = 'webcam-toolbar-group';
 
     const regions: { key: RegionFilter; label: string }[] = [
-      { key: 'iran', label: t('components.webcams.regions.iran') },
       { key: 'all', label: t('components.webcams.regions.all') },
       { key: 'middle-east', label: t('components.webcams.regions.mideast') },
       { key: 'europe', label: t('components.webcams.regions.europe') },
       { key: 'americas', label: t('components.webcams.regions.americas') },
       { key: 'asia', label: t('components.webcams.regions.asia') },
+      { key: 'iran', label: t('components.webcams.regions.iran') },
     ];
 
     regions.forEach(({ key, label }) => {
