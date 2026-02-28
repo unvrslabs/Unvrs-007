@@ -13438,13 +13438,7 @@ a.prediction-link:hover {
 
 /* Map tile attribution */
 .map-attribution {
-  position: absolute;
-  bottom: 2px;
-  right: 4px;
-  font-size: 9px;
-  color: var(--text-dim);
-  opacity: 0.6;
-  z-index: 10;
+  display: none;
   pointer-events: auto;
 }
 
@@ -13457,22 +13451,9 @@ a.prediction-link:hover {
   text-decoration: underline;
 }
 
-/* deck.gl mode indicator */
+/* deck.gl mode indicator — hidden */
 .map-container.deckgl-mode::after {
-  content: 'WebGL';
-  position: absolute;
-  bottom: 10px;
-  right: 170px;
-  z-index: 99;
-  background: rgba(0, 200, 100, 0.15);
-  color: var(--green);
-  padding: 2px 6px;
-  border-radius: 2px;
-  font-size: 8px;
-  font-weight: bold;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  opacity: 0.7;
+  display: none;
 }
 
 /* Responsive adjustments for deck.gl on smaller desktops */

@@ -77,15 +77,16 @@ const TECH_LIVE_CHANNELS: LiveChannel[] = [
 
 // Italia variant: Italian TV channels
 const ITALIA_LIVE_CHANNELS: LiveChannel[] = [
-  { id: 'tgcom24', name: 'TGCOM24', handle: '@tgcom24', fallbackVideoId: 'hWeGaR28z5E' },
-  { id: 'sky-tg24', name: 'Sky TG24', handle: '@SkyTG24', fallbackVideoId: 'yAoQDz2GJoI' },
+  { id: 'tgcom24', name: 'TGCOM24', handle: '@tgcom24', fallbackVideoId: 'ud5LHQ-XzK4', useFallbackOnly: true },
+  { id: 'sky-tg24', name: 'Sky TG24', handle: '@SkyTG24', fallbackVideoId: 'l_82l53W5I8', useFallbackOnly: true },
+  { id: 'euronews-it', name: 'Euronews', handle: '@euronews', fallbackVideoId: 'pUcmpyynASM', useFallbackOnly: true },
   { id: 'rai-1', name: 'Rai 1', handle: '@Rai', fallbackVideoId: 'gSL3sM7sIKA', useFallbackOnly: true },
   { id: 'rai-2', name: 'Rai 2', handle: '@Rai', fallbackVideoId: 'qDBvNJUa4lg', useFallbackOnly: true },
   { id: 'rai-3', name: 'Rai 3', handle: '@Rai', fallbackVideoId: 'JYRVNSf1Q90', useFallbackOnly: true },
   { id: 'rete-4', name: 'Rete 4', handle: '@Mediaset', fallbackVideoId: 'ICr2bpAJb2Q', useFallbackOnly: true },
   { id: 'canale-5', name: 'Canale 5', handle: '@Mediaset', fallbackVideoId: 'G4SiCo6nRBo', useFallbackOnly: true },
   { id: 'italia-1', name: 'Italia 1', handle: '@Mediaset', fallbackVideoId: 'IgzAsBYw6SM', useFallbackOnly: true },
-  { id: 'la7', name: 'La7', handle: '@La7tv', fallbackVideoId: 'RGvmxSWCaFE' },
+  { id: 'la7', name: 'La7', handle: '@La7tv', fallbackVideoId: 'RGvmxSWCaFE', useFallbackOnly: true },
 ];
 
 // Optional channels users can add from the "Available Channels" tab UI
@@ -180,6 +181,7 @@ export function loadChannelsFromStorage(): LiveChannel[] {
   const channelMap = new Map<string, LiveChannel>();
   for (const c of FULL_LIVE_CHANNELS) channelMap.set(c.id, { ...c });
   for (const c of TECH_LIVE_CHANNELS) channelMap.set(c.id, { ...c });
+  for (const c of ITALIA_LIVE_CHANNELS) channelMap.set(c.id, { ...c });
   for (const c of OPTIONAL_LIVE_CHANNELS) channelMap.set(c.id, { ...c });
   for (const c of stored.custom ?? []) {
     if (c.id && c.handle) channelMap.set(c.id, { ...c });
@@ -201,7 +203,7 @@ export function saveChannelsToStorage(channels: LiveChannel[]): void {
   const order = channels.map((c) => c.id);
   const custom = channels.filter((c) => !BUILTIN_IDS.has(c.id));
   const builtinNames = new Map<string, string>();
-  for (const c of [...FULL_LIVE_CHANNELS, ...TECH_LIVE_CHANNELS, ...OPTIONAL_LIVE_CHANNELS]) builtinNames.set(c.id, c.name);
+  for (const c of [...FULL_LIVE_CHANNELS, ...TECH_LIVE_CHANNELS, ...ITALIA_LIVE_CHANNELS, ...OPTIONAL_LIVE_CHANNELS]) builtinNames.set(c.id, c.name);
   const displayNameOverrides: Record<string, string> = {};
   for (const c of channels) {
     if (builtinNames.has(c.id) && c.name !== builtinNames.get(c.id)) {
