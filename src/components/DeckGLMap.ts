@@ -3199,7 +3199,6 @@ export class DeckGLMap {
     toggles.innerHTML = `
       <div class="toggle-header">
         <span>${t('components.deckgl.layersTitle')}</span>
-        <button class="layer-help-btn" title="${t('components.deckgl.layerGuide')}">?</button>
         <button class="toggle-collapse">&#9660;</button>
       </div>
       <div class="toggle-list" style="max-height: 32vh; overflow-y: auto; scrollbar-width: thin;">

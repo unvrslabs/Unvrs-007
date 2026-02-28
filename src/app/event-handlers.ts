@@ -432,9 +432,9 @@ export class EventHandlerManager implements AppModule {
     if (SITE_VARIANT === 'tech' || SITE_VARIANT === 'finance' || SITE_VARIANT === 'happy') return;
 
     this.ctx.pizzintIndicator = new PizzIntIndicator();
-    const headerLeft = this.ctx.container.querySelector('.header-left');
-    if (headerLeft) {
-      headerLeft.appendChild(this.ctx.pizzintIndicator.getElement());
+    const mount = document.getElementById('glassPizzintMount');
+    if (mount) {
+      mount.appendChild(this.ctx.pizzintIndicator.getElement());
     }
   }
 
