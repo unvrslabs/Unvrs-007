@@ -163,9 +163,6 @@ export class PanelLayoutManager implements AppModule {
           <div class="map-resize-handle" id="mapResizeHandle"></div>
         </div>
         <div class="panels-grid" id="panelsGrid"></div>
-        <footer class="site-footer">
-          Sviluppato con <span class="footer-heart">&hearts;</span> da <a href="https://www.unvrslabs.dev" target="_blank" rel="noopener">Unvrs Labs</a>
-        </footer>
       </div>
     `;
 
@@ -666,6 +663,15 @@ export class PanelLayoutManager implements AppModule {
         'telegram-intel': 2,
         'oref-sirens': 1,
         'security-advisories': 2,
+        /* News – varied layout */
+        'politics': 2,
+        'us': 2,
+        'europe': 3,
+        'middleeast': 2,
+        'africa': 1,
+        'latam': 1,
+        'asia': 2,
+        'energy': 2,
       };
       for (const [key, span] of Object.entries(defaultSpans)) {
         if (savedSpans[key]) continue; // user already customised this panel
@@ -677,6 +683,12 @@ export class PanelLayoutManager implements AppModule {
         }
       }
     }
+
+    // Site footer — inside the grid so it's visible in all layouts (incl. ultra-wide)
+    const footer = document.createElement('footer');
+    footer.className = 'site-footer';
+    footer.innerHTML = 'Sviluppato con <span class="footer-heart">&hearts;</span> da <a href="https://www.unvrslabs.dev" target="_blank" rel="noopener">Unvrs Labs</a>';
+    panelsGrid.appendChild(footer);
 
     this.ctx.map.onTimeRangeChanged((range) => {
       this.ctx.currentTimeRange = range;
