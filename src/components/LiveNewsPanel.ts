@@ -634,7 +634,7 @@ export class LiveNewsPanel extends Panel {
     openBtn.addEventListener('click', () => {
       this.openChannelManagementModal();
     });
-    container.appendChild(openBtn);
+    container.prepend(openBtn);
   }
 
   private openChannelManagementModal(): void {
