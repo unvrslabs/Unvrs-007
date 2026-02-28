@@ -110,20 +110,21 @@ export class PanelLayoutManager implements AppModule {
         <div class="header-right"></div>
       </div>
       <div class="glass-nav-row">
-        <span id="glassNotificationsMount" class="glass-nav-left-mount"></span>
+        <span class="glass-nav-left-mount">
+          <select id="regionSelect" class="glass-nav-select">
+            <option value="global">${t('components.deckgl.views.global')}</option>
+            <option value="america">${t('components.deckgl.views.americas')}</option>
+            <option value="mena">${t('components.deckgl.views.mena')}</option>
+            <option value="eu">${t('components.deckgl.views.europe')}</option>
+            <option value="asia">${t('components.deckgl.views.asia')}</option>
+            <option value="latam">${t('components.deckgl.views.latam')}</option>
+            <option value="africa">${t('components.deckgl.views.africa')}</option>
+            <option value="oceania">${t('components.deckgl.views.oceania')}</option>
+          </select>
+        </span>
         <div class="glass-nav-center-group">
+        <span id="glassNotificationsMount" class="glass-nav-notifications-mount"></span>
         <nav class="glass-nav glass-nav-main">
-            <select id="regionSelect" class="glass-nav-select">
-              <option value="global">${t('components.deckgl.views.global')}</option>
-              <option value="america">${t('components.deckgl.views.americas')}</option>
-              <option value="mena">${t('components.deckgl.views.mena')}</option>
-              <option value="eu">${t('components.deckgl.views.europe')}</option>
-              <option value="asia">${t('components.deckgl.views.asia')}</option>
-              <option value="latam">${t('components.deckgl.views.latam')}</option>
-              <option value="africa">${t('components.deckgl.views.africa')}</option>
-              <option value="oceania">${t('components.deckgl.views.oceania')}</option>
-            </select>
-            <span class="glass-nav-divider"></span>
             <a href="#" class="glass-nav-item ${SITE_VARIANT === 'full' ? 'active' : ''}" data-glass-variant="full">World</a>
             <a href="#" class="glass-nav-item ${SITE_VARIANT === 'finance' ? 'active' : ''}" data-glass-variant="finance">Finance</a>
             <a href="#" class="glass-nav-item ${SITE_VARIANT === 'tech' ? 'active' : ''}" data-glass-variant="tech">Tech</a>
@@ -132,10 +133,10 @@ export class PanelLayoutManager implements AppModule {
         </nav>
         </div>
         <div class="glass-nav-tools">
+            <span id="glassPizzintMount"></span>
             <button class="glass-nav-icon" id="searchBtn" title="${t('header.search')}">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             </button>
-            <span id="glassPizzintMount"></span>
             <span id="glassStatusMount"></span>
             <span id="unifiedSettingsMount"></span>
         </div>

@@ -311,6 +311,12 @@ canvas,
   align-items: center;
 }
 
+.glass-nav-notifications-mount {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
 .glass-nav-main {
 }
 
