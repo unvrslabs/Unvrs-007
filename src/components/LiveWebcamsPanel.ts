@@ -4,8 +4,9 @@ import { escapeHtml } from '@/utils/sanitize';
 import { t } from '../services/i18n';
 import { trackWebcamSelected, trackWebcamRegionFiltered } from '@/services/analytics';
 import { getStreamQuality, subscribeStreamQualityChange } from '@/services/ai-flow-settings';
+import { SITE_VARIANT } from '@/config/variant';
 
-type WebcamRegion = 'iran' | 'middle-east' | 'europe' | 'asia' | 'americas';
+type WebcamRegion = 'iran' | 'middle-east' | 'europe' | 'asia' | 'americas' | 'italia';
 
 interface WebcamFeed {
   id: string;
@@ -46,6 +47,12 @@ const WEBCAM_FEEDS: WebcamFeed[] = [
   { id: 'tokyo', city: 'Tokyo', country: 'Japan', region: 'asia', channelHandle: '@TokyoLiveCam4K', fallbackVideoId: '4pu9sF5Qssw' },
   { id: 'seoul', city: 'Seoul', country: 'South Korea', region: 'asia', channelHandle: '@UNvillage_live', fallbackVideoId: '-JhoMGoAfFc' },
   { id: 'sydney', city: 'Sydney', country: 'Australia', region: 'asia', channelHandle: '@WebcamSydney', fallbackVideoId: '7pcL-0Wo77U' },
+  // Italia
+  { id: 'roma', city: 'Roma', country: 'Italia', region: 'italia', channelHandle: '@SkylineWebcams', fallbackVideoId: 'TaGUVve3s_k' },
+  { id: 'venezia', city: 'Venezia', country: 'Italia', region: 'italia', channelHandle: '@SkylineWebcams', fallbackVideoId: 'vPwD-gPqCf4' },
+  { id: 'napoli', city: 'Napoli', country: 'Italia', region: 'italia', channelHandle: '@SkylineWebcams', fallbackVideoId: 'wKnYzq3POIY' },
+  { id: 'firenze', city: 'Firenze', country: 'Italia', region: 'italia', channelHandle: '@SkylineWebcams', fallbackVideoId: 'TZPXMnG4S3g' },
+  { id: 'milano', city: 'Milano', country: 'Italia', region: 'italia', channelHandle: '@SkylineWebcams', fallbackVideoId: 'pPfCJQDJpkw' },
 ];
 
 const MAX_GRID_CELLS = 4;
@@ -55,8 +62,8 @@ type RegionFilter = 'all' | WebcamRegion;
 
 export class LiveWebcamsPanel extends Panel {
   private viewMode: ViewMode = 'grid';
-  private regionFilter: RegionFilter = 'all';
-  private activeFeed: WebcamFeed = WEBCAM_FEEDS[0]!;
+  private regionFilter: RegionFilter = SITE_VARIANT === 'italia' ? 'italia' : 'all';
+  private activeFeed: WebcamFeed = SITE_VARIANT === 'italia' ? WEBCAM_FEEDS.find(f => f.id === 'roma')! : WEBCAM_FEEDS[0]!;
   private toolbar: HTMLElement | null = null;
   private iframes: HTMLIFrameElement[] = [];
   private observer: IntersectionObserver | null = null;
@@ -81,10 +88,12 @@ export class LiveWebcamsPanel extends Panel {
     return WEBCAM_FEEDS.filter(f => f.region === this.regionFilter);
   }
 
-  private static readonly ALL_GRID_IDS = ['jerusalem', 'tehran', 'kyiv', 'washington'];
+  private static readonly ALL_GRID_IDS = SITE_VARIANT === 'italia'
+    ? ['roma', 'venezia', 'napoli', 'milano']
+    : ['jerusalem', 'tehran', 'kyiv', 'washington'];
 
   private get gridFeeds(): WebcamFeed[] {
-    if (this.regionFilter === 'all') {
+    if (this.regionFilter === 'all' || this.regionFilter === 'italia') {
       return LiveWebcamsPanel.ALL_GRID_IDS
         .map(id => WEBCAM_FEEDS.find(f => f.id === id)!)
         .filter(Boolean);
@@ -99,14 +108,23 @@ export class LiveWebcamsPanel extends Panel {
     const regionGroup = document.createElement('div');
     regionGroup.className = 'webcam-toolbar-group';
 
-    const regions: { key: RegionFilter; label: string }[] = [
-      { key: 'all', label: t('components.webcams.regions.all') },
-      { key: 'middle-east', label: t('components.webcams.regions.mideast') },
-      { key: 'europe', label: t('components.webcams.regions.europe') },
-      { key: 'americas', label: t('components.webcams.regions.americas') },
-      { key: 'asia', label: t('components.webcams.regions.asia') },
-      { key: 'iran', label: t('components.webcams.regions.iran') },
-    ];
+    const regions: { key: RegionFilter; label: string }[] = SITE_VARIANT === 'italia'
+      ? [
+        { key: 'italia', label: 'Italia' },
+        { key: 'all', label: t('components.webcams.regions.all') },
+        { key: 'europe', label: t('components.webcams.regions.europe') },
+        { key: 'middle-east', label: t('components.webcams.regions.mideast') },
+        { key: 'americas', label: t('components.webcams.regions.americas') },
+        { key: 'asia', label: t('components.webcams.regions.asia') },
+      ]
+      : [
+        { key: 'all', label: t('components.webcams.regions.all') },
+        { key: 'middle-east', label: t('components.webcams.regions.mideast') },
+        { key: 'europe', label: t('components.webcams.regions.europe') },
+        { key: 'americas', label: t('components.webcams.regions.americas') },
+        { key: 'asia', label: t('components.webcams.regions.asia') },
+        { key: 'iran', label: t('components.webcams.regions.iran') },
+      ];
 
     regions.forEach(({ key, label }) => {
       const btn = document.createElement('button');

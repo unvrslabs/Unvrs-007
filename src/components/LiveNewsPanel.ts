@@ -75,6 +75,16 @@ const TECH_LIVE_CHANNELS: LiveChannel[] = [
   { id: 'nasa', name: 'Sen Space Live', handle: '@NASA', fallbackVideoId: 'fO9e9jnhYK8', useFallbackOnly: true },
 ];
 
+// Italia variant: Italian news channels
+const ITALIA_LIVE_CHANNELS: LiveChannel[] = [
+  { id: 'sky-tg24', name: 'Sky TG24', handle: '@SkyTG24', fallbackVideoId: 'yAoQDz2GJoI' },
+  { id: 'rai-news-24', name: 'Rai News 24', handle: '@RaiNews', fallbackVideoId: 'XOY2MG1Yxmc' },
+  { id: 'tgcom24', name: 'TGCOM24', handle: '@tgcom24', fallbackVideoId: 'hWeGaR28z5E' },
+  { id: 'euronews-it', name: 'Euronews IT', handle: '@euabortnews', fallbackVideoId: 'pykpO5kQJ98' },
+  { id: 'france24', name: 'France24', handle: '@FRANCE24English', fallbackVideoId: 'Ap-UM1O9RBU' },
+  { id: 'bloomberg', name: 'Bloomberg', handle: '@Bloomberg', fallbackVideoId: 'iEpJwprxDdk' },
+];
+
 // Optional channels users can add from the "Available Channels" tab UI
 export const OPTIONAL_LIVE_CHANNELS: LiveChannel[] = [
   // North America
@@ -136,7 +146,7 @@ export const OPTIONAL_CHANNEL_REGIONS: { key: string; labelKey: string; channelI
   { key: 'africa', labelKey: 'components.liveNews.regionAfrica', channelIds: ['africanews', 'channels-tv', 'ktn-news', 'enca', 'sabc-news'] },
 ];
 
-const DEFAULT_LIVE_CHANNELS = SITE_VARIANT === 'tech' ? TECH_LIVE_CHANNELS : SITE_VARIANT === 'happy' ? [] : FULL_LIVE_CHANNELS;
+const DEFAULT_LIVE_CHANNELS = SITE_VARIANT === 'tech' ? TECH_LIVE_CHANNELS : SITE_VARIANT === 'happy' ? [] : SITE_VARIANT === 'italia' ? ITALIA_LIVE_CHANNELS : FULL_LIVE_CHANNELS;
 
 /** Default channel list for the current variant (for restore in channel management). */
 export function getDefaultLiveChannels(): LiveChannel[] {
@@ -157,6 +167,7 @@ const DEFAULT_STORED: StoredLiveChannels = {
 export const BUILTIN_IDS = new Set([
   ...FULL_LIVE_CHANNELS.map((c) => c.id),
   ...TECH_LIVE_CHANNELS.map((c) => c.id),
+  ...ITALIA_LIVE_CHANNELS.map((c) => c.id),
   ...OPTIONAL_LIVE_CHANNELS.map((c) => c.id),
 ]);
 
