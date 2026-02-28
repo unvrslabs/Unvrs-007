@@ -110,9 +110,8 @@ export class PanelLayoutManager implements AppModule {
         <div class="header-right"></div>
       </div>
       <div class="glass-nav-row">
-        <span id="glassPizzintMount" class="glass-nav-left-mount"></span>
+        <span id="glassNotificationsMount" class="glass-nav-left-mount"></span>
         <div class="glass-nav-center-group">
-        <span id="glassStatusMount" class="glass-nav-status-mount"></span>
         <nav class="glass-nav glass-nav-main">
             <select id="regionSelect" class="glass-nav-select">
               <option value="global">${t('components.deckgl.views.global')}</option>
@@ -133,10 +132,11 @@ export class PanelLayoutManager implements AppModule {
         </nav>
         </div>
         <div class="glass-nav-tools">
-            <span id="glassNotificationsMount"></span>
             <button class="glass-nav-icon" id="searchBtn" title="${t('header.search')}">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             </button>
+            <span id="glassPizzintMount"></span>
+            <span id="glassStatusMount"></span>
             <span id="unifiedSettingsMount"></span>
         </div>
       </div>

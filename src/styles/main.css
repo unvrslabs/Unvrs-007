@@ -327,7 +327,7 @@ canvas,
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0;
+  gap: 4px;
   padding: 6px 8px;
   width: fit-content;
   height: 48px;
@@ -6640,7 +6640,7 @@ a.prediction-link:hover {
 .status-panel {
   position: absolute;
   top: 100%;
-  left: 0;
+  right: 0;
   margin-top: 8px;
   width: 340px;
   background: linear-gradient(135deg, hsl(215 30% 18% / 0.92) 0%, hsl(215 30% 15% / 0.88) 100%);
@@ -9419,7 +9419,7 @@ a.prediction-link:hover {
 .pizzint-panel {
   position: absolute;
   top: 100%;
-  left: 0;
+  right: 0;
   margin-top: 8px;
   width: 340px;
   background: linear-gradient(135deg, hsl(215 30% 18% / 0.92) 0%, hsl(215 30% 15% / 0.88) 100%);
@@ -11829,7 +11829,7 @@ a.prediction-link:hover {
 .intel-findings-dropdown {
   position: absolute;
   top: 100%;
-  right: 0;
+  left: 0;
   width: 380px;
   background: linear-gradient(135deg, hsl(215 30% 18% / 0.92) 0%, hsl(215 30% 15% / 0.88) 100%);
   backdrop-filter: blur(40px) saturate(180%);
