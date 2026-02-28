@@ -619,6 +619,42 @@ export class PanelLayoutManager implements AppModule {
       }
     });
 
+    // Italia variant: apply default varied spans for visual variety
+    if (SITE_VARIANT === 'italia') {
+      const savedSpansRaw = localStorage.getItem(this.ctx.PANEL_SPANS_KEY);
+      const hasSavedSpans = savedSpansRaw && Object.keys(JSON.parse(savedSpansRaw)).length > 0;
+      if (!hasSavedSpans) {
+        const italiaSpans: Record<string, number> = {
+          'italia-politica': 2,
+          'italia-economia': 1,
+          'italia-difesa': 1,
+          'italia-energia': 1,
+          'italia-esteri': 2,
+          'italia-finanza': 1,
+          'italia-infrastrutture': 1,
+          'italia-tech': 2,
+          'gov': 1,
+          'thinktanks': 1,
+          'europe': 2,
+          'intel': 2,
+          'gdelt-intel': 1,
+          'insights': 2,
+          'strategic-posture': 1,
+          'cii': 1,
+          'strategic-risk': 2,
+          'cascade': 1,
+        };
+        for (const [key, span] of Object.entries(italiaSpans)) {
+          const panel = this.ctx.panels[key];
+          if (panel && span > 1) {
+            const el = panel.getElement();
+            el.classList.remove('span-1', 'span-2', 'span-3', 'span-4');
+            el.classList.add(`span-${span}`, 'resized');
+          }
+        }
+      }
+    }
+
     this.ctx.map.onTimeRangeChanged((range) => {
       this.ctx.currentTimeRange = range;
       this.applyTimeRangeFilterDebounced();
