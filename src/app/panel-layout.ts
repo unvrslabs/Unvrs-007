@@ -163,6 +163,9 @@ export class PanelLayoutManager implements AppModule {
           <div class="map-resize-handle" id="mapResizeHandle"></div>
         </div>
         <div class="panels-grid" id="panelsGrid"></div>
+        <footer class="site-footer">
+          Sviluppato con <span class="footer-heart">&hearts;</span> da <a href="https://www.unvrslabs.dev" target="_blank" rel="noopener">Unvrs Labs</a>
+        </footer>
       </div>
     `;
 
@@ -625,12 +628,12 @@ export class PanelLayoutManager implements AppModule {
       this.createPanelSectionTabs(panelsGrid);
     }
 
-    // Italia variant: apply default varied spans for visual variety
-    if (SITE_VARIANT === 'italia') {
+    // Apply default varied spans for visual variety (when user hasn't customised)
+    {
       const savedSpansRaw = localStorage.getItem(this.ctx.PANEL_SPANS_KEY);
       const hasSavedSpans = savedSpansRaw && Object.keys(JSON.parse(savedSpansRaw)).length > 0;
       if (!hasSavedSpans) {
-        const italiaSpans: Record<string, number> = {
+        const defaultSpans: Record<string, number> = SITE_VARIANT === 'italia' ? {
           'italia-politica': 2,
           'italia-economia': 1,
           'italia-difesa': 1,
@@ -649,8 +652,20 @@ export class PanelLayoutManager implements AppModule {
           'cii': 1,
           'strategic-risk': 2,
           'cascade': 1,
+        } : {
+          /* Intelligence – hero cards */
+          'strategic-risk': 3,
+          'insights': 2,
+          'strategic-posture': 2,
+          'intel': 2,
+          'gdelt-intel': 2,
+          'cii': 2,
+          'cascade': 2,
+          'telegram-intel': 2,
+          'oref-sirens': 1,
+          'security-advisories': 2,
         };
-        for (const [key, span] of Object.entries(italiaSpans)) {
+        for (const [key, span] of Object.entries(defaultSpans)) {
           const panel = this.ctx.panels[key];
           if (panel && span > 1) {
             const el = panel.getElement();

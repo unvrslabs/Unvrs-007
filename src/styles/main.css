@@ -1317,16 +1317,19 @@ canvas,
 .panel.span-2 {
   grid-row: span 2 !important;
   min-height: 400px !important;
+  max-height: none !important;
 }
 
 .panel.span-3 {
   grid-row: span 3 !important;
   min-height: 600px !important;
+  max-height: none !important;
 }
 
 .panel.span-4 {
   grid-row: span 4 !important;
   min-height: 800px !important;
+  max-height: none !important;
 }
 
 .panel-resize-handle {
@@ -13465,6 +13468,7 @@ a.prediction-link:hover {
   justify-content: center;
   gap: 4px;
   padding: 6px 8px;
+  margin: 12px 0 8px;
   height: 48px;
   overflow-x: auto;
   scrollbar-width: none;
@@ -13478,6 +13482,44 @@ a.prediction-link:hover {
 /* Hide panels filtered out by the section tab bar */
 .panel.tab-hidden {
   display: none !important;
+}
+
+/* ============ Site Footer ============ */
+.site-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 24px 16px 32px;
+  font-size: 12px;
+  color: hsl(0 0% 100% / 0.35);
+  letter-spacing: 0.02em;
+}
+
+.site-footer a {
+  color: hsl(0 0% 100% / 0.55);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+.site-footer a:hover {
+  color: hsl(0 0% 100% / 0.85);
+}
+
+.footer-heart {
+  color: #e25555;
+  font-size: 14px;
+  display: inline-block;
+  animation: heartbeat 1.8s ease-in-out infinite;
+}
+
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  14% { transform: scale(1.2); }
+  28% { transform: scale(1); }
+  42% { transform: scale(1.15); }
+  56% { transform: scale(1); }
 }
 
 /* Responsive adjustments for deck.gl on smaller desktops */
