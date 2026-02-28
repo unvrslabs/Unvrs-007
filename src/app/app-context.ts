@@ -21,7 +21,7 @@ import type { GoodThingsDigestPanel } from '@/components/GoodThingsDigestPanel';
 import type { SpeciesComebackPanel } from '@/components/SpeciesComebackPanel';
 import type { RenewableEnergyPanel } from '@/components/RenewableEnergyPanel';
 import type { TvModeController } from '@/services/tv-mode';
-import type { BreakingNewsBanner } from '@/components/BreakingNewsBanner';
+import type { AgentSidebar } from '@/components/AgentSidebar';
 
 export interface CountryBriefSignals {
   protests: number;
@@ -78,8 +78,8 @@ export interface AppContext {
   signalModal: SignalModal | null;
   statusPanel: StatusPanel | null;
   searchModal: SearchModal | null;
+  agentSidebar: AgentSidebar | null;
   findingsBadge: IntelligenceGapBadge | null;
-  breakingBanner: BreakingNewsBanner | null;
   playbackControl: PlaybackControl | null;
   exportPanel: ExportPanel | null;
   unifiedSettings: UnifiedSettings | null;

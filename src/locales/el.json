@@ -203,8 +203,7 @@
     "techReadiness": "Δείκτης Τεχνολογικής Ετοιμότητας",
     "gccInvestments": "Επενδύσεις GCC",
     "geoHubs": "Γεωπολιτικά Κέντρα",
-    "liveWebcams": "Ζωντανές Κάμερες",
-    "securityAdvisories": "Προειδοποιήσεις Ασφαλείας"
+    "liveWebcams": "Ζωντανές Κάμερες"
   },
   "modals": {
     "search": {
@@ -606,8 +605,7 @@
       "error": "Αποτυχία φόρτωσης προβλέψεων",
       "yes": "Ναι",
       "no": "Όχι",
-      "vol": "Όγκ",
-      "closes": "Κλείνει"
+      "vol": "Όγκ"
     },
     "stablecoins": {
       "pegHealth": "Υγεία Σύνδεσης",
@@ -1314,28 +1312,6 @@
       "regionAsia": "Ασία",
       "regionMiddleEast": "Μέση Ανατολή",
       "regionAfrica": "Αφρική"
-    },
-    "securityAdvisories": {
-      "loading": "Φόρτωση ταξιδιωτικών οδηγιών...",
-      "noMatching": "Δεν βρέθηκαν οδηγίες για αυτό το φίλτρο",
-      "critical": "Κρίσιμο",
-      "health": "Υγεία",
-      "sources": "US State Dept, AU DFAT, UK FCDO, NZ MFAT, CDC, ECDC, WHO, US Embassies",
-      "refresh": "Ανανέωση",
-      "levels": {
-        "doNotTravel": "Μην ταξιδεύετε",
-        "reconsider": "Επανεξετάστε",
-        "caution": "Προσοχή",
-        "normal": "Κανονικό",
-        "info": "Πληροφορία"
-      },
-      "time": {
-        "justNow": "μόλις τώρα",
-        "minutesAgo": "{{count}} λεπτά πριν",
-        "hoursAgo": "{{count}} ώρες πριν",
-        "daysAgo": "{{count}} ημέρες πριν"
-      },
-      "infoTooltip": "<strong>Προειδοποιήσεις Ασφαλείας</strong><br>Ταξιδιωτικές οδηγίες και προειδοποιήσεις ασφαλείας."
     }
   },
   "popups": {
@@ -1973,7 +1949,6 @@
     "close": "Κλείσιμο",
     "currentVariant": "(τρέχον)",
     "retry": "Επανάληψη",
-    "refresh": "Ανανέωση",
-    "all": "Όλα"
+    "refresh": "Ανανέωση"
   }
 }

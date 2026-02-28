@@ -11,7 +11,7 @@ import type {
   GetSectorSummaryResponse,
   SectorPerformance,
 } from '../../../../src/generated/server/worldmonitor/market/v1/service_server';
-import { fetchFinnhubQuote, fetchYahooQuotesBatch } from './_shared';
+import { fetchFinnhubQuotesBatch, fetchYahooQuotesBatch } from './_shared';
 import { cachedFetchJson } from '../../../_shared/redis';
 
 const REDIS_CACHE_KEY = 'market:sectors:v1';
@@ -29,11 +29,9 @@ export async function getSectorSummary(
     const sectors: SectorPerformance[] = [];
 
     if (apiKey) {
-      const results = await Promise.all(
-        sectorSymbols.map((s) => fetchFinnhubQuote(s, apiKey)),
-      );
-      for (const r of results) {
-        if (r) sectors.push({ symbol: r.symbol, name: r.symbol, change: r.changePercent });
+      const batchResults = await fetchFinnhubQuotesBatch(sectorSymbols, apiKey);
+      for (const [sym, r] of batchResults) {
+        sectors.push({ symbol: sym, name: sym, change: r.changePercent });
       }
     }
 

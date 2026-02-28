@@ -1,10 +1,7 @@
-const WS_API_URL = import.meta.env.VITE_WS_API_URL || '';
-
 const DEFAULT_REMOTE_HOSTS: Record<string, string> = {
-  tech: WS_API_URL,
-  full: WS_API_URL,
-  world: WS_API_URL,
-  happy: WS_API_URL,
+  tech: 'https://tech.worldmonitor.app',
+  full: 'https://worldmonitor.app',
+  world: 'https://worldmonitor.app',
 };
 
 const DEFAULT_LOCAL_API_PORT = 46123;
@@ -113,7 +110,7 @@ export function getRemoteApiBaseUrl(): string {
   }
 
   const variant = import.meta.env.VITE_VARIANT || 'full';
-  return DEFAULT_REMOTE_HOSTS[variant] ?? DEFAULT_REMOTE_HOSTS.full ?? '';
+  return DEFAULT_REMOTE_HOSTS[variant] ?? DEFAULT_REMOTE_HOSTS.full ?? 'https://worldmonitor.app';
 }
 
 export function toRuntimeUrl(path: string): string {
@@ -129,23 +126,12 @@ export function toRuntimeUrl(path: string): string {
   return `${baseUrl}${path}`;
 }
 
-function extractHostnames(...urls: (string | undefined)[]): string[] {
-  const hosts: string[] = [];
-  for (const u of urls) {
-    if (!u) continue;
-    try { hosts.push(new URL(u).hostname); } catch {}
-  }
-  return hosts;
-}
-
 const APP_HOSTS = new Set([
   'worldmonitor.app',
   'www.worldmonitor.app',
   'tech.worldmonitor.app',
-  'api.worldmonitor.app',
   'localhost',
   '127.0.0.1',
-  ...extractHostnames(WS_API_URL, import.meta.env.VITE_WS_RELAY_URL),
 ]);
 
 function isAppOriginUrl(urlStr: string): boolean {
@@ -370,47 +356,4 @@ export function installRuntimeFetchPatch(): void {
   };
 
   (window as unknown as Record<string, unknown>).__wmFetchPatched = true;
-}
-
-const WEB_RPC_PATTERN = /^\/api\/[^/]+\/v1\//;
-const ALLOWED_REDIRECT_HOSTS = /^https:\/\/([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)*worldmonitor\.app(:\d+)?$/;
-
-function isAllowedRedirectTarget(url: string): boolean {
-  try {
-    const parsed = new URL(url);
-    return ALLOWED_REDIRECT_HOSTS.test(parsed.origin) || parsed.hostname === 'localhost';
-  } catch {
-    return false;
-  }
-}
-
-export function installWebApiRedirect(): void {
-  if (isDesktopRuntime() || typeof window === 'undefined') return;
-  if (!WS_API_URL) return;
-  if (!isAllowedRedirectTarget(WS_API_URL)) {
-    console.warn('[runtime] VITE_WS_API_URL blocked — not in hostname allowlist:', WS_API_URL);
-    return;
-  }
-  if ((window as unknown as Record<string, unknown>).__wmWebRedirectPatched) return;
-
-  const nativeFetch = window.fetch.bind(window);
-  const API_BASE = WS_API_URL;
-
-  window.fetch = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
-    if (typeof input === 'string' && WEB_RPC_PATTERN.test(input)) {
-      return nativeFetch(`${API_BASE}${input}`, init);
-    }
-    if (input instanceof URL && input.origin === window.location.origin && WEB_RPC_PATTERN.test(input.pathname)) {
-      return nativeFetch(new URL(`${API_BASE}${input.pathname}${input.search}`), init);
-    }
-    if (input instanceof Request) {
-      const u = new URL(input.url);
-      if (u.origin === window.location.origin && WEB_RPC_PATTERN.test(u.pathname)) {
-        return nativeFetch(new Request(`${API_BASE}${u.pathname}${u.search}`, input), init);
-      }
-    }
-    return nativeFetch(input, init);
-  };
-
-  (window as unknown as Record<string, unknown>).__wmWebRedirectPatched = true;
 }

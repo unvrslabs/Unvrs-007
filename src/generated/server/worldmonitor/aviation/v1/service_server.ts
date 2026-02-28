@@ -2,10 +2,14 @@
 // source: worldmonitor/aviation/v1/service.proto
 
 export interface ListAirportDelaysRequest {
-  pageSize: number;
-  cursor: string;
+  pagination?: PaginationRequest;
   region: AirportRegion;
   minSeverity: FlightDelaySeverity;
+}
+
+export interface PaginationRequest {
+  pageSize: number;
+  cursor: string;
 }
 
 export interface ListAirportDelaysResponse {
@@ -105,19 +109,12 @@ export function createAviationServiceRoutes(
 ): RouteDescriptor[] {
   return [
     {
-      method: "GET",
+      method: "POST",
       path: "/api/aviation/v1/list-airport-delays",
       handler: async (req: Request): Promise<Response> => {
         try {
           const pathParams: Record<string, string> = {};
-          const url = new URL(req.url, "http://localhost");
-          const params = url.searchParams;
-          const body: ListAirportDelaysRequest = {
-            pageSize: Number(params.get("page_size") ?? "0"),
-            cursor: params.get("cursor") ?? "",
-            region: (params.get("region") ?? "AIRPORT_REGION_UNSPECIFIED") as AirportRegion,
-            minSeverity: (params.get("min_severity") ?? "FLIGHT_DELAY_SEVERITY_UNSPECIFIED") as FlightDelaySeverity,
-          };
+          const body = await req.json() as ListAirportDelaysRequest;
           if (options?.validateRequest) {
             const bodyViolations = options.validateRequest("listAirportDelays", body);
             if (bodyViolations) {

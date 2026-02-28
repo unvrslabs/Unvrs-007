@@ -95,7 +95,6 @@ export async function getFredSeries(
   _ctx: ServerContext,
   req: GetFredSeriesRequest,
 ): Promise<GetFredSeriesResponse> {
-  if (!req.seriesId) return { series: undefined };
   try {
     const cacheKey = `${REDIS_CACHE_KEY}:${req.seriesId}:${req.limit || 0}`;
     const result = await cachedFetchJson<GetFredSeriesResponse>(cacheKey, REDIS_CACHE_TTL, async () => {

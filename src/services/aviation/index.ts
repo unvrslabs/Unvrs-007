@@ -99,8 +99,6 @@ export async function fetchFlightDelays(): Promise<AirportDelayAlert[]> {
     const response = await client.listAirportDelays({
       region: 'AIRPORT_REGION_UNSPECIFIED',
       minSeverity: 'FLIGHT_DELAY_SEVERITY_UNSPECIFIED',
-      pageSize: 0,
-      cursor: '',
     });
     return response.alerts.map(toDisplayAlert);
   }, []);

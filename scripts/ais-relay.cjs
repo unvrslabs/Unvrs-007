@@ -99,11 +99,7 @@ function sendCompressed(req, res, statusCode, headers, body) {
         safeEnd(res, statusCode, headers, body);
         return;
       }
-      const existingVary = String(res.getHeader('vary') || '');
-      const vary = existingVary.toLowerCase().includes('accept-encoding')
-        ? existingVary
-        : (existingVary ? `${existingVary}, Accept-Encoding` : 'Accept-Encoding');
-      safeEnd(res, statusCode, { ...headers, 'Content-Encoding': 'gzip', 'Vary': vary }, compressed);
+      safeEnd(res, statusCode, { ...headers, 'Content-Encoding': 'gzip', 'Vary': 'Accept-Encoding' }, compressed);
     });
   } else {
     safeEnd(res, statusCode, headers, body);
@@ -115,11 +111,7 @@ function sendPreGzipped(req, res, statusCode, headers, rawBody, gzippedBody) {
   if (res.headersSent || res.writableEnded) return;
   const acceptEncoding = req.headers['accept-encoding'] || '';
   if (acceptEncoding.includes('gzip') && gzippedBody) {
-    const existingVary = String(res.getHeader('vary') || '');
-    const vary = existingVary.toLowerCase().includes('accept-encoding')
-      ? existingVary
-      : (existingVary ? `${existingVary}, Accept-Encoding` : 'Accept-Encoding');
-    safeEnd(res, statusCode, { ...headers, 'Content-Encoding': 'gzip', 'Vary': vary }, gzippedBody);
+    safeEnd(res, statusCode, { ...headers, 'Content-Encoding': 'gzip', 'Vary': 'Accept-Encoding' }, gzippedBody);
   } else {
     safeEnd(res, statusCode, headers, rawBody);
   }
@@ -1146,7 +1138,6 @@ async function handleUcdpEventsRequest(req, res) {
     return sendCompressed(req, res, 200, {
       'Content-Type': 'application/json',
       'Cache-Control': 'public, max-age=3600',
-      'CDN-Cache-Control': 'public, max-age=3600',
       'X-Cache': 'HIT',
     }, JSON.stringify(ucdpCache.data));
   }
@@ -1164,7 +1155,6 @@ async function handleUcdpEventsRequest(req, res) {
     return sendCompressed(req, res, 200, {
       'Content-Type': 'application/json',
       'Cache-Control': 'public, max-age=600',
-      'CDN-Cache-Control': 'public, max-age=600',
       'X-Cache': 'STALE',
     }, JSON.stringify(ucdpCache.data));
   }
@@ -1185,7 +1175,6 @@ async function handleUcdpEventsRequest(req, res) {
     sendCompressed(req, res, 200, {
       'Content-Type': 'application/json',
       'Cache-Control': 'public, max-age=3600',
-      'CDN-Cache-Control': 'public, max-age=3600',
       'X-Cache': 'MISS',
     }, JSON.stringify(result));
   } catch (err) {
@@ -1484,7 +1473,6 @@ async function handleOpenSkyRequest(req, res, PORT) {
       return sendPreGzipped(req, res, 200, {
         'Content-Type': 'application/json',
         'Cache-Control': 'public, max-age=30',
-        'CDN-Cache-Control': 'public, max-age=15',
         'X-Cache': 'HIT',
       }, cached.data, cached.gzip);
     }
@@ -1497,7 +1485,6 @@ async function handleOpenSkyRequest(req, res, PORT) {
       return sendPreGzipped(req, res, 200, {
         'Content-Type': 'application/json',
         'Cache-Control': 'no-cache',
-        'CDN-Cache-Control': 'no-store',
         'X-Cache': 'NEG',
       }, negCached.body, negCached.gzip);
     }
@@ -1511,7 +1498,6 @@ async function handleOpenSkyRequest(req, res, PORT) {
       return sendCompressed(req, res, 200, {
         'Content-Type': 'application/json',
         'Cache-Control': 'no-cache',
-        'CDN-Cache-Control': 'no-store',
         'X-Cache': 'RATE-LIMITED',
       }, JSON.stringify({ states: [], time: Date.now() }));
     }
@@ -1529,7 +1515,6 @@ async function handleOpenSkyRequest(req, res, PORT) {
         return sendPreGzipped(req, res, 200, {
           'Content-Type': 'application/json',
           'Cache-Control': 'public, max-age=30',
-          'CDN-Cache-Control': 'public, max-age=15',
           'X-Cache': 'DEDUP',
         }, deduped.data, deduped.gzip);
       }
@@ -1540,7 +1525,6 @@ async function handleOpenSkyRequest(req, res, PORT) {
         return sendPreGzipped(req, res, 200, {
           'Content-Type': 'application/json',
           'Cache-Control': 'no-cache',
-          'CDN-Cache-Control': 'no-store',
           'X-Cache': 'DEDUP-NEG',
         }, dedupNeg.body, dedupNeg.gzip);
       }
@@ -1549,7 +1533,6 @@ async function handleOpenSkyRequest(req, res, PORT) {
       return sendPreGzipped(req, res, 200, {
         'Content-Type': 'application/json',
         'Cache-Control': 'no-cache',
-        'CDN-Cache-Control': 'no-store',
         'X-Cache': 'DEDUP-EMPTY',
       }, OPENSKY_DEDUP_EMPTY_RESPONSE_JSON, OPENSKY_DEDUP_EMPTY_RESPONSE_GZIP);
     }
@@ -1616,14 +1599,13 @@ async function handleOpenSkyRequest(req, res, PORT) {
 
     // Serve stale cache on network errors
     if (result.error && cached) {
-      return sendPreGzipped(req, res, 200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', 'CDN-Cache-Control': 'no-store', 'X-Cache': 'STALE' }, cached.data, cached.gzip);
+      return sendPreGzipped(req, res, 200, { 'Content-Type': 'application/json', 'X-Cache': 'STALE' }, cached.data, cached.gzip);
     }
 
     const responseData = result.data || JSON.stringify({ error: result.error?.message || 'upstream error', time: Date.now(), states: null });
     return sendCompressed(req, res, upstreamStatus, {
       'Content-Type': 'application/json',
       'Cache-Control': upstreamStatus === 200 ? 'public, max-age=30' : 'no-cache',
-      'CDN-Cache-Control': upstreamStatus === 200 ? 'public, max-age=15' : 'no-store',
       'X-Cache': result.rateLimited ? 'RATE-LIMITED' : 'MISS',
     }, responseData);
   } catch (err) {
@@ -1656,7 +1638,6 @@ function handleWorldBankRequest(req, res) {
     return sendCompressed(req, res, 200, {
       'Content-Type': 'application/json',
       'Cache-Control': 'public, max-age=1800',
-      'CDN-Cache-Control': 'public, max-age=1800',
       'X-Cache': 'HIT',
     }, cached.data);
   }
@@ -1699,7 +1680,6 @@ function handleWorldBankRequest(req, res) {
     return sendCompressed(req, res, 200, {
       'Content-Type': 'application/json',
       'Cache-Control': 'public, max-age=86400',
-      'CDN-Cache-Control': 'public, max-age=86400',
       'X-Cache': 'MISS',
     }, body);
   }
@@ -1754,8 +1734,8 @@ function handleWorldBankRequest(req, res) {
     timeout: 15000,
   }, (response) => {
     if (response.statusCode !== 200) {
-      safeEnd(res, response.statusCode, { 'Content-Type': 'application/json' }, JSON.stringify({ error: `World Bank API ${response.statusCode}` }));
-      return;
+      res.writeHead(response.statusCode, { 'Content-Type': 'application/json' });
+      return res.end(JSON.stringify({ error: `World Bank API ${response.statusCode}` }));
     }
     let rawData = '';
     response.on('data', chunk => rawData += chunk);
@@ -1774,7 +1754,6 @@ function handleWorldBankRequest(req, res) {
           return sendCompressed(req, res, 200, {
             'Content-Type': 'application/json',
             'Cache-Control': 'public, max-age=1800',
-            'CDN-Cache-Control': 'public, max-age=1800',
             'X-Cache': 'MISS',
           }, empty);
         }
@@ -1808,12 +1787,12 @@ function handleWorldBankRequest(req, res) {
         sendCompressed(req, res, 200, {
           'Content-Type': 'application/json',
           'Cache-Control': 'public, max-age=1800',
-          'CDN-Cache-Control': 'public, max-age=1800',
           'X-Cache': 'MISS',
         }, body);
       } catch (e) {
         console.error('[Relay] World Bank parse error:', e.message);
-        safeEnd(res, 500, { 'Content-Type': 'application/json' }, JSON.stringify({ error: 'Parse error' }));
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Parse error' }));
       }
     });
   });
@@ -1822,114 +1801,30 @@ function handleWorldBankRequest(req, res) {
     if (cached) {
       return sendCompressed(req, res, 200, {
         'Content-Type': 'application/json',
-        'Cache-Control': 'no-store',
-        'CDN-Cache-Control': 'no-store',
         'X-Cache': 'STALE',
       }, cached.data);
     }
-    safeEnd(res, 502, { 'Content-Type': 'application/json' }, JSON.stringify({ error: err.message }));
+    res.writeHead(502, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: err.message }));
   });
   request.on('timeout', () => {
     request.destroy();
     if (cached) {
       return sendCompressed(req, res, 200, {
         'Content-Type': 'application/json',
-        'Cache-Control': 'no-store',
-        'CDN-Cache-Control': 'no-store',
         'X-Cache': 'STALE',
       }, cached.data);
     }
-    safeEnd(res, 504, { 'Content-Type': 'application/json' }, JSON.stringify({ error: 'World Bank request timeout' }));
+    res.writeHead(504, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'World Bank request timeout' }));
   });
 }
 
 // ── Polymarket proxy (Cloudflare JA3 blocks Vercel edge runtime) ──
-const POLYMARKET_ENABLED = String(process.env.POLYMARKET_ENABLED || 'true').toLowerCase() !== 'false';
 const polymarketCache = new Map(); // key: query string → { data, timestamp }
-const polymarketInflight = new Map(); // key → Promise (dedup concurrent requests)
 const POLYMARKET_CACHE_TTL_MS = 2 * 60 * 1000; // 2 min — market data changes frequently
-const POLYMARKET_NEG_TTL_MS = 60 * 1000; // 60s negative cache on 429/error
-
-// Circuit breaker — stops upstream requests after repeated failures to prevent OOM
-const polymarketCircuitBreaker = { failures: 0, openUntil: 0 };
-const POLYMARKET_CB_THRESHOLD = 5;
-const POLYMARKET_CB_COOLDOWN_MS = 60 * 1000;
-
-// Concurrent upstream limiter — caps in-flight upstream requests
-const POLYMARKET_MAX_CONCURRENT = 3;
-let polymarketActiveUpstream = 0;
-
-function tripPolymarketCircuitBreaker() {
-  polymarketCircuitBreaker.failures++;
-  if (polymarketCircuitBreaker.failures >= POLYMARKET_CB_THRESHOLD) {
-    polymarketCircuitBreaker.openUntil = Date.now() + POLYMARKET_CB_COOLDOWN_MS;
-    console.error(`[Relay] Polymarket circuit OPEN — cooling down ${POLYMARKET_CB_COOLDOWN_MS / 1000}s`);
-  }
-}
-
-function fetchPolymarketUpstream(cacheKey, endpoint, params, tag) {
-  if (polymarketActiveUpstream >= POLYMARKET_MAX_CONCURRENT) {
-    polymarketCache.set(cacheKey, { data: '[]', timestamp: Date.now() - POLYMARKET_CACHE_TTL_MS + POLYMARKET_NEG_TTL_MS });
-    return Promise.resolve(null);
-  }
-
-  const gammaUrl = `https://gamma-api.polymarket.com/${endpoint}?${params}`;
-  console.log('[Relay] Polymarket request (MISS):', endpoint, tag || '');
-  polymarketActiveUpstream++;
-
-  return new Promise((resolve) => {
-    let finalized = false;
-    function finalize(ok) {
-      if (finalized) return;
-      finalized = true;
-      polymarketActiveUpstream--;
-      if (ok) {
-        polymarketCircuitBreaker.failures = 0;
-      } else {
-        tripPolymarketCircuitBreaker();
-        polymarketCache.set(cacheKey, { data: '[]', timestamp: Date.now() - POLYMARKET_CACHE_TTL_MS + POLYMARKET_NEG_TTL_MS });
-      }
-    }
-    const request = https.get(gammaUrl, {
-      headers: { 'Accept': 'application/json' },
-      timeout: 10000,
-    }, (response) => {
-      if (response.statusCode !== 200) {
-        console.error(`[Relay] Polymarket upstream ${response.statusCode} (failures: ${polymarketCircuitBreaker.failures + 1})`);
-        response.resume();
-        finalize(false);
-        resolve(null);
-        return;
-      }
-      let data = '';
-      response.on('data', chunk => data += chunk);
-      response.on('end', () => {
-        finalize(true);
-        polymarketCache.set(cacheKey, { data, timestamp: Date.now() });
-        resolve(data);
-      });
-      response.on('error', () => { finalize(false); });
-    });
-    request.on('error', (err) => {
-      console.error('[Relay] Polymarket error:', err.message);
-      finalize(false);
-      resolve(null);
-    });
-    request.on('timeout', () => {
-      request.destroy();
-      finalize(false);
-      resolve(null);
-    });
-  });
-}
 
 function handlePolymarketRequest(req, res) {
-  if (!POLYMARKET_ENABLED) {
-    return sendCompressed(req, res, 503, {
-      'Content-Type': 'application/json',
-      'Cache-Control': 'no-store',
-    }, JSON.stringify({ error: 'polymarket disabled', reason: 'POLYMARKET_ENABLED=false' }));
-  }
   const url = new URL(req.url, `http://localhost:${PORT}`);
   const cacheKey = url.search || '';
 
@@ -1938,24 +1833,9 @@ function handlePolymarketRequest(req, res) {
     return sendCompressed(req, res, 200, {
       'Content-Type': 'application/json',
       'Cache-Control': 'public, max-age=120',
-      'CDN-Cache-Control': 'public, max-age=120',
       'X-Cache': 'HIT',
       'X-Polymarket-Source': 'railway-cache',
     }, cached.data);
-  }
-
-  // Circuit breaker open — serve stale cache or empty, skip upstream
-  if (Date.now() < polymarketCircuitBreaker.openUntil) {
-    if (cached) {
-      return sendCompressed(req, res, 200, {
-        'Content-Type': 'application/json',
-        'Cache-Control': 'no-store',
-        'X-Cache': 'STALE',
-        'X-Circuit': 'OPEN',
-        'X-Polymarket-Source': 'railway-stale',
-      }, cached.data);
-    }
-    return safeEnd(res, 200, { 'Content-Type': 'application/json', 'X-Circuit': 'OPEN' }, JSON.stringify([]));
   }
 
   const endpoint = url.searchParams.get('endpoint') || 'markets';
@@ -1968,34 +1848,53 @@ function handlePolymarketRequest(req, res) {
   const tag = url.searchParams.get('tag') || url.searchParams.get('tag_slug');
   if (tag && endpoint === 'events') params.set('tag_slug', tag.replace(/[^a-z0-9-]/gi, '').slice(0, 100));
 
-  let inflight = polymarketInflight.get(cacheKey);
-  if (!inflight) {
-    inflight = fetchPolymarketUpstream(cacheKey, endpoint, params, tag).finally(() => {
-      polymarketInflight.delete(cacheKey);
-    });
-    polymarketInflight.set(cacheKey, inflight);
-  }
+  const gammaUrl = `https://gamma-api.polymarket.com/${endpoint}?${params}`;
+  console.log('[Relay] Polymarket request (MISS):', endpoint, tag || '');
 
-  inflight.then((data) => {
-    if (data) {
+  const request = https.get(gammaUrl, {
+    headers: { 'Accept': 'application/json' },
+    timeout: 10000,
+  }, (response) => {
+    if (response.statusCode !== 200) {
+      console.error(`[Relay] Polymarket upstream ${response.statusCode}`);
+      res.writeHead(response.statusCode, { 'Content-Type': 'application/json' });
+      return res.end(JSON.stringify([]));
+    }
+    let data = '';
+    response.on('data', chunk => data += chunk);
+    response.on('end', () => {
+      polymarketCache.set(cacheKey, { data, timestamp: Date.now() });
       sendCompressed(req, res, 200, {
         'Content-Type': 'application/json',
         'Cache-Control': 'public, max-age=120',
-        'CDN-Cache-Control': 'public, max-age=120',
         'X-Cache': 'MISS',
         'X-Polymarket-Source': 'railway',
       }, data);
-    } else if (cached) {
-      sendCompressed(req, res, 200, {
+    });
+  });
+  request.on('error', (err) => {
+    console.error('[Relay] Polymarket error:', err.message);
+    if (cached) {
+      return sendCompressed(req, res, 200, {
         'Content-Type': 'application/json',
-        'Cache-Control': 'no-store',
-        'CDN-Cache-Control': 'no-store',
         'X-Cache': 'STALE',
         'X-Polymarket-Source': 'railway-stale',
       }, cached.data);
-    } else {
-      safeEnd(res, 200, { 'Content-Type': 'application/json' }, JSON.stringify([]));
     }
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify([]));
+  });
+  request.on('timeout', () => {
+    request.destroy();
+    if (cached) {
+      return sendCompressed(req, res, 200, {
+        'Content-Type': 'application/json',
+        'X-Cache': 'STALE',
+        'X-Polymarket-Source': 'railway-stale',
+      }, cached.data);
+    }
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify([]));
   });
 }
 
@@ -2063,10 +1962,6 @@ const server = http.createServer(async (req, res) => {
     return res.end();
   }
 
-  // NOTE: With Cloudflare edge caching (CDN-Cache-Control), authenticated responses may be
-  // served to unauthenticated requests from edge cache. This is acceptable — all proxied data
-  // is public (RSS, WorldBank, UCDP, Polymarket, OpenSky, AIS). Auth exists for abuse
-  // prevention (rate limiting), not data protection. Cloudflare WAF provides edge-level protection.
   const isPublicRoute = pathname === '/health' || pathname === '/';
   if (!isPublicRoute) {
     if (!isAuthorizedRequest(req)) {
@@ -2116,7 +2011,6 @@ const server = http.createServer(async (req, res) => {
         ucdp: ucdpCache.data ? 'warm' : 'cold',
         worldbank: worldbankCache.size,
         polymarket: polymarketCache.size,
-        polymarketInflight: polymarketInflight.size,
       },
       auth: {
         sharedSecretEnabled: !!RELAY_SHARED_SECRET,
@@ -2148,7 +2042,6 @@ const server = http.createServer(async (req, res) => {
       sendPreGzipped(req, res, 200, {
         'Content-Type': 'application/json',
         'Cache-Control': 'public, max-age=2',
-        'CDN-Cache-Control': 'public, max-age=10',
       }, json, gz);
     } else {
       // Cold start fallback
@@ -2156,7 +2049,6 @@ const server = http.createServer(async (req, res) => {
       sendCompressed(req, res, 200, {
         'Content-Type': 'application/json',
         'Cache-Control': 'public, max-age=2',
-        'CDN-Cache-Control': 'public, max-age=10',
       }, JSON.stringify(payload));
     }
   } else if (pathname === '/opensky-reset') {
@@ -2169,7 +2061,7 @@ const server = http.createServer(async (req, res) => {
     console.log('[Relay] OpenSky auth + rate-limit state reset via /opensky-reset');
     const tokenStart = Date.now();
     const token = await getOpenSkyToken();
-    return sendCompressed(req, res, 200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', 'CDN-Cache-Control': 'no-store' }, JSON.stringify({
+    return sendCompressed(req, res, 200, { 'Content-Type': 'application/json' }, JSON.stringify({
       reset: true,
       tokenAcquired: !!token,
       latencyMs: Date.now() - tokenStart,
@@ -2259,7 +2151,6 @@ const server = http.createServer(async (req, res) => {
       sendCompressed(req, res, 200, {
         'Content-Type': 'application/json',
         'Cache-Control': 'public, max-age=10',
-        'CDN-Cache-Control': 'public, max-age=10',
       }, JSON.stringify({
         source: 'telegram',
         earlySignal: true,
@@ -2308,14 +2199,10 @@ const server = http.createServer(async (req, res) => {
         'feeds.capi24.com',  // News24 redirect destination
         'islandtimes.org',
         'www.atlanticcouncil.org',
+        // RSSHub (NHK, MIIT, MOFCOM)
+        'rsshub.app',
       ];
       const parsed = new URL(feedUrl);
-      // Block deprecated/stale feed domains — stale clients still request these
-      const blockedDomains = ['rsshub.app'];
-      if (blockedDomains.includes(parsed.hostname)) {
-        res.writeHead(410, { 'Content-Type': 'application/json' });
-        return res.end(JSON.stringify({ error: 'Feed deprecated' }));
-      }
       if (!allowedDomains.includes(parsed.hostname)) {
         res.writeHead(403, { 'Content-Type': 'application/json' });
         return res.end(JSON.stringify({ error: 'Domain not allowed on Railway proxy' }));
@@ -2330,7 +2217,6 @@ const server = http.createServer(async (req, res) => {
           return sendCompressed(req, res, rssCached.statusCode || 200, {
             'Content-Type': rssCached.contentType || 'application/xml',
             'Cache-Control': rssCached.statusCode >= 200 && rssCached.statusCode < 300 ? 'public, max-age=300' : 'no-cache',
-            'CDN-Cache-Control': rssCached.statusCode >= 200 && rssCached.statusCode < 300 ? 'public, max-age=600, stale-while-revalidate=300' : 'no-store',
             'X-Cache': 'HIT',
           }, rssCached.data);
         }
@@ -2347,7 +2233,6 @@ const server = http.createServer(async (req, res) => {
             return sendCompressed(req, res, deduped.statusCode || 200, {
               'Content-Type': deduped.contentType || 'application/xml',
               'Cache-Control': deduped.statusCode >= 200 && deduped.statusCode < 300 ? 'public, max-age=300' : 'no-cache',
-              'CDN-Cache-Control': deduped.statusCode >= 200 && deduped.statusCode < 300 ? 'public, max-age=600, stale-while-revalidate=300' : 'no-store',
               'X-Cache': 'DEDUP',
             }, deduped.data);
           }
@@ -2422,7 +2307,6 @@ const server = http.createServer(async (req, res) => {
             sendCompressed(req, res, response.statusCode, {
               'Content-Type': 'application/xml',
               'Cache-Control': response.statusCode >= 200 && response.statusCode < 300 ? 'public, max-age=300' : 'no-cache',
-              'CDN-Cache-Control': response.statusCode >= 200 && response.statusCode < 300 ? 'public, max-age=600, stale-while-revalidate=300' : 'no-store',
               'X-Cache': 'MISS',
             }, data);
           });
@@ -2438,7 +2322,7 @@ const server = http.createServer(async (req, res) => {
           if (rssCached) {
             if (!responseHandled && !res.headersSent) {
               responseHandled = true;
-              sendCompressed(req, res, 200, { 'Content-Type': 'application/xml', 'Cache-Control': 'no-store', 'CDN-Cache-Control': 'no-store', 'X-Cache': 'STALE' }, rssCached.data);
+              sendCompressed(req, res, 200, { 'Content-Type': 'application/xml', 'X-Cache': 'STALE' }, rssCached.data);
             }
             resolveInFlight();
             return;
@@ -2450,7 +2334,7 @@ const server = http.createServer(async (req, res) => {
           request.destroy();
           if (rssCached && !responseHandled && !res.headersSent) {
             responseHandled = true;
-            sendCompressed(req, res, 200, { 'Content-Type': 'application/xml', 'Cache-Control': 'no-store', 'CDN-Cache-Control': 'no-store', 'X-Cache': 'STALE' }, rssCached.data);
+            sendCompressed(req, res, 200, { 'Content-Type': 'application/xml', 'X-Cache': 'STALE' }, rssCached.data);
             resolveInFlight();
             return;
           }

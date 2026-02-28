@@ -177,7 +177,6 @@ const allLayersEnabled: MapLayers = {
   speciesRecovery: false,
   renewableInstallations: false,
   tradeRoutes: true,
-  iranAttacks: false,
 };
 
 const allLayersDisabled: MapLayers = {
@@ -222,7 +221,6 @@ const allLayersDisabled: MapLayers = {
   speciesRecovery: false,
   renewableInstallations: false,
   tradeRoutes: false,
-  iranAttacks: false,
 };
 
 const SEEDED_NEWS_LOCATIONS: Array<{

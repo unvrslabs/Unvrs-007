@@ -12,7 +12,6 @@ import {
   LAYER_TO_SOURCE,
 } from '@/config';
 import { INTEL_HOTSPOTS, CONFLICT_ZONES } from '@/config/geo';
-import { tokenizeForMatch, matchKeyword } from '@/utils/keyword-match';
 import {
   fetchCategoryFeeds,
   getFeedFailures,
@@ -57,7 +56,6 @@ import {
   fetchChokepointStatus,
   fetchCriticalMinerals,
 } from '@/services';
-import { checkBatchForBreakingAlerts } from '@/services/breaking-news-alerts';
 import { mlWorker } from '@/services/ml-worker';
 import { clusterNewsHybrid } from '@/services/clustering';
 import { ingestProtests, ingestFlights, ingestVessels, ingestEarthquakes, detectGeoConvergence, geoConvergenceToSignal } from '@/services/geo-convergence';
@@ -68,17 +66,14 @@ import { analyzeFlightsForSurge, surgeAlertToSignal, detectForeignMilitaryPresen
 import { fetchCachedTheaterPosture } from '@/services/cached-theater-posture';
 import { ingestProtestsForCII, ingestMilitaryForCII, ingestNewsForCII, ingestOutagesForCII, ingestConflictsForCII, ingestUcdpForCII, ingestHapiForCII, ingestDisplacementForCII, ingestClimateForCII, isInLearningMode } from '@/services/country-instability';
 import { dataFreshness, type DataSourceId } from '@/services/data-freshness';
-import { fetchConflictEvents, fetchUcdpClassifications, fetchHapiSummary, fetchUcdpEvents, deduplicateAgainstAcled, fetchIranEvents } from '@/services/conflict';
+import { fetchConflictEvents, fetchUcdpClassifications, fetchHapiSummary, fetchUcdpEvents, deduplicateAgainstAcled } from '@/services/conflict';
 import { fetchUnhcrPopulation } from '@/services/displacement';
 import { fetchClimateAnomalies } from '@/services/climate';
-import { fetchSecurityAdvisories } from '@/services/security-advisories';
 import { enrichEventsWithExposure } from '@/services/population-exposure';
 import { debounce, getCircuitBreakerCooldownInfo } from '@/utils';
 import { isFeatureAvailable } from '@/services/runtime-config';
 import { getAiFlowSettings } from '@/services/ai-flow-settings';
 import { t } from '@/services/i18n';
-import { getHydratedData } from '@/services/bootstrap';
-import type { GetSectorSummaryResponse } from '@/generated/client/worldmonitor/market/v1/service_client';
 import { maybeShowDownloadBanner } from '@/components/DownloadBanner';
 import { ResearchServiceClient } from '@/generated/client/worldmonitor/research/v1/service_client';
 import {
@@ -99,7 +94,6 @@ import {
   PopulationExposurePanel,
   TradePolicyPanel,
   SupplyChainPanel,
-  SecurityAdvisoriesPanel,
 } from '@/components';
 import { SatelliteFiresPanel } from '@/components/SatelliteFiresPanel';
 import { classifyNewsItem } from '@/services/positive-classifier';
@@ -239,7 +233,6 @@ export class DataLoaderManager implements AppModule {
     if (SITE_VARIANT !== 'happy' && this.ctx.mapLayers.cables) tasks.push({ name: 'cableHealth', task: runGuarded('cableHealth', () => this.loadCableHealth()) });
     if (SITE_VARIANT !== 'happy' && this.ctx.mapLayers.flights) tasks.push({ name: 'flights', task: runGuarded('flights', () => this.loadFlightDelays()) });
     if (SITE_VARIANT !== 'happy' && CYBER_LAYER_ENABLED && this.ctx.mapLayers.cyberThreats) tasks.push({ name: 'cyberThreats', task: runGuarded('cyberThreats', () => this.loadCyberThreats()) });
-    if (SITE_VARIANT !== 'happy' && this.ctx.mapLayers.iranAttacks) tasks.push({ name: 'iranAttacks', task: runGuarded('iranAttacks', () => this.loadIranEvents()) });
     if (SITE_VARIANT !== 'happy' && (this.ctx.mapLayers.techEvents || SITE_VARIANT === 'tech')) tasks.push({ name: 'techEvents', task: runGuarded('techEvents', () => this.loadTechEvents()) });
 
     if (SITE_VARIANT === 'tech') {
@@ -304,9 +297,6 @@ export class DataLoaderManager implements AppModule {
         case 'kindness':
           this.loadKindnessData();
           break;
-        case 'iranAttacks':
-          await this.loadIranEvents();
-          break;
         case 'ucdpEvents':
         case 'displacement':
         case 'climate':
@@ -320,7 +310,7 @@ export class DataLoaderManager implements AppModule {
   }
 
   private findFlashLocation(title: string): { lat: number; lon: number } | null {
-    const tokens = tokenizeForMatch(title);
+    const titleLower = title.toLowerCase();
     let bestMatch: { lat: number; lon: number; matches: number } | null = null;
 
     const countKeywordMatches = (keywords: string[] | undefined): number => {
@@ -328,7 +318,7 @@ export class DataLoaderManager implements AppModule {
       let matches = 0;
       for (const keyword of keywords) {
         const cleaned = keyword.trim().toLowerCase();
-        if (cleaned.length >= 3 && matchKeyword(tokens, cleaned)) {
+        if (cleaned.length >= 3 && titleLower.includes(cleaned)) {
           matches++;
         }
       }
@@ -484,7 +474,6 @@ export class DataLoaderManager implements AppModule {
         onBatch: (partialItems) => {
           scheduleRender(partialItems);
           this.flashMapForNews(partialItems);
-          checkBatchForBreakingAlerts(partialItems);
         },
       });
 
@@ -580,7 +569,6 @@ export class DataLoaderManager implements AppModule {
         const intelResult = await Promise.allSettled([fetchCategoryFeeds(enabledIntelSources)]);
         if (intelResult[0]?.status === 'fulfilled') {
           const intel = intelResult[0].value;
-          checkBatchForBreakingAlerts(intel);
           this.renderNewsForCategory('intel', intel);
           if (intelPanel) {
             try {
@@ -602,7 +590,6 @@ export class DataLoaderManager implements AppModule {
     this.ctx.allNews = collectedNews;
     this.ctx.initialLoadComplete = true;
     maybeShowDownloadBanner();
-    // Disabled for white-label deploy on world.unvrslabs.dev
     // mountCommunityWidget();
     updateAndCheck([
       { type: 'news', region: 'global', count: collectedNews.length },
@@ -676,25 +663,19 @@ export class DataLoaderManager implements AppModule {
       } else {
         this.ctx.statusPanel?.updateApi('Finnhub', { status: 'ok' });
 
-        const hydratedSectors = getHydratedData('sectors') as GetSectorSummaryResponse | undefined;
-        if (hydratedSectors?.sectors?.length) {
-          const mapped = hydratedSectors.sectors.map((s) => ({ name: s.name, change: s.change }));
-          (this.ctx.panels['heatmap'] as HeatmapPanel).renderHeatmap(mapped);
-        } else {
-          const sectorsResult = await fetchMultipleStocks(
-            SECTORS.map((s) => ({ ...s, display: s.name })),
-            {
-              onBatch: (partialSectors) => {
-                (this.ctx.panels['heatmap'] as HeatmapPanel).renderHeatmap(
-                  partialSectors.map((s) => ({ name: s.name, change: s.change }))
-                );
-              },
-            }
-          );
-          (this.ctx.panels['heatmap'] as HeatmapPanel).renderHeatmap(
-            sectorsResult.data.map((s) => ({ name: s.name, change: s.change }))
-          );
-        }
+        const sectorsResult = await fetchMultipleStocks(
+          SECTORS.map((s) => ({ ...s, display: s.name })),
+          {
+            onBatch: (partialSectors) => {
+              (this.ctx.panels['heatmap'] as HeatmapPanel).renderHeatmap(
+                partialSectors.map((s) => ({ name: s.name, change: s.change }))
+              );
+            },
+          }
+        );
+        (this.ctx.panels['heatmap'] as HeatmapPanel).renderHeatmap(
+          sectorsResult.data.map((s) => ({ name: s.name, change: s.change }))
+        );
       }
 
       const commoditiesPanel = this.ctx.panels['commodities'] as CommoditiesPanel;
@@ -1069,9 +1050,6 @@ export class DataLoaderManager implements AppModule {
       }
     })());
 
-    // Security advisories
-    tasks.push(this.loadSecurityAdvisories());
-
     await Promise.allSettled(tasks);
 
     try {
@@ -1151,16 +1129,6 @@ export class DataLoaderManager implements AppModule {
       this.ctx.statusPanel?.updateFeed('Cyber Threats', { status: 'error', errorMessage: String(error) });
       this.ctx.statusPanel?.updateApi('Cyber Threats API', { status: 'error' });
       dataFreshness.recordError('cyber_threats', String(error));
-    }
-  }
-
-  async loadIranEvents(): Promise<void> {
-    try {
-      const events = await fetchIranEvents();
-      this.ctx.map?.setIranEvents(events);
-      this.ctx.map?.setLayerReady('iranAttacks', events.length > 0);
-    } catch {
-      this.ctx.map?.setLayerReady('iranAttacks', false);
     }
   }
 
@@ -1894,17 +1862,6 @@ export class DataLoaderManager implements AppModule {
       this.ctx.renewablePanel?.setCapacityData(capacity);
     } catch {
       // EIA failure does not break the existing World Bank gauge
-    }
-  }
-
-  async loadSecurityAdvisories(): Promise<void> {
-    try {
-      const result = await fetchSecurityAdvisories();
-      if (result.ok) {
-        (this.ctx.panels['security-advisories'] as SecurityAdvisoriesPanel)?.setData(result.advisories);
-      }
-    } catch (error) {
-      console.error('[App] Security advisories fetch failed:', error);
     }
   }
 }

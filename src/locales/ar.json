@@ -203,8 +203,7 @@
     "techReadiness": "مؤشر الجاهزية التقنية",
     "gccInvestments": "استثمارات دول الخليج",
     "geoHubs": "مراكز جيوسياسية",
-    "liveWebcams": "كاميرات مباشرة",
-    "securityAdvisories": "تنبيهات أمنية"
+    "liveWebcams": "كاميرات مباشرة"
   },
   "modals": {
     "search": {
@@ -578,8 +577,7 @@
       "error": "فشل تحميل التنبؤات",
       "yes": "نعم",
       "no": "لا",
-      "vol": "الحجم",
-      "closes": "يغلق"
+      "vol": "الحجم"
     },
     "stablecoins": {
       "pegHealth": "صحة الربط",
@@ -1287,28 +1285,6 @@
       "regionAsia": "آسيا",
       "regionMiddleEast": "الشرق الأوسط",
       "regionAfrica": "أفريقيا"
-    },
-    "securityAdvisories": {
-      "loading": "جاري جلب التحذيرات الأمنية...",
-      "noMatching": "لا توجد تحذيرات مطابقة لهذا الفلتر",
-      "critical": "حرج",
-      "health": "صحة",
-      "sources": "وزارة الخارجية الأمريكية، DFAT الأسترالية، FCDO البريطانية، MFAT النيوزيلندية, CDC, ECDC, WHO, US Embassies",
-      "refresh": "تحديث",
-      "levels": {
-        "doNotTravel": "لا تسافر",
-        "reconsider": "أعد التفكير في السفر",
-        "caution": "توخي الحذر",
-        "normal": "عادي",
-        "info": "معلومات"
-      },
-      "time": {
-        "justNow": "الآن",
-        "minutesAgo": "منذ {{count}} دقيقة",
-        "hoursAgo": "منذ {{count}} ساعة",
-        "daysAgo": "منذ {{count}} يوم"
-      },
-      "infoTooltip": "<strong>تنبيهات أمنية</strong><br>تحذيرات السفر والتنبيهات الأمنية من الوكالات الحكومية."
     }
   },
   "popups": {
@@ -1946,7 +1922,6 @@
     "close": "إغلاق",
     "currentVariant": "(الحالي)",
     "retry": "Retry",
-    "refresh": "Refresh",
-    "all": "الكل"
+    "refresh": "Refresh"
   }
 }

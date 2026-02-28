@@ -41,7 +41,6 @@ export class NewsPanel extends Panel {
   private summaryBtn: HTMLButtonElement | null = null;
   private summaryContainer: HTMLElement | null = null;
   private currentHeadlines: string[] = [];
-  private lastHeadlineSignature = '';
   private isSummarizing = false;
 
   constructor(id: string, title: string) {
@@ -154,14 +153,8 @@ export class NewsPanel extends Panel {
     this.summaryContainer.style.display = 'block';
     this.summaryContainer.innerHTML = `<div class="panel-summary-loading">${t('components.newsPanel.generatingSummary')}</div>`;
 
-    const sigAtStart = this.lastHeadlineSignature;
-
     try {
-      const result = await generateSummary(this.currentHeadlines.slice(0, 8), undefined, this.panelId, currentLang);
-      if (this.lastHeadlineSignature !== sigAtStart) {
-        this.hideSummary();
-        return;
-      }
+      const result = await generateSummary(this.currentHeadlines.slice(0, 8), undefined, undefined, currentLang);
       if (result?.summary) {
         this.setCachedSummary(cacheKey, result.summary);
         this.showSummary(result.summary);
@@ -230,29 +223,16 @@ export class NewsPanel extends Panel {
     this.summaryContainer.innerHTML = '';
   }
 
-  private getHeadlineSignature(): string {
-    return JSON.stringify(this.currentHeadlines.slice(0, 5).sort());
-  }
-
-  private updateHeadlineSignature(): void {
-    const newSig = this.getHeadlineSignature();
-    if (newSig !== this.lastHeadlineSignature) {
-      this.lastHeadlineSignature = newSig;
-      if (this.summaryContainer?.style.display === 'block') {
-        this.hideSummary();
-      }
-    }
-  }
-
   private getCachedSummary(key: string): string | null {
     try {
       const cached = localStorage.getItem(key);
       if (!cached) return null;
-      const parsed = JSON.parse(cached);
-      if (!parsed.headlineSignature) { localStorage.removeItem(key); return null; }
-      if (parsed.headlineSignature !== this.lastHeadlineSignature) return null;
-      if (Date.now() - parsed.timestamp > SUMMARY_CACHE_TTL) { localStorage.removeItem(key); return null; }
-      return parsed.summary;
+      const { summary, timestamp } = JSON.parse(cached);
+      if (Date.now() - timestamp > SUMMARY_CACHE_TTL) {
+        localStorage.removeItem(key);
+        return null;
+      }
+      return summary;
     } catch {
       return null;
     }
@@ -260,12 +240,10 @@ export class NewsPanel extends Panel {
 
   private setCachedSummary(key: string, summary: string): void {
     try {
-      localStorage.setItem(key, JSON.stringify({
-        headlineSignature: this.lastHeadlineSignature,
-        summary,
-        timestamp: Date.now(),
-      }));
-    } catch { /* storage full */ }
+      localStorage.setItem(key, JSON.stringify({ summary, timestamp: Date.now() }));
+    } catch {
+      // Storage full, ignore
+    }
   }
 
   public setDeviation(zScore: number, percentChange: number, level: DeviationLevel): void {
@@ -309,7 +287,6 @@ export class NewsPanel extends Panel {
     this.setCount(0);
     this.relatedAssetContext.clear();
     this.currentHeadlines = [];
-    this.updateHeadlineSignature();
     this.setContent(`<div class="panel-empty">${escapeHtml(message)}</div>`);
   }
 
@@ -334,8 +311,6 @@ export class NewsPanel extends Panel {
       .slice(0, 5)
       .map(item => item.title)
       .filter((title): title is string => typeof title === 'string' && title.trim().length > 0);
-
-    this.updateHeadlineSignature();
 
     const html = items
       .map(
@@ -374,8 +349,6 @@ export class NewsPanel extends Panel {
 
     // Store headlines for summarization (cap at 5 to reduce entity conflation in small models)
     this.currentHeadlines = sorted.slice(0, 5).map(c => c.primaryTitle);
-
-    this.updateHeadlineSignature();
 
     const clusterIds = sorted.map(c => c.id);
     let newItemIds: Set<string>;

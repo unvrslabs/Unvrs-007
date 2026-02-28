@@ -216,7 +216,6 @@ export const DEFAULT_MAP_LAYERS: MapLayers = {
   speciesRecovery: false,
   renewableInstallations: false,
   tradeRoutes: true,
-  iranAttacks: false,
 };
 
 // Mobile defaults for finance variant
@@ -265,7 +264,6 @@ export const MOBILE_DEFAULT_MAP_LAYERS: MapLayers = {
   speciesRecovery: false,
   renewableInstallations: false,
   tradeRoutes: false,
-  iranAttacks: false,
 };
 
 export const VARIANT_CONFIG: VariantConfig = {

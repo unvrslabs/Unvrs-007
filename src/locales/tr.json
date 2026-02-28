@@ -203,8 +203,7 @@
     "techReadiness": "Teknoloji Hazirlik Endeksi",
     "gccInvestments": "GCC Yatirimlari",
     "geoHubs": "Jeopolitik Merkezler",
-    "liveWebcams": "Canli Web Kameralari",
-    "securityAdvisories": "Güvenlik Uyarıları"
+    "liveWebcams": "Canli Web Kameralari"
   },
   "modals": {
     "search": {
@@ -578,8 +577,7 @@
       "error": "Tahminler yuklenemedi",
       "yes": "Evet",
       "no": "Hayir",
-      "vol": "Hacim",
-      "closes": "Kapanış"
+      "vol": "Hacim"
     },
     "stablecoins": {
       "pegHealth": "Parite Sagligi",
@@ -1287,28 +1285,6 @@
       "regionAsia": "Asya",
       "regionMiddleEast": "Orta Doğu",
       "regionAfrica": "Afrika"
-    },
-    "securityAdvisories": {
-      "loading": "Seyahat uyarıları yükleniyor...",
-      "noMatching": "Bu filtre için uyarı yok",
-      "critical": "Kritik",
-      "health": "Sağlık",
-      "sources": "US State Dept, AU DFAT, UK FCDO, NZ MFAT, CDC, ECDC, WHO, US Embassies",
-      "refresh": "Yenile",
-      "levels": {
-        "doNotTravel": "Seyahat etmeyin",
-        "reconsider": "Seyahati yeniden düşünün",
-        "caution": "Dikkat",
-        "normal": "Normal",
-        "info": "Bilgi"
-      },
-      "time": {
-        "justNow": "şimdi",
-        "minutesAgo": "{{count}} dk önce",
-        "hoursAgo": "{{count}} sa önce",
-        "daysAgo": "{{count}} gün önce"
-      },
-      "infoTooltip": "<strong>Güvenlik Uyarıları</strong><br>Hükümet kurumlarından seyahat uyarıları ve güvenlik bildirimleri."
     }
   },
   "popups": {
@@ -1946,7 +1922,6 @@
     "close": "Kapat",
     "currentVariant": "(mevcut)",
     "retry": "Retry",
-    "refresh": "Refresh",
-    "all": "Tümü"
+    "refresh": "Refresh"
   }
 }

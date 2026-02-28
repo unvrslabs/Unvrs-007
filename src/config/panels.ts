@@ -50,11 +50,9 @@ const FULL_PANELS: Record<string, PanelConfig> = {
   displacement: { name: 'UNHCR Displacement', enabled: true, priority: 2 },
   climate: { name: 'Climate Anomalies', enabled: true, priority: 2 },
   'population-exposure': { name: 'Population Exposure', enabled: true, priority: 2 },
-  'security-advisories': { name: 'Security Advisories', enabled: true, priority: 2 },
 };
 
 const FULL_MAP_LAYERS: MapLayers = {
-  iranAttacks: true,
   conflicts: true,
   bases: true,
   cables: false,
@@ -103,7 +101,6 @@ const FULL_MAP_LAYERS: MapLayers = {
 };
 
 const FULL_MOBILE_MAP_LAYERS: MapLayers = {
-  iranAttacks: true,
   conflicts: true,
   bases: false,
   cables: false,
@@ -237,7 +234,6 @@ const TECH_MAP_LAYERS: MapLayers = {
   speciesRecovery: false,
   renewableInstallations: false,
   tradeRoutes: false,
-  iranAttacks: false,
 };
 
 const TECH_MOBILE_MAP_LAYERS: MapLayers = {
@@ -286,7 +282,6 @@ const TECH_MOBILE_MAP_LAYERS: MapLayers = {
   speciesRecovery: false,
   renewableInstallations: false,
   tradeRoutes: false,
-  iranAttacks: false,
 };
 
 // ============================================
@@ -372,7 +367,6 @@ const FINANCE_MAP_LAYERS: MapLayers = {
   speciesRecovery: false,
   renewableInstallations: false,
   tradeRoutes: true,
-  iranAttacks: false,
 };
 
 const FINANCE_MOBILE_MAP_LAYERS: MapLayers = {
@@ -421,7 +415,6 @@ const FINANCE_MOBILE_MAP_LAYERS: MapLayers = {
   speciesRecovery: false,
   renewableInstallations: false,
   tradeRoutes: false,
-  iranAttacks: false,
 };
 
 // ============================================
@@ -486,7 +479,6 @@ const HAPPY_MAP_LAYERS: MapLayers = {
   speciesRecovery: true,
   renewableInstallations: true,
   tradeRoutes: false,
-  iranAttacks: false,
 };
 
 const HAPPY_MOBILE_MAP_LAYERS: MapLayers = {
@@ -535,7 +527,6 @@ const HAPPY_MOBILE_MAP_LAYERS: MapLayers = {
   speciesRecovery: true,
   renewableInstallations: true,
   tradeRoutes: false,
-  iranAttacks: false,
 };
 
 // ============================================
@@ -596,7 +587,7 @@ export const PANEL_CATEGORY_MAP: Record<string, { labelKey: string; panelKeys: s
   },
   dataTracking: {
     labelKey: 'header.panelCatDataTracking',
-    panelKeys: ['monitors', 'satellite-fires', 'ucdp-events', 'displacement', 'climate', 'population-exposure', 'security-advisories'],
+    panelKeys: ['monitors', 'satellite-fires', 'ucdp-events', 'displacement', 'climate', 'population-exposure'],
     variants: ['full'],
   },
 

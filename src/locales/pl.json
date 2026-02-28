@@ -203,8 +203,7 @@
     "techHubs": "Gorące centra technologiczne",
     "gccInvestments": "Inwestycje GCC",
     "geoHubs": "Geopolitical Hotspots",
-    "liveWebcams": "Kamery na Żywo",
-    "securityAdvisories": "Ostrzeżenia Bezpieczeństwa"
+    "liveWebcams": "Kamery na Żywo"
   },
   "modals": {
     "search": {
@@ -578,8 +577,7 @@
       "error": "Nie udało się wczytać prognoz",
       "yes": "Tak",
       "no": "NIE",
-      "vol": "Tom",
-      "closes": "Zamyka się"
+      "vol": "Tom"
     },
     "deckgl": {
       "views": {
@@ -1287,28 +1285,6 @@
       "regionAsia": "Azja",
       "regionMiddleEast": "Bliski Wschód",
       "regionAfrica": "Afryka"
-    },
-    "securityAdvisories": {
-      "loading": "Ładowanie ostrzeżeń podróżnych...",
-      "noMatching": "Brak ostrzeżeń dla tego filtra",
-      "critical": "Krytyczny",
-      "health": "Zdrowie",
-      "sources": "US State Dept, AU DFAT, UK FCDO, NZ MFAT, CDC, ECDC, WHO, US Embassies",
-      "refresh": "Odśwież",
-      "levels": {
-        "doNotTravel": "Nie podróżuj",
-        "reconsider": "Rozważ podróż",
-        "caution": "Ostrożność",
-        "normal": "Normalny",
-        "info": "Info"
-      },
-      "time": {
-        "justNow": "właśnie",
-        "minutesAgo": "{{count}} min temu",
-        "hoursAgo": "{{count}} godz. temu",
-        "daysAgo": "{{count}} dni temu"
-      },
-      "infoTooltip": "<strong>Ostrzeżenia Bezpieczeństwa</strong><br>Ostrzeżenia podróżne i alerty bezpieczeństwa z agencji rządowych."
     }
   },
   "popups": {
@@ -1946,7 +1922,6 @@
     "close": "Zamknij",
     "currentVariant": "(bieżący)",
     "retry": "Retry",
-    "refresh": "Refresh",
-    "all": "Wszystkie"
+    "refresh": "Refresh"
   }
 }

@@ -203,8 +203,7 @@
     "techHubs": "Centros tecnológicos de moda",
     "gccInvestments": "Inversiones del CCG",
     "geoHubs": "Geopolitical Hotspots",
-    "liveWebcams": "Cámaras en Vivo",
-    "securityAdvisories": "Alertas de Seguridad"
+    "liveWebcams": "Cámaras en Vivo"
   },
   "modals": {
     "search": {
@@ -578,8 +577,7 @@
       "error": "No se pudieron cargar las predicciones",
       "yes": "Sí",
       "no": "No",
-      "vol": "volumen",
-      "closes": "Cierra"
+      "vol": "volumen"
     },
     "deckgl": {
       "views": {
@@ -1287,28 +1285,6 @@
       "regionAsia": "Asia",
       "regionMiddleEast": "Oriente Medio",
       "regionAfrica": "África"
-    },
-    "securityAdvisories": {
-      "loading": "Cargando alertas de viaje...",
-      "noMatching": "No hay alertas para este filtro",
-      "critical": "Crítico",
-      "health": "Salud",
-      "sources": "US State Dept, AU DFAT, UK FCDO, NZ MFAT, CDC, ECDC, WHO, US Embassies",
-      "refresh": "Actualizar",
-      "levels": {
-        "doNotTravel": "No viajar",
-        "reconsider": "Reconsiderar viaje",
-        "caution": "Precaución",
-        "normal": "Normal",
-        "info": "Info"
-      },
-      "time": {
-        "justNow": "ahora",
-        "minutesAgo": "hace {{count}} min",
-        "hoursAgo": "hace {{count}} h",
-        "daysAgo": "hace {{count}} d"
-      },
-      "infoTooltip": "<strong>Alertas de Seguridad</strong><br>Avisos de viaje y alertas de seguridad de agencias gubernamentales."
     }
   },
   "popups": {
@@ -1946,7 +1922,6 @@
     "close": "Cerrar",
     "currentVariant": "(actual)",
     "retry": "Retry",
-    "refresh": "Refresh",
-    "all": "Todos"
+    "refresh": "Refresh"
   }
 }

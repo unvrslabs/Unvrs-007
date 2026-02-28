@@ -300,53 +300,6 @@ class SignalAggregator {
     this.pruneOld();
   }
 
-  ingestTheaterPostures(postures: Array<{
-    targetNation: string | null;
-    totalAircraft: number;
-    totalVessels: number;
-    postureLevel: 'normal' | 'elevated' | 'critical';
-    theaterName: string;
-  }>): void {
-    const TARGET_CODES: Record<string, string> = {
-      'Iran': 'IR', 'Taiwan': 'TW', 'North Korea': 'KP',
-      'Gaza': 'PS', 'Yemen': 'YE',
-    };
-
-    for (const p of postures) {
-      if (!p.targetNation || p.postureLevel === 'normal') continue;
-      const code = TARGET_CODES[p.targetNation];
-      if (!code) continue;
-
-      const hasFlight = this.signals.some(s => s.country === code && s.type === 'military_flight');
-      if (!hasFlight && p.totalAircraft > 0) {
-        this.signals.push({
-          type: 'military_flight',
-          country: code,
-          countryName: getCountryName(code),
-          lat: 0,
-          lon: 0,
-          severity: p.postureLevel === 'critical' ? 'high' : 'medium',
-          title: `${p.totalAircraft} military aircraft in ${p.theaterName}`,
-          timestamp: new Date(),
-        });
-      }
-
-      const hasVessel = this.signals.some(s => s.country === code && s.type === 'military_vessel');
-      if (!hasVessel && p.totalVessels > 0) {
-        this.signals.push({
-          type: 'military_vessel',
-          country: code,
-          countryName: getCountryName(code),
-          lat: 0,
-          lon: 0,
-          severity: p.totalVessels >= 5 ? 'high' : 'medium',
-          title: `${p.totalVessels} naval vessels in ${p.theaterName}`,
-          timestamp: new Date(),
-        });
-      }
-    }
-  }
-
   private coordsToCountry(lat: number, lon: number): string {
     const hit = getCountryAtCoordinates(lat, lon);
     return hit?.code ?? 'XX';
@@ -498,3 +451,26 @@ class SignalAggregator {
 
 export const signalAggregator = new SignalAggregator();
 
+export function logSignalSummary(): void {
+  const summary = signalAggregator.getSummary();
+
+  console.group('%c[Signal Aggregator]', 'color: #6b8afd; font-weight: bold');
+  console.log(`Total signals: ${summary.totalSignals}`);
+  console.log('By type:', summary.byType);
+
+  if (summary.convergenceZones.length > 0) {
+    console.log('%cConvergence Zones:', 'color: #f59e0b; font-weight: bold');
+    for (const z of summary.convergenceZones) {
+      console.log(`  ${z.description}`);
+    }
+  }
+
+  if (summary.topCountries.length > 0) {
+    console.log('%cTop Countries:', 'color: #4ade80; font-weight: bold');
+    for (const c of summary.topCountries.slice(0, 5)) {
+      console.log(`  ${c.countryName}: ${c.totalCount} signals, score ${c.convergenceScore}`);
+    }
+  }
+
+  console.groupEnd();
+}

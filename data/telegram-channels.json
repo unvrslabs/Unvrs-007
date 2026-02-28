@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-02-23T18:37:10Z",
+  "updatedAt": "2026-02-23T12:19:41Z",
   "note": "Product-managed curated list. Not user-configurable.",
   "channels": {
     "full": [
@@ -14,35 +14,17 @@
         "maxMessages": 20
       },
       {
-        "handle": "abualiexpress",
-        "label": "Abu Ali Express",
-        "topic": "middleeast",
-        "tier": 2,
-        "enabled": true,
-        "region": "middleeast",
-        "maxMessages": 25
-      },
-      {
-        "handle": "air_alert_ua",
-        "label": "Повітряна Тривога",
-        "topic": "alerts",
-        "tier": 2,
-        "enabled": true,
-        "region": "ukraine",
-        "maxMessages": 20
-      },
-      {
-        "handle": "AuroraIntel",
-        "label": "Aurora Intel",
-        "topic": "conflict",
+        "handle": "BNONews",
+        "label": "BNO News",
+        "topic": "breaking",
         "tier": 2,
         "enabled": true,
         "region": "global",
-        "maxMessages": 20
+        "maxMessages": 25
       },
       {
-        "handle": "BNONews",
-        "label": "BNO News",
+        "handle": "LiveUAMap",
+        "label": "LiveUAMap",
         "topic": "breaking",
         "tier": 2,
         "enabled": true,
@@ -59,17 +41,8 @@
         "maxMessages": 30
       },
       {
-        "handle": "DeepStateUA",
-        "label": "DeepState",
-        "topic": "conflict",
-        "tier": 2,
-        "enabled": true,
-        "region": "ukraine",
-        "maxMessages": 20
-      },
-      {
-        "handle": "DefenderDome",
-        "label": "The Defender Dome",
+        "handle": "OSINTdefender",
+        "label": "OSINTdefender",
         "topic": "conflict",
         "tier": 2,
         "enabled": true,
@@ -77,21 +50,39 @@
         "maxMessages": 25
       },
       {
-        "handle": "englishabuali",
-        "label": "Abu Ali Express EN",
-        "topic": "middleeast",
+        "handle": "AuroraIntel",
+        "label": "Aurora Intel",
+        "topic": "conflict",
         "tier": 2,
         "enabled": true,
-        "region": "middleeast",
-        "maxMessages": 25
+        "region": "global",
+        "maxMessages": 20
       },
       {
-        "handle": "IranIntl",
-        "label": "Iran International",
-        "topic": "politics",
+        "handle": "GeopoliticalCenter",
+        "label": "GeopoliticalCenter",
+        "topic": "geopolitics",
+        "tier": 3,
+        "enabled": true,
+        "region": "global",
+        "maxMessages": 20
+      },
+      {
+        "handle": "Osintlatestnews",
+        "label": "OSIntOps News",
+        "topic": "osint",
+        "tier": 3,
+        "enabled": true,
+        "region": "global",
+        "maxMessages": 20
+      },
+      {
+        "handle": "air_alert_ua",
+        "label": "Повітряна Тривога",
+        "topic": "alerts",
         "tier": 2,
         "enabled": true,
-        "region": "iran",
+        "region": "ukraine",
         "maxMessages": 20
       },
       {
@@ -104,30 +95,21 @@
         "maxMessages": 20
       },
       {
-        "handle": "LiveUAMap",
-        "label": "LiveUAMap",
-        "topic": "breaking",
-        "tier": 2,
+        "handle": "war_monitor",
+        "label": "monitor",
+        "topic": "alerts",
+        "tier": 3,
         "enabled": true,
-        "region": "global",
-        "maxMessages": 25
+        "region": "ukraine",
+        "maxMessages": 20
       },
       {
-        "handle": "OSINTdefender",
-        "label": "OSINTdefender",
+        "handle": "DeepStateUA",
+        "label": "DeepState",
         "topic": "conflict",
         "tier": 2,
         "enabled": true,
-        "region": "global",
-        "maxMessages": 25
-      },
-      {
-        "handle": "OsintUpdates",
-        "label": "Osint Updates",
-        "topic": "breaking",
-        "tier": 2,
-        "enabled": true,
-        "region": "global",
+        "region": "ukraine",
         "maxMessages": 20
       },
       {
@@ -138,42 +120,6 @@
         "enabled": true,
         "region": "global",
         "maxMessages": 10
-      },
-      {
-        "handle": "CyberDetective",
-        "label": "CyberDetective",
-        "topic": "cyber",
-        "tier": 3,
-        "enabled": true,
-        "region": "global",
-        "maxMessages": 15
-      },
-      {
-        "handle": "GeopoliticalCenter",
-        "label": "GeopoliticalCenter",
-        "topic": "geopolitics",
-        "tier": 3,
-        "enabled": true,
-        "region": "global",
-        "maxMessages": 20
-      },
-      {
-        "handle": "Middle_East_Spectator",
-        "label": "Middle East Spectator",
-        "topic": "middleeast",
-        "tier": 3,
-        "enabled": true,
-        "region": "middleeast",
-        "maxMessages": 20
-      },
-      {
-        "handle": "MiddleEastNow_Breaking",
-        "label": "Middle East Now Breaking",
-        "topic": "middleeast",
-        "tier": 3,
-        "enabled": true,
-        "region": "middleeast",
-        "maxMessages": 15
       },
       {
         "handle": "nexta_live",
@@ -192,60 +138,6 @@
         "enabled": true,
         "region": "europe",
         "maxMessages": 15
-      },
-      {
-        "handle": "OSINTIndustries",
-        "label": "OSINT Industries",
-        "topic": "osint",
-        "tier": 3,
-        "enabled": true,
-        "region": "global",
-        "maxMessages": 15
-      },
-      {
-        "handle": "Osintlatestnews",
-        "label": "OSIntOps News",
-        "topic": "osint",
-        "tier": 3,
-        "enabled": true,
-        "region": "global",
-        "maxMessages": 20
-      },
-      {
-        "handle": "osintlive",
-        "label": "OSINT Live",
-        "topic": "osint",
-        "tier": 3,
-        "enabled": true,
-        "region": "global",
-        "maxMessages": 15
-      },
-      {
-        "handle": "OsintTv",
-        "label": "OsintTV",
-        "topic": "geopolitics",
-        "tier": 3,
-        "enabled": true,
-        "region": "global",
-        "maxMessages": 15
-      },
-      {
-        "handle": "spectatorindex",
-        "label": "The Spectator Index",
-        "topic": "breaking",
-        "tier": 3,
-        "enabled": true,
-        "region": "global",
-        "maxMessages": 15
-      },
-      {
-        "handle": "war_monitor",
-        "label": "monitor",
-        "topic": "alerts",
-        "tier": 3,
-        "enabled": true,
-        "region": "ukraine",
-        "maxMessages": 20
       }
     ],
     "tech": [],

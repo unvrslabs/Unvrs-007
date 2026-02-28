@@ -92,15 +92,7 @@ export default async function handler(request) {
       }
     }
 
-    // Extract HLS manifest URL for native playback (available for live streams).
-    // The URL is in streamingData and contains a signed googlevideo.com manifest.
-    let hlsUrl = null;
-    const hlsMatch = html.match(/"hlsManifestUrl"\s*:\s*"([^"]+)"/);
-    if (hlsMatch && videoId) {
-      hlsUrl = hlsMatch[1].replace(/\\u0026/g, '&');
-    }
-
-    return new Response(JSON.stringify({ videoId, isLive: videoId !== null, channelExists, channelName, hlsUrl }), {
+    return new Response(JSON.stringify({ videoId, isLive: videoId !== null, channelExists, channelName }), {
       status: 200,
       headers: {
         'Content-Type': 'application/json',

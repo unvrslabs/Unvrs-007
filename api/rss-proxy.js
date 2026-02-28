@@ -86,6 +86,7 @@ const ALLOWED_DOMAINS = [
   'openai.com',
   'www.reutersagency.com',
   'feeds.reuters.com',
+  'rsshub.app',
   'asia.nikkei.com',
   'www.cfr.org',
   'www.csis.org',
@@ -123,7 +124,6 @@ const ALLOWED_DOMAINS = [
   // Additional tech variant domains
   'www.producthunt.com',
   'www.axios.com',
-  'api.axios.com',
   'github.blog',
   'githubnext.com',
   'mshibanami.github.io',
@@ -166,7 +166,6 @@ const ALLOWED_DOMAINS = [
   'kyivindependent.com',
   'www.themoscowtimes.com',
   'feeds.24.com',
-  'feeds.news24.com',  // News24 main feed domain
   'feeds.capi24.com',  // News24 redirect destination
   // International News Sources
   'www.france24.com',
@@ -197,6 +196,7 @@ const ALLOWED_DOMAINS = [
   'japantoday.com',
   'www.thehindu.com',
   'indianexpress.com',
+  'www.indianewsnetwork.com',
   'www.twz.com',
   'gcaptain.com',
   // International Organizations
@@ -279,29 +279,6 @@ const ALLOWED_DOMAINS = [
   'seekingalpha.com',
   'www.coindesk.com',
   'cointelegraph.com',
-  // Security advisories — government travel advisory feeds
-  'travel.state.gov',
-  'www.smartraveller.gov.au',
-  'www.safetravel.govt.nz',
-  // US Embassy security alerts
-  'th.usembassy.gov',
-  'ae.usembassy.gov',
-  'de.usembassy.gov',
-  'ua.usembassy.gov',
-  'mx.usembassy.gov',
-  'in.usembassy.gov',
-  'pk.usembassy.gov',
-  'co.usembassy.gov',
-  'pl.usembassy.gov',
-  'bd.usembassy.gov',
-  'it.usembassy.gov',
-  'do.usembassy.gov',
-  'mm.usembassy.gov',
-  // Health advisories
-  'wwwnc.cdc.gov',
-  'www.ecdc.europa.eu',
-  'www.who.int',
-  'www.afro.who.int',
   // Happy variant — positive news sources
   'www.goodnewsnetwork.org',
   'www.positive.news',
@@ -344,15 +321,6 @@ export default async function handler(req) {
 
   try {
     const parsedUrl = new URL(feedUrl);
-
-    // Block deprecated feed domains (stale clients still request these)
-    const BLOCKED_DOMAINS = ['rsshub.app'];
-    if (BLOCKED_DOMAINS.includes(parsedUrl.hostname)) {
-      return new Response(JSON.stringify({ error: 'Feed deprecated' }), {
-        status: 410,
-        headers: { 'Content-Type': 'application/json', ...corsHeaders },
-      });
-    }
 
     // Security: Check if domain is allowed (normalize www prefix)
     const hostname = parsedUrl.hostname;

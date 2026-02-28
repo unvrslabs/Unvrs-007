@@ -77,7 +77,7 @@ Sentry.init({
     /setting 'luma'/,
     /ML request .* timed out/,
     /^Element not found$/,
-    /(?:AbortError: )?The operation was aborted\.?\s*$/,
+    /^The operation was aborted\.?\s*$/,
     /Unexpected end of script/,
     /error loading dynamically imported module/,
     /Style is not done loading/,
@@ -111,10 +111,6 @@ Sentry.init({
     /isReCreate is not defined/,
     /reading 'style'.*HTMLImageElement/,
     /can't access property "write", \w+ is undefined/,
-    /AbortError: The user aborted a request/,
-    /\w+ is not a function.*\/uv\/service\//,
-    /__isInQueue__/,
-    /^(?:LIDNotifyId|onWebViewAppeared|onGetWiFiBSSID) is not defined$/,
   ],
   beforeSend(event) {
     const msg = event.exception?.values?.[0]?.value ?? '';
@@ -144,9 +140,9 @@ window.addEventListener('unhandledrejection', (e) => {
   if (e.reason?.name === 'NotAllowedError') e.preventDefault();
 });
 
-import { debugGetCells, getCellCount } from '@/services/geo-convergence';
+import { debugInjectTestEvents, debugGetCells, getCellCount } from '@/services/geo-convergence';
 import { initMetaTags } from '@/services/meta-tags';
-import { installRuntimeFetchPatch, installWebApiRedirect } from '@/services/runtime';
+import { installRuntimeFetchPatch } from '@/services/runtime';
 import { loadDesktopSecrets } from '@/services/runtime-config';
 import { initAnalytics, trackApiKeysSnapshot } from '@/services/analytics';
 import { applyStoredTheme } from '@/utils/theme-manager';
@@ -167,8 +163,6 @@ initMetaTags();
 
 // In desktop mode, route /api/* calls to the local Tauri sidecar backend.
 installRuntimeFetchPatch();
-// In web production, route RPC calls through api.worldmonitor.app (Cloudflare edge).
-installWebApiRedirect();
 loadDesktopSecrets().then(async () => {
   await initAnalytics();
   trackApiKeysSnapshot();
@@ -220,6 +214,7 @@ if (urlParams.get('settings') === '1') {
 
 // Debug helpers for geo-convergence testing (remove in production)
 (window as unknown as Record<string, unknown>).geoDebug = {
+  inject: debugInjectTestEvents,
   cells: debugGetCells,
   count: getCellCount,
 };

@@ -2,10 +2,14 @@
 // source: worldmonitor/aviation/v1/service.proto
 
 export interface ListAirportDelaysRequest {
-  pageSize: number;
-  cursor: string;
+  pagination?: PaginationRequest;
   region: AirportRegion;
   minSeverity: FlightDelaySeverity;
+}
+
+export interface PaginationRequest {
+  pageSize: number;
+  cursor: string;
 }
 
 export interface ListAirportDelaysResponse {
@@ -101,12 +105,7 @@ export class AviationServiceClient {
 
   async listAirportDelays(req: ListAirportDelaysRequest, options?: AviationServiceCallOptions): Promise<ListAirportDelaysResponse> {
     let path = "/api/aviation/v1/list-airport-delays";
-    const params = new URLSearchParams();
-    if (req.pageSize != null && req.pageSize !== 0) params.set("page_size", String(req.pageSize));
-    if (req.cursor != null && req.cursor !== "") params.set("cursor", String(req.cursor));
-    if (req.region != null && req.region !== "AIRPORT_REGION_UNSPECIFIED") params.set("region", String(req.region));
-    if (req.minSeverity != null && req.minSeverity !== "FLIGHT_DELAY_SEVERITY_UNSPECIFIED") params.set("min_severity", String(req.minSeverity));
-    const url = this.baseURL + path + (params.toString() ? "?" + params.toString() : "");
+    const url = this.baseURL + path;
 
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
@@ -115,8 +114,9 @@ export class AviationServiceClient {
     };
 
     const resp = await this.fetchFn(url, {
-      method: "GET",
+      method: "POST",
       headers,
+      body: JSON.stringify(req),
       signal: options?.signal,
     });
 

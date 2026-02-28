@@ -15,21 +15,13 @@ import { startLearning } from '@/services/country-instability';
 import { dataFreshness } from '@/services/data-freshness';
 import { loadFromStorage, parseMapUrlState, saveToStorage, isMobileDevice } from '@/utils';
 import type { ParsedMapUrlState } from '@/utils';
-import { SignalModal, IntelligenceGapBadge, BreakingNewsBanner } from '@/components';
-import { initBreakingNewsAlerts, destroyBreakingNewsAlerts } from '@/services/breaking-news-alerts';
-import type { ServiceStatusPanel } from '@/components/ServiceStatusPanel';
-import type { StablecoinPanel } from '@/components/StablecoinPanel';
-import type { ETFFlowsPanel } from '@/components/ETFFlowsPanel';
-import type { MacroSignalsPanel } from '@/components/MacroSignalsPanel';
-import type { StrategicPosturePanel } from '@/components/StrategicPosturePanel';
-import type { StrategicRiskPanel } from '@/components/StrategicRiskPanel';
+import { SignalModal, IntelligenceGapBadge } from '@/components';
+import { AgentSidebar } from '@/components/AgentSidebar';
 import { isDesktopRuntime } from '@/services/runtime';
-import { BETA_MODE } from '@/config/beta';
 import { trackEvent, trackDeeplinkOpened } from '@/services/analytics';
 import { preloadCountryGeometry, getCountryNameByCode } from '@/services/country-geometry';
 import { initI18n } from '@/services/i18n';
 
-import { fetchBootstrapData } from '@/services/bootstrap';
 import { DesktopUpdater } from '@/app/desktop-updater';
 import { CountryIntelManager } from '@/app/country-intel';
 import { SearchManager } from '@/app/search-manager';
@@ -92,7 +84,7 @@ export class App {
       mapLayers = loadFromStorage<MapLayers>(STORAGE_KEYS.mapLayers, defaultLayers);
       // Happy variant: force non-happy layers off even if localStorage has stale true values
       if (currentVariant === 'happy') {
-        const unhappyLayers: (keyof MapLayers)[] = ['conflicts', 'bases', 'hotspots', 'nuclear', 'irradiators', 'sanctions', 'military', 'protests', 'pipelines', 'waterways', 'ais', 'flights', 'spaceports', 'minerals', 'natural', 'fires', 'outages', 'cyberThreats', 'weather', 'economic', 'cables', 'datacenters', 'ucdpEvents', 'displacement', 'climate', 'iranAttacks'];
+        const unhappyLayers: (keyof MapLayers)[] = ['conflicts', 'bases', 'hotspots', 'nuclear', 'irradiators', 'sanctions', 'military', 'protests', 'pipelines', 'waterways', 'ais', 'flights', 'spaceports', 'minerals', 'natural', 'fires', 'outages', 'cyberThreats', 'weather', 'economic', 'cables', 'datacenters', 'ucdpEvents', 'displacement', 'climate'];
         unhappyLayers.forEach(layer => { mapLayers[layer] = false; });
       }
       panelSettings = loadFromStorage<Record<string, PanelConfig>>(
@@ -189,7 +181,7 @@ export class App {
       }
       // For happy variant, force off all non-happy layers (including natural events)
       if (currentVariant === 'happy') {
-        const unhappyLayers: (keyof MapLayers)[] = ['conflicts', 'bases', 'hotspots', 'nuclear', 'irradiators', 'sanctions', 'military', 'protests', 'pipelines', 'waterways', 'ais', 'flights', 'spaceports', 'minerals', 'natural', 'fires', 'outages', 'cyberThreats', 'weather', 'economic', 'cables', 'datacenters', 'ucdpEvents', 'displacement', 'climate', 'iranAttacks'];
+        const unhappyLayers: (keyof MapLayers)[] = ['conflicts', 'bases', 'hotspots', 'nuclear', 'irradiators', 'sanctions', 'military', 'protests', 'pipelines', 'waterways', 'ais', 'flights', 'spaceports', 'minerals', 'natural', 'fires', 'outages', 'cyberThreats', 'weather', 'economic', 'cables', 'datacenters', 'ucdpEvents', 'displacement', 'climate'];
         const urlLayers = initialUrlState.layers;
         unhappyLayers.forEach(layer => {
           urlLayers[layer] = false;
@@ -227,8 +219,8 @@ export class App {
       signalModal: null,
       statusPanel: null,
       searchModal: null,
+      agentSidebar: null,
       findingsBadge: null,
-      breakingBanner: null,
       playbackControl: null,
       exportPanel: null,
       unifiedSettings: null,
@@ -272,7 +264,6 @@ export class App {
       openCountryStory: (code, name) => this.countryIntel.openCountryStory(code, name),
       loadAllData: () => this.dataLoader.loadAllData(),
       updateMonitorResults: () => this.dataLoader.updateMonitorResults(),
-      loadSecurityAdvisories: () => this.dataLoader.loadSecurityAdvisories(),
     });
 
     this.eventHandlers = new EventHandlerManager(this.state, {
@@ -307,7 +298,6 @@ export class App {
     const aiFlow = getAiFlowSettings();
     if (aiFlow.browserModel || isDesktopRuntime()) {
       await mlWorker.init();
-      if (BETA_MODE) mlWorker.loadModel('summarization-beta').catch(() => {});
     }
 
     this.unsubAiFlow = subscribeAiFlowChange((key) => {
@@ -328,10 +318,7 @@ export class App {
       initAisStream();
     }
 
-    // Hydrate in-memory cache from bootstrap endpoint (before panels construct and fetch)
-    await fetchBootstrapData();
-
-    // Phase 1: Layout (creates map + panels — they'll find hydrated data)
+    // Phase 1: Layout (creates map + panels)
     this.panelLayout.init();
 
     // Happy variant: pre-populate panels from persistent cache for instant render
@@ -341,6 +328,7 @@ export class App {
 
     // Phase 2: Shared UI components
     this.state.signalModal = new SignalModal();
+    this.state.agentSidebar = new AgentSidebar();
     this.state.signalModal.setLocationClickHandler((lat, lon) => {
       this.state.map?.setCenter(lat, lon, 4);
     });
@@ -356,11 +344,6 @@ export class App {
         if (localStorage.getItem('wm-settings-open') === '1') return;
         this.state.signalModal?.showAlert(alert);
       });
-    }
-
-    if (!this.state.isMobile) {
-      initBreakingNewsAlerts();
-      this.state.breakingBanner = new BreakingNewsBanner();
     }
 
     // Phase 3: UI setup methods
@@ -427,10 +410,8 @@ export class App {
       this.modules[i]!.destroy();
     }
 
-    // Clean up subscriptions, map, AIS, and breaking news
+    // Clean up subscriptions, map, and AIS
     this.unsubAiFlow?.();
-    this.state.breakingBanner?.destroy();
-    destroyBreakingNewsAlerts();
     this.state.map?.destroy();
     disconnectAisStream();
   }
@@ -520,44 +501,6 @@ export class App {
         }, intervalMs: 10 * 60 * 1000, condition: () => CYBER_LAYER_ENABLED && this.state.mapLayers.cyberThreats },
       ]);
     }
-
-    // Panel-level refreshes (moved from panel constructors into scheduler for hidden-tab awareness + jitter)
-    this.refreshScheduler.scheduleRefresh(
-      'service-status',
-      () => (this.state.panels['service-status'] as ServiceStatusPanel).fetchStatus(),
-      60_000,
-      () => !!this.state.panels['service-status']
-    );
-    this.refreshScheduler.scheduleRefresh(
-      'stablecoins',
-      () => (this.state.panels['stablecoins'] as StablecoinPanel).fetchData(),
-      3 * 60_000,
-      () => !!this.state.panels['stablecoins']
-    );
-    this.refreshScheduler.scheduleRefresh(
-      'etf-flows',
-      () => (this.state.panels['etf-flows'] as ETFFlowsPanel).fetchData(),
-      3 * 60_000,
-      () => !!this.state.panels['etf-flows']
-    );
-    this.refreshScheduler.scheduleRefresh(
-      'macro-signals',
-      () => (this.state.panels['macro-signals'] as MacroSignalsPanel).fetchData(),
-      3 * 60_000,
-      () => !!this.state.panels['macro-signals']
-    );
-    this.refreshScheduler.scheduleRefresh(
-      'strategic-posture',
-      () => (this.state.panels['strategic-posture'] as StrategicPosturePanel).refresh(),
-      15 * 60_000,
-      () => !!this.state.panels['strategic-posture']
-    );
-    this.refreshScheduler.scheduleRefresh(
-      'strategic-risk',
-      () => (this.state.panels['strategic-risk'] as StrategicRiskPanel).refresh(),
-      5 * 60_000,
-      () => !!this.state.panels['strategic-risk']
-    );
 
     // WTO trade policy data — annual data, poll every 10 min to avoid hammering upstream
     if (SITE_VARIANT === 'full' || SITE_VARIANT === 'finance') {

@@ -14,7 +14,7 @@ import { getNaturalEventIcon } from '@/services/eonet';
 import { getHotspotEscalation, getEscalationChange24h } from '@/services/hotspot-escalation';
 import { getCableHealthRecord } from '@/services/cable-health';
 
-export type PopupType = 'conflict' | 'hotspot' | 'earthquake' | 'weather' | 'base' | 'waterway' | 'apt' | 'cyberThreat' | 'nuclear' | 'economic' | 'irradiator' | 'pipeline' | 'cable' | 'cable-advisory' | 'repair-ship' | 'outage' | 'datacenter' | 'datacenterCluster' | 'ais' | 'protest' | 'protestCluster' | 'flight' | 'militaryFlight' | 'militaryVessel' | 'militaryFlightCluster' | 'militaryVesselCluster' | 'natEvent' | 'port' | 'spaceport' | 'mineral' | 'startupHub' | 'cloudRegion' | 'techHQ' | 'accelerator' | 'techEvent' | 'techHQCluster' | 'techEventCluster' | 'techActivity' | 'geoActivity' | 'stockExchange' | 'financialCenter' | 'centralBank' | 'commodityHub' | 'iranEvent';
+export type PopupType = 'conflict' | 'hotspot' | 'earthquake' | 'weather' | 'base' | 'waterway' | 'apt' | 'cyberThreat' | 'nuclear' | 'economic' | 'irradiator' | 'pipeline' | 'cable' | 'cable-advisory' | 'repair-ship' | 'outage' | 'datacenter' | 'datacenterCluster' | 'ais' | 'protest' | 'protestCluster' | 'flight' | 'militaryFlight' | 'militaryVessel' | 'militaryFlightCluster' | 'militaryVesselCluster' | 'natEvent' | 'port' | 'spaceport' | 'mineral' | 'startupHub' | 'cloudRegion' | 'techHQ' | 'accelerator' | 'techEvent' | 'techHQCluster' | 'techEventCluster' | 'techActivity' | 'geoActivity' | 'stockExchange' | 'financialCenter' | 'centralBank' | 'commodityHub';
 
 interface TechEventPopupData {
   id: string;
@@ -47,18 +47,6 @@ interface TechEventClusterData {
   count?: number;
   soonCount?: number;
   sampled?: boolean;
-}
-
-interface IranEventPopupData {
-  id: string;
-  title: string;
-  category: string;
-  sourceUrl: string;
-  latitude: number;
-  longitude: number;
-  locationName: string;
-  timestamp: number;
-  severity: string;
 }
 
 // Finance popup data types
@@ -132,7 +120,7 @@ interface DatacenterClusterData {
 
 interface PopupData {
   type: PopupType;
-  data: ConflictZone | Hotspot | Earthquake | WeatherAlert | MilitaryBase | StrategicWaterway | APTGroup | CyberThreat | NuclearFacility | EconomicCenter | GammaIrradiator | Pipeline | UnderseaCable | CableAdvisory | RepairShip | InternetOutage | AIDataCenter | AisDisruptionEvent | SocialUnrestEvent | AirportDelayAlert | MilitaryFlight | MilitaryVessel | MilitaryFlightCluster | MilitaryVesselCluster | NaturalEvent | Port | Spaceport | CriticalMineralProject | StartupHub | CloudRegion | TechHQ | Accelerator | TechEventPopupData | TechHQClusterData | TechEventClusterData | ProtestClusterData | DatacenterClusterData | TechHubActivity | GeoHubActivity | StockExchangePopupData | FinancialCenterPopupData | CentralBankPopupData | CommodityHubPopupData | IranEventPopupData;
+  data: ConflictZone | Hotspot | Earthquake | WeatherAlert | MilitaryBase | StrategicWaterway | APTGroup | CyberThreat | NuclearFacility | EconomicCenter | GammaIrradiator | Pipeline | UnderseaCable | CableAdvisory | RepairShip | InternetOutage | AIDataCenter | AisDisruptionEvent | SocialUnrestEvent | AirportDelayAlert | MilitaryFlight | MilitaryVessel | MilitaryFlightCluster | MilitaryVesselCluster | NaturalEvent | Port | Spaceport | CriticalMineralProject | StartupHub | CloudRegion | TechHQ | Accelerator | TechEventPopupData | TechHQClusterData | TechEventClusterData | ProtestClusterData | DatacenterClusterData | TechHubActivity | GeoHubActivity | StockExchangePopupData | FinancialCenterPopupData | CentralBankPopupData | CommodityHubPopupData;
   relatedNews?: NewsItem[];
   x: number;
   y: number;
@@ -440,8 +428,6 @@ export class MapPopup {
         return this.renderCentralBankPopup(data.data as CentralBankPopupData);
       case 'commodityHub':
         return this.renderCommodityHubPopup(data.data as CommodityHubPopupData);
-      case 'iranEvent':
-        return this.renderIranEventPopup(data.data as unknown as IranEventPopupData);
       default:
         return '';
     }
@@ -836,14 +822,6 @@ export class MapPopup {
       'russia': 'high',
     };
 
-    const enriched = base as MilitaryBase & { kind?: string; catAirforce?: boolean; catNaval?: boolean; catNuclear?: boolean; catSpace?: boolean; catTraining?: boolean };
-    const categories: string[] = [];
-    if (enriched.catAirforce) categories.push('Air Force');
-    if (enriched.catNaval) categories.push('Naval');
-    if (enriched.catNuclear) categories.push('Nuclear');
-    if (enriched.catSpace) categories.push('Space');
-    if (enriched.catTraining) categories.push('Training');
-
     return `
       <div class="popup-header base">
         <span class="popup-title">${escapeHtml(base.name.toUpperCase())}</span>
@@ -852,15 +830,11 @@ export class MapPopup {
       </div>
       <div class="popup-body">
         ${base.description ? `<p class="popup-description">${escapeHtml(base.description)}</p>` : ''}
-        ${enriched.kind ? `<p class="popup-description" style="opacity:0.7;margin-top:2px">${escapeHtml(enriched.kind.replace(/_/g, ' '))}</p>` : ''}
         <div class="popup-stats">
           <div class="popup-stat">
             <span class="stat-label">${t('popups.type')}</span>
             <span class="stat-value">${escapeHtml(typeLabels[base.type] || base.type)}</span>
           </div>
-          ${base.arm ? `<div class="popup-stat"><span class="stat-label">Branch</span><span class="stat-value">${escapeHtml(base.arm)}</span></div>` : ''}
-          ${base.country ? `<div class="popup-stat"><span class="stat-label">Country</span><span class="stat-value">${escapeHtml(base.country)}</span></div>` : ''}
-          ${categories.length > 0 ? `<div class="popup-stat"><span class="stat-label">Categories</span><span class="stat-value">${escapeHtml(categories.join(', '))}</span></div>` : ''}
           <div class="popup-stat">
             <span class="stat-label">${t('popups.coordinates')}</span>
             <span class="stat-value">${base.lat.toFixed(2)}°, ${base.lon.toFixed(2)}°</span>
@@ -2569,34 +2543,6 @@ export class MapPopup {
           </div>
         ` : ''}
         ${hub.description ? `<p class="popup-description">${escapeHtml(hub.description)}</p>` : ''}
-      </div>
-    `;
-  }
-
-  private renderIranEventPopup(event: IranEventPopupData): string {
-    const catColors: Record<string, string> = {
-      military: '#ff3232',
-      politics: '#ff8c00',
-      diplomacy: '#ffa500',
-      human_rights: '#e06666',
-      transport: '#cccc00',
-      regional: '#cccc00',
-    };
-    const catColor = catColors[event.category] || '#ccc';
-    const time = event.timestamp ? new Date(event.timestamp).toLocaleString() : '';
-    const safeUrl = sanitizeUrl(event.sourceUrl);
-    return `
-      <div class="popup-content">
-        <div class="popup-header">
-          <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${catColor};margin-right:6px;"></span>
-          <strong>${escapeHtml(event.title)}</strong>
-        </div>
-        <div class="popup-details">
-          <span class="popup-badge" style="background:${catColor};color:#fff;padding:2px 6px;border-radius:3px;font-size:11px;">${escapeHtml(event.category)}</span>
-          ${event.locationName ? ` <span style="color:#aaa;font-size:11px;">${escapeHtml(event.locationName)}</span>` : ''}
-        </div>
-        ${time ? `<div class="popup-time" style="color:#888;font-size:11px;margin-top:4px;">${escapeHtml(time)}</div>` : ''}
-        ${safeUrl ? `<a href="${escapeHtml(safeUrl)}" target="_blank" rel="noopener noreferrer nofollow" style="font-size:11px;color:#4a9eff;">Source</a>` : ''}
       </div>
     `;
   }

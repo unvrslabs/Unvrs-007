@@ -203,8 +203,7 @@
     "techReadiness": "ดัชนีความพร้อมด้านเทคโนโลยี",
     "gccInvestments": "การลงทุน GCC",
     "geoHubs": "ศูนย์กลางภูมิรัฐศาสตร์",
-    "liveWebcams": "เว็บแคมสด",
-    "securityAdvisories": "คำเตือนด้านความปลอดภัย"
+    "liveWebcams": "เว็บแคมสด"
   },
   "modals": {
     "search": {
@@ -578,8 +577,7 @@
       "error": "ไม่สามารถโหลดการพยากรณ์ได้",
       "yes": "ใช่",
       "no": "ไม่",
-      "vol": "ปริมาณ",
-      "closes": "ปิด"
+      "vol": "ปริมาณ"
     },
     "stablecoins": {
       "pegHealth": "สุขภาพ Peg",
@@ -1287,28 +1285,6 @@
       "regionAsia": "เอเชีย",
       "regionMiddleEast": "ตะวันออกกลาง",
       "regionAfrica": "แอฟริกา"
-    },
-    "securityAdvisories": {
-      "loading": "กำลังโหลดคำเตือนการเดินทาง...",
-      "noMatching": "ไม่พบคำเตือนสำหรับตัวกรองนี้",
-      "critical": "วิกฤต",
-      "health": "สุขภาพ",
-      "sources": "US State Dept, AU DFAT, UK FCDO, NZ MFAT, CDC, ECDC, WHO, US Embassies",
-      "refresh": "รีเฟรช",
-      "levels": {
-        "doNotTravel": "ห้ามเดินทาง",
-        "reconsider": "ทบทวนการเดินทาง",
-        "caution": "ระวัง",
-        "normal": "ปกติ",
-        "info": "ข้อมูล"
-      },
-      "time": {
-        "justNow": "เมื่อสักครู่",
-        "minutesAgo": "{{count}} นาทีที่แล้ว",
-        "hoursAgo": "{{count}} ชั่วโมงที่แล้ว",
-        "daysAgo": "{{count}} วันที่แล้ว"
-      },
-      "infoTooltip": "<strong>คำเตือนด้านความปลอดภัย</strong><br>คำเตือนการเดินทางและความปลอดภัยจากหน่วยงานรัฐบาล."
     }
   },
   "popups": {
@@ -1946,7 +1922,6 @@
     "close": "ปิด",
     "currentVariant": "(ปัจจุบัน)",
     "retry": "ลองใหม่",
-    "refresh": "รีเฟรช",
-    "all": "ทั้งหมด"
+    "refresh": "รีเฟรช"
   }
 }

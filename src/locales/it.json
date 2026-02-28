@@ -203,8 +203,7 @@
     "techHubs": "Hub tecnologici caldi",
     "gccInvestments": "Investimenti GCC",
     "geoHubs": "Hotspot geopolitici",
-    "liveWebcams": "Webcam in Diretta",
-    "securityAdvisories": "Avvisi di Sicurezza"
+    "liveWebcams": "Webcam in Diretta"
   },
   "modals": {
     "search": {
@@ -578,8 +577,7 @@
       "error": "Impossibile caricare le previsioni",
       "yes": "SÌ",
       "no": "NO",
-      "vol": "vol",
-      "closes": "Chiude"
+      "vol": "vol"
     },
     "deckgl": {
       "views": {
@@ -1287,28 +1285,6 @@
       "regionAsia": "Asia",
       "regionMiddleEast": "Medio Oriente",
       "regionAfrica": "Africa"
-    },
-    "securityAdvisories": {
-      "loading": "Caricamento avvisi di viaggio...",
-      "noMatching": "Nessun avviso per questo filtro",
-      "critical": "Critico",
-      "health": "Salute",
-      "sources": "US State Dept, AU DFAT, UK FCDO, NZ MFAT, CDC, ECDC, WHO, US Embassies",
-      "refresh": "Aggiorna",
-      "levels": {
-        "doNotTravel": "Non viaggiare",
-        "reconsider": "Riconsiderare il viaggio",
-        "caution": "Cautela",
-        "normal": "Normale",
-        "info": "Info"
-      },
-      "time": {
-        "justNow": "adesso",
-        "minutesAgo": "{{count}} min fa",
-        "hoursAgo": "{{count}} ore fa",
-        "daysAgo": "{{count}} giorni fa"
-      },
-      "infoTooltip": "<strong>Avvisi di Sicurezza</strong><br>Avvisi di viaggio e allerte di sicurezza dalle agenzie governative."
     }
   },
   "popups": {
@@ -1946,7 +1922,6 @@
     "close": "Chiudi",
     "currentVariant": "(corrente)",
     "retry": "Retry",
-    "refresh": "Refresh",
-    "all": "Tutti"
+    "refresh": "Refresh"
   }
 }

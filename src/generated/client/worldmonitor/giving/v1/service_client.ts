@@ -106,10 +106,7 @@ export class GivingServiceClient {
 
   async getGivingSummary(req: GetGivingSummaryRequest, options?: GivingServiceCallOptions): Promise<GetGivingSummaryResponse> {
     let path = "/api/giving/v1/get-giving-summary";
-    const params = new URLSearchParams();
-    if (req.platformLimit != null && req.platformLimit !== 0) params.set("platform_limit", String(req.platformLimit));
-    if (req.categoryLimit != null && req.categoryLimit !== 0) params.set("category_limit", String(req.categoryLimit));
-    const url = this.baseURL + path + (params.toString() ? "?" + params.toString() : "");
+    const url = this.baseURL + path;
 
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
@@ -118,8 +115,9 @@ export class GivingServiceClient {
     };
 
     const resp = await this.fetchFn(url, {
-      method: "GET",
+      method: "POST",
       headers,
+      body: JSON.stringify(req),
       signal: options?.signal,
     });
 
@@ -145,4 +143,3 @@ export class GivingServiceClient {
     throw new ApiError(resp.status, `Request failed with status ${resp.status}`, body);
   }
 }
-

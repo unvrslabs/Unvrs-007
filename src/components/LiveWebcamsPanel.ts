@@ -1,5 +1,5 @@
 import { Panel } from './Panel';
-import { isDesktopRuntime, getLocalApiPort } from '@/services/runtime';
+import { isDesktopRuntime, getRemoteApiBaseUrl } from '@/services/runtime';
 import { escapeHtml } from '@/utils/sanitize';
 import { t } from '../services/i18n';
 import { trackWebcamSelected, trackWebcamRegionFiltered } from '@/services/analytics';
@@ -163,11 +163,14 @@ export class LiveWebcamsPanel extends Panel {
   private buildEmbedUrl(videoId: string): string {
     const quality = getStreamQuality();
     if (isDesktopRuntime()) {
-      // Use local sidecar embed — YouTube rejects tauri:// parent origin with error 153.
-      // The sidecar serves the embed from http://127.0.0.1:PORT which YouTube accepts.
-      const params = new URLSearchParams({ videoId, autoplay: '1', mute: '1' });
+      const remoteBase = getRemoteApiBaseUrl();
+      const params = new URLSearchParams({
+        videoId,
+        autoplay: '1',
+        mute: '1',
+      });
       if (quality !== 'auto') params.set('vq', quality);
-      return `http://localhost:${getLocalApiPort()}/api/youtube-embed?${params.toString()}`;
+      return `${remoteBase}/api/youtube/embed?${params.toString()}`;
     }
     const vq = quality !== 'auto' ? `&vq=${quality}` : '';
     return `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&mute=1&controls=0&modestbranding=1&playsinline=1&rel=0${vq}`;
@@ -179,12 +182,10 @@ export class LiveWebcamsPanel extends Panel {
     iframe.src = this.buildEmbedUrl(feed.fallbackVideoId);
     iframe.title = `${feed.city} live webcam`;
     iframe.allow = 'autoplay; encrypted-media; picture-in-picture';
+    iframe.allowFullscreen = true;
     iframe.referrerPolicy = 'strict-origin-when-cross-origin';
-    if (!isDesktopRuntime()) {
-      iframe.allowFullscreen = true;
-      iframe.setAttribute('loading', 'lazy');
-      iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-presentation');
-    }
+    iframe.setAttribute('loading', 'lazy');
+    iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-presentation');
     return iframe;
   }
 
@@ -210,55 +211,24 @@ export class LiveWebcamsPanel extends Panel {
     const grid = document.createElement('div');
     grid.className = 'webcam-grid';
 
-    const feeds = this.gridFeeds;
-    const desktop = isDesktopRuntime();
-
-    feeds.forEach((feed, i) => {
+    this.gridFeeds.forEach(feed => {
       const cell = document.createElement('div');
       cell.className = 'webcam-cell';
+      cell.addEventListener('click', () => {
+        trackWebcamSelected(feed.id, feed.city, 'grid');
+        this.activeFeed = feed;
+        this.setViewMode('single');
+      });
 
       const label = document.createElement('div');
       label.className = 'webcam-cell-label';
       label.innerHTML = `<span class="webcam-live-dot"></span><span class="webcam-city">${escapeHtml(feed.city.toUpperCase())}</span>`;
 
-      if (desktop) {
-        // On desktop, clicks pass through label (pointer-events:none in CSS)
-        // to YouTube iframe so users click play directly. Add expand button.
-        const expandBtn = document.createElement('button');
-        expandBtn.className = 'webcam-expand-btn';
-        expandBtn.title = t('webcams.expand') || 'Expand';
-        expandBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>';
-        expandBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          trackWebcamSelected(feed.id, feed.city, 'grid');
-          this.activeFeed = feed;
-          this.setViewMode('single');
-        });
-        label.appendChild(expandBtn);
-      } else {
-        cell.addEventListener('click', () => {
-          trackWebcamSelected(feed.id, feed.city, 'grid');
-          this.activeFeed = feed;
-          this.setViewMode('single');
-        });
-      }
-
+      const iframe = this.createIframe(feed);
+      cell.appendChild(iframe);
       cell.appendChild(label);
       grid.appendChild(cell);
-
-      if (desktop && i > 0) {
-        // Stagger iframe creation on desktop — WKWebView throttles concurrent autoplay.
-        setTimeout(() => {
-          if (!this.isVisible || this.isIdle) return;
-          const iframe = this.createIframe(feed);
-          cell.insertBefore(iframe, label);
-          this.iframes.push(iframe);
-        }, i * 800);
-      } else {
-        const iframe = this.createIframe(feed);
-        cell.insertBefore(iframe, label);
-        this.iframes.push(iframe);
-      }
+      this.iframes.push(iframe);
     });
 
     this.content.appendChild(grid);

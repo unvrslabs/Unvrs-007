@@ -202,16 +202,12 @@ export function createIntelligenceServiceRoutes(
 ): RouteDescriptor[] {
   return [
     {
-      method: "GET",
+      method: "POST",
       path: "/api/intelligence/v1/get-risk-scores",
       handler: async (req: Request): Promise<Response> => {
         try {
           const pathParams: Record<string, string> = {};
-          const url = new URL(req.url, "http://localhost");
-          const params = url.searchParams;
-          const body: GetRiskScoresRequest = {
-            region: params.get("region") ?? "",
-          };
+          const body = await req.json() as GetRiskScoresRequest;
           if (options?.validateRequest) {
             const bodyViolations = options.validateRequest("getRiskScores", body);
             if (bodyViolations) {
@@ -249,16 +245,12 @@ export function createIntelligenceServiceRoutes(
       },
     },
     {
-      method: "GET",
+      method: "POST",
       path: "/api/intelligence/v1/get-pizzint-status",
       handler: async (req: Request): Promise<Response> => {
         try {
           const pathParams: Record<string, string> = {};
-          const url = new URL(req.url, "http://localhost");
-          const params = url.searchParams;
-          const body: GetPizzintStatusRequest = {
-            includeGdelt: params.get("include_gdelt") === "true",
-          };
+          const body = await req.json() as GetPizzintStatusRequest;
           if (options?.validateRequest) {
             const bodyViolations = options.validateRequest("getPizzintStatus", body);
             if (bodyViolations) {
@@ -339,17 +331,18 @@ export function createIntelligenceServiceRoutes(
       },
     },
     {
-      method: "GET",
+      method: "POST",
       path: "/api/intelligence/v1/get-country-intel-brief",
       handler: async (req: Request): Promise<Response> => {
         try {
           const pathParams: Record<string, string> = {};
-          const url = new URL(req.url, "http://localhost");
-
-          const params = url.searchParams;
-          const body: GetCountryIntelBriefRequest = {
-            countryCode: params.get("country_code") ?? "",
-          };
+          const body = await req.json() as GetCountryIntelBriefRequest;
+          if (options?.validateRequest) {
+            const bodyViolations = options.validateRequest("getCountryIntelBrief", body);
+            if (bodyViolations) {
+              throw new ValidationError(bodyViolations);
+            }
+          }
 
           const ctx: ServerContext = {
             request: req,
@@ -381,20 +374,12 @@ export function createIntelligenceServiceRoutes(
       },
     },
     {
-      method: "GET",
+      method: "POST",
       path: "/api/intelligence/v1/search-gdelt-documents",
       handler: async (req: Request): Promise<Response> => {
         try {
           const pathParams: Record<string, string> = {};
-          const url = new URL(req.url, "http://localhost");
-          const params = url.searchParams;
-          const body: SearchGdeltDocumentsRequest = {
-            query: params.get("query") ?? "",
-            maxRecords: Number(params.get("max_records") ?? "0"),
-            timespan: params.get("timespan") ?? "",
-            toneFilter: params.get("tone_filter") ?? "",
-            sort: params.get("sort") ?? "",
-          };
+          const body = await req.json() as SearchGdeltDocumentsRequest;
           if (options?.validateRequest) {
             const bodyViolations = options.validateRequest("searchGdeltDocuments", body);
             if (bodyViolations) {
