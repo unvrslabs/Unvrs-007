@@ -13,6 +13,7 @@ import {
   type CryptoQuote as ProtoCryptoQuote,
 } from '@/generated/client/worldmonitor/market/v1/service_client';
 import type { MarketData, CryptoData } from '@/types';
+import { CRYPTO_MAP } from '@/config/markets';
 import { createCircuitBreaker } from '@/utils';
 
 // ---- Client + Circuit Breakers ----
@@ -38,9 +39,10 @@ function toMarketData(proto: ProtoMarketQuote, meta?: { name?: string; display?:
 }
 
 function toCryptoData(proto: ProtoCryptoQuote): CryptoData {
+  const mapped = CRYPTO_MAP[proto.symbol] || CRYPTO_MAP[proto.name];
   return {
-    name: proto.name,
-    symbol: proto.symbol,
+    name: mapped?.name || proto.name,
+    symbol: mapped?.symbol || proto.symbol,
     price: proto.price,
     change: proto.change,
     sparkline: proto.sparkline.length > 0 ? proto.sparkline : undefined,
@@ -121,7 +123,7 @@ let lastSuccessfulCrypto: CryptoData[] = [];
 
 export async function fetchCrypto(): Promise<CryptoData[]> {
   const resp = await cryptoBreaker.execute(async () => {
-    return client.listCryptoQuotes({ ids: [] }); // empty = all defaults
+    return client.listCryptoQuotes({ ids: ['bitcoin', 'ethereum', 'solana', 'ripple', 'binancecoin', 'cardano', 'dogecoin', 'tron', 'avalanche-2', 'chainlink', 'polkadot', 'sui'] });
   }, emptyCryptoFallback);
 
   const results = resp.quotes

@@ -1599,6 +1599,185 @@ canvas,
 .panels-grid.section-intelligence > .panel[data-panel="gdelt-intel"] { grid-column: 3; }
 .panels-grid.section-intelligence > .panel[data-panel="intel"] { grid-column: 4; }
 
+/* ======= Markets section – 4-column grid ======= */
+.panels-grid.section-markets {
+  grid-template-columns: repeat(4, 1fr) !important;
+}
+
+.panels-grid.section-markets > .panel-section-tabs,
+.panels-grid.section-markets > footer.site-footer {
+  grid-column: 1 / -1;
+}
+
+/* Pinned live panels: 2 cols each */
+.panels-grid.section-markets > .panel[data-panel="live-news"] {
+  grid-column: 1 / span 2 !important;
+}
+.panels-grid.section-markets > .panel[data-panel="live-webcams"] {
+  grid-column: 3 / span 2 !important;
+}
+
+/* Visual order */
+.panels-grid.section-markets > .panel[data-panel="crypto"]        { order: 1; }
+.panels-grid.section-markets > .panel[data-panel="stablecoins"]   { order: 2; }
+.panels-grid.section-markets > .panel[data-panel="etf-flows"]     { order: 3; }
+.panels-grid.section-markets > .panel[data-panel="economic"]      { order: 4; }
+.panels-grid.section-markets > .panel[data-panel="markets"]       { order: 5; }
+.panels-grid.section-markets > .panel[data-panel="commodities"]   { order: 6; }
+.panels-grid.section-markets > .panel[data-panel="heatmap"]       { order: 7; }
+.panels-grid.section-markets > .panel[data-panel="finance"]       { order: 8; }
+.panels-grid.section-markets > .panel[data-panel="macro-signals"] { order: 9; }
+.panels-grid.section-markets > .panel[data-panel="supply-chain"]  { order: 10; }
+.panels-grid.section-markets > .panel[data-panel="polymarket"]    { order: 11; }
+.panels-grid.section-markets > .panel[data-panel="trade-policy"]  { order: 12; }
+.panels-grid.section-markets > footer.site-footer                 { order: 99; }
+
+/* Hero cards: Crypto (col1) + Markets (col4) span 2 rows */
+.panels-grid.section-markets > .panel[data-panel="crypto"] {
+  grid-column: 1;
+  grid-row: span 2 !important;
+  min-height: 500px !important;
+}
+.panels-grid.section-markets > .panel[data-panel="markets"] {
+  grid-column: 4;
+  grid-row: span 2 !important;
+  min-height: 500px !important;
+}
+/* Make hero panel content fill the full height */
+.panels-grid.section-markets > .panel[data-panel="crypto"],
+.panels-grid.section-markets > .panel[data-panel="markets"] {
+  display: flex;
+  flex-direction: column;
+  max-height: unset !important;
+}
+.panels-grid.section-markets > .panel[data-panel="crypto"] .panel-content,
+.panels-grid.section-markets > .panel[data-panel="markets"] .panel-content {
+  flex: 1;
+}
+
+/* Row 1: stablecoins (col2) */
+.panels-grid.section-markets > .panel[data-panel="stablecoins"] { grid-column: 2; }
+
+/* Row 2: etf-flows (col2) */
+.panels-grid.section-markets > .panel[data-panel="etf-flows"]   { grid-column: 2; }
+
+/* Col3 rows 1-2: economic (tall, fills empty hero space) */
+.panels-grid.section-markets > .panel[data-panel="economic"] {
+  grid-column: 3;
+  grid-row: span 2 !important;
+  min-height: 500px !important;
+  max-height: unset !important;
+  display: flex;
+  flex-direction: column;
+}
+.panels-grid.section-markets > .panel[data-panel="economic"] .panel-content {
+  flex: 1;
+}
+
+/* Row 1-2 normal cards */
+.panels-grid.section-markets > .panel[data-panel="stablecoins"],
+.panels-grid.section-markets > .panel[data-panel="etf-flows"] {
+  grid-row: span 1 !important;
+  min-height: 240px !important;
+}
+
+/* Row 3 (grid-row 6): commodities (col1-2) + heatmap (col3-4) */
+.panels-grid.section-markets > .panel[data-panel="commodities"] {
+  grid-column: 1 / span 2;
+  grid-row: 6 !important;
+}
+.panels-grid.section-markets > .panel[data-panel="heatmap"] {
+  grid-column: 3 / span 2;
+  grid-row: 6 !important;
+}
+
+/* Rows 4-5 (grid-rows 7-8): finance, macro-signals, supply-chain tall; polymarket + trade-policy col4 */
+.panels-grid.section-markets > .panel[data-panel="finance"]       { grid-column: 1; grid-row: 7 / span 2 !important; align-self: stretch; max-height: unset !important; }
+.panels-grid.section-markets > .panel[data-panel="macro-signals"] { grid-column: 2; grid-row: 7 / span 2 !important; align-self: stretch; max-height: unset !important; }
+.panels-grid.section-markets > .panel[data-panel="supply-chain"]  { grid-column: 3; grid-row: 7 / span 2 !important; align-self: stretch; max-height: unset !important; }
+.panels-grid.section-markets > .panel[data-panel="polymarket"]    { grid-column: 4; grid-row: 7 !important; min-height: 300px !important; }
+.panels-grid.section-markets > .panel[data-panel="trade-policy"]  { grid-column: 4; grid-row: 8 !important; min-height: 300px !important; }
+
+/* Normal cards min-height */
+.panels-grid.section-markets > .panel[data-panel="heatmap"],
+.panels-grid.section-markets > .panel[data-panel="finance"],
+.panels-grid.section-markets > .panel[data-panel="commodities"],
+.panels-grid.section-markets > .panel[data-panel="macro-signals"],
+.panels-grid.section-markets > .panel[data-panel="trade-policy"],
+.panels-grid.section-markets > .panel[data-panel="supply-chain"],
+.panels-grid.section-markets > .panel[data-panel="polymarket"] {
+  min-height: 300px !important;
+}
+
+/* ======= News section – 4-column grid ======= */
+.panels-grid.section-news {
+  grid-template-columns: repeat(4, 1fr) !important;
+}
+
+.panels-grid.section-news > .panel-section-tabs,
+.panels-grid.section-news > footer.site-footer {
+  grid-column: 1 / -1;
+}
+
+/* Pinned live panels: side by side on one row (2 cols each in 4-col grid) */
+.panels-grid.section-news > .panel[data-panel="live-news"] {
+  grid-column: 1 / span 2 !important;
+}
+.panels-grid.section-news > .panel[data-panel="live-webcams"] {
+  grid-column: 3 / span 2 !important;
+}
+
+/* Visual order */
+.panels-grid.section-news > .panel[data-panel="politics"]   { order: 1; }
+.panels-grid.section-news > .panel[data-panel="europe"]     { order: 2; }
+.panels-grid.section-news > .panel[data-panel="us"]         { order: 3; }
+.panels-grid.section-news > .panel[data-panel="middleeast"] { order: 4; }
+.panels-grid.section-news > .panel[data-panel="energy"]     { order: 5; }
+.panels-grid.section-news > .panel[data-panel="africa"]     { order: 6; }
+.panels-grid.section-news > .panel[data-panel="latam"]      { order: 7; }
+.panels-grid.section-news > .panel[data-panel="asia"]       { order: 8; }
+.panels-grid.section-news > footer.site-footer              { order: 99; }
+
+/* Row 1-2: 4 tall cards */
+.panels-grid.section-news > .panel[data-panel="politics"] {
+  grid-column: 1;
+  grid-row: span 2 !important;
+  min-height: 500px !important;
+  align-self: stretch;
+}
+.panels-grid.section-news > .panel[data-panel="europe"] {
+  grid-column: 2;
+  grid-row: span 2 !important;
+  min-height: 500px !important;
+  align-self: stretch;
+}
+.panels-grid.section-news > .panel[data-panel="us"] {
+  grid-column: 3;
+  grid-row: span 2 !important;
+  min-height: 500px !important;
+  align-self: stretch;
+}
+.panels-grid.section-news > .panel[data-panel="middleeast"] {
+  grid-column: 4;
+  grid-row: span 2 !important;
+  min-height: 500px !important;
+  align-self: stretch;
+}
+
+/* Remaining cards – normal height */
+.panels-grid.section-news > .panel[data-panel="energy"]  { grid-column: 1; }
+.panels-grid.section-news > .panel[data-panel="africa"]  { grid-column: 2; }
+.panels-grid.section-news > .panel[data-panel="latam"]   { grid-column: 3; }
+.panels-grid.section-news > .panel[data-panel="asia"]    { grid-column: 4; }
+
+.panels-grid.section-news > .panel[data-panel="energy"],
+.panels-grid.section-news > .panel[data-panel="africa"],
+.panels-grid.section-news > .panel[data-panel="latam"],
+.panels-grid.section-news > .panel[data-panel="asia"] {
+  grid-row: span 1 !important;
+  min-height: 350px !important;
+}
+
 .panel-resize-handle {
   position: absolute;
   bottom: 0;
@@ -1674,17 +1853,17 @@ canvas,
 }
 
 .panel-header-error {
-  background: rgba(255, 50, 50, 0.15);
-  border-bottom-color: rgba(255, 80, 80, 0.5);
+  background: transparent;
+  border-bottom-color: var(--border);
 }
 
 .panel-header-error .panel-title {
-  color: var(--semantic-critical);
+  color: var(--text);
 }
 
 .panel-header-error .panel-count {
-  background: rgba(255, 80, 80, 0.3);
-  color: var(--semantic-critical);
+  background: var(--darken-heavy);
+  color: var(--text-dim);
 }
 
 .header-clock {
@@ -5781,7 +5960,8 @@ a.prediction-link:hover {
 }
 
 .prediction-yes {
-  background: var(--green);
+  background: rgba(68, 255, 136, 0.25);
+  border: 1px solid rgba(68, 255, 136, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -5790,7 +5970,8 @@ a.prediction-link:hover {
 }
 
 .prediction-no {
-  background: var(--red);
+  background: rgba(255, 68, 68, 0.25);
+  border: 1px solid rgba(255, 68, 68, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -5801,8 +5982,8 @@ a.prediction-link:hover {
 .prediction-label {
   font-size: 10px;
   font-weight: bold;
-  color: var(--bg);
-  text-shadow: 0 0 2px var(--overlay-heavy);
+  color: var(--text);
+  text-shadow: none;
   white-space: nowrap;
   padding: 0 4px;
 }

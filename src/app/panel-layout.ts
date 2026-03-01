@@ -1001,10 +1001,12 @@ export class PanelLayoutManager implements AppModule {
       if (!el) continue;
       el.classList.toggle('tab-hidden', allowedSet !== null && !allowedSet.has(key));
     }
-    // Toggle intelligence-specific grid layout
+    // Toggle section-specific grid layouts
     const grid = document.querySelector('.panels-grid');
     if (grid) {
       grid.classList.toggle('section-intelligence', activeTab === 'intelligence');
+      grid.classList.toggle('section-news', activeTab === 'news');
+      grid.classList.toggle('section-markets', activeTab === 'markets');
     }
   }
 
