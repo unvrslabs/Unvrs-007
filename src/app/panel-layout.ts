@@ -672,32 +672,6 @@ export class PanelLayoutManager implements AppModule {
         'latam': 1,
         'asia': 2,
         'energy': 2,
-        /* Markets – varied layout */
-        'commodities': 2,
-        'markets': 3,
-        'economic': 2,
-        'trade-policy': 2,
-        'supply-chain': 1,
-        'finance': 2,
-        'polymarket': 2,
-        'macro-signals': 1,
-        'etf-flows': 2,
-        'stablecoins': 1,
-        'crypto': 2,
-        'heatmap': 3,
-        /* Topics – varied layout */
-        'gov': 2,
-        'thinktanks': 2,
-        'tech': 3,
-        'ai': 2,
-        'layoffs': 1,
-        /* Tracking – varied layout */
-        'monitors': 2,
-        'satellite-fires': 2,
-        'ucdp-events': 3,
-        'displacement': 2,
-        'climate': 2,
-        'population-exposure': 1,
       };
       for (const [key, span] of Object.entries(defaultSpans)) {
         if (savedSpans[key]) continue; // user already customised this panel
