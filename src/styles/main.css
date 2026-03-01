@@ -13709,15 +13709,6 @@ a.prediction-link:hover {
   display: none !important;
 }
 
-/* Intelligence tab: 2-column grid layout */
-.panels-grid.intel-tab-layout {
-  grid-template-columns: repeat(2, 1fr) !important;
-}
-
-.panel.intel-full-width {
-  grid-column: 1 / -1 !important;
-}
-
 /* ============ Site Footer ============ */
 .site-footer {
   grid-column: 1 / -1;
