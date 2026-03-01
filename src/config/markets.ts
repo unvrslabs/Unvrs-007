@@ -1,4 +1,5 @@
 import type { Sector, Commodity, MarketSymbol } from '@/types';
+import { SITE_VARIANT } from '@/config/variant';
 
 export const SECTORS: Sector[] = [
   { symbol: 'XLK', name: 'Tech' },
@@ -15,7 +16,7 @@ export const SECTORS: Sector[] = [
   { symbol: 'SMH', name: 'Semis' },
 ];
 
-export const COMMODITIES: Commodity[] = [
+const GLOBAL_COMMODITIES: Commodity[] = [
   { symbol: '^VIX', name: 'VIX', display: 'VIX' },
   { symbol: 'GC=F', name: 'Gold', display: 'GOLD' },
   { symbol: 'CL=F', name: 'Crude Oil', display: 'OIL' },
@@ -24,7 +25,20 @@ export const COMMODITIES: Commodity[] = [
   { symbol: 'HG=F', name: 'Copper', display: 'COPPER' },
 ];
 
-export const MARKET_SYMBOLS: MarketSymbol[] = [
+const ITALIA_COMMODITIES: Commodity[] = [
+  { symbol: 'GC=F', name: 'Oro', display: 'ORO' },
+  { symbol: 'BZ=F', name: 'Brent', display: 'BRENT' },
+  { symbol: 'NG=F', name: 'Gas Naturale', display: 'GAS' },
+  { symbol: 'EURUSD=X', name: 'Euro/Dollaro', display: 'EUR/USD' },
+  { symbol: 'EURGBP=X', name: 'Euro/Sterlina', display: 'EUR/GBP' },
+  { symbol: 'SI=F', name: 'Argento', display: 'ARGENTO' },
+  { symbol: 'HG=F', name: 'Rame', display: 'RAME' },
+  { symbol: 'ZW=F', name: 'Grano', display: 'GRANO' },
+];
+
+export const COMMODITIES: Commodity[] = SITE_VARIANT === 'italia' ? ITALIA_COMMODITIES : GLOBAL_COMMODITIES;
+
+const GLOBAL_MARKET_SYMBOLS: MarketSymbol[] = [
   { symbol: '^GSPC', name: 'S&P 500', display: 'SPX' },
   { symbol: '^DJI', name: 'Dow Jones', display: 'DOW' },
   { symbol: '^IXIC', name: 'NASDAQ', display: 'NDX' },
@@ -54,6 +68,39 @@ export const MARKET_SYMBOLS: MarketSymbol[] = [
   { symbol: 'NFLX', name: 'Netflix', display: 'NFLX' },
   { symbol: 'BAC', name: 'BofA', display: 'BAC' },
 ];
+
+const ITALIA_MARKET_SYMBOLS: MarketSymbol[] = [
+  // Indici
+  { symbol: 'FTSEMIB.MI', name: 'FTSE MIB', display: 'FTSE MIB' },
+  { symbol: '^STOXX50E', name: 'Euro Stoxx 50', display: 'STOXX50' },
+  { symbol: '^GDAXI', name: 'DAX', display: 'DAX' },
+  // Banche & Assicurazioni
+  { symbol: 'ISP.MI', name: 'Intesa Sanpaolo', display: 'ISP' },
+  { symbol: 'UCG.MI', name: 'UniCredit', display: 'UCG' },
+  { symbol: 'G.MI', name: 'Generali', display: 'G' },
+  { symbol: 'MB.MI', name: 'Mediobanca', display: 'MB' },
+  { symbol: 'BMPS.MI', name: 'Banca MPS', display: 'MPS' },
+  // Energia
+  { symbol: 'ENEL.MI', name: 'Enel', display: 'ENEL' },
+  { symbol: 'ENI.MI', name: 'Eni', display: 'ENI' },
+  { symbol: 'SRG.MI', name: 'Snam', display: 'SNAM' },
+  { symbol: 'TRN.MI', name: 'Terna', display: 'TERNA' },
+  // Industria & Difesa
+  { symbol: 'LDO.MI', name: 'Leonardo', display: 'LDO' },
+  { symbol: 'STLAM.MI', name: 'Stellantis', display: 'STLA' },
+  { symbol: 'PRY.MI', name: 'Prysmian', display: 'PRY' },
+  // Lusso & Consumo
+  { symbol: 'RACE.MI', name: 'Ferrari', display: 'FERRARI' },
+  { symbol: 'MONC.MI', name: 'Moncler', display: 'MONC' },
+  { symbol: 'CPR.MI', name: 'Campari', display: 'CPR' },
+  // Telecom & Infrastrutture
+  { symbol: 'TIT.MI', name: 'Telecom Italia', display: 'TIT' },
+  { symbol: 'PST.MI', name: 'Poste Italiane', display: 'POSTE' },
+  { symbol: 'AMP.MI', name: 'Amplifon', display: 'AMP' },
+  { symbol: 'PIRC.MI', name: 'Pirelli', display: 'PIRC' },
+];
+
+export const MARKET_SYMBOLS: MarketSymbol[] = SITE_VARIANT === 'italia' ? ITALIA_MARKET_SYMBOLS : GLOBAL_MARKET_SYMBOLS;
 
 export const CRYPTO_IDS = ['bitcoin', 'ethereum', 'solana', 'ripple', 'binancecoin', 'cardano', 'dogecoin', 'tron', 'avalanche-2', 'chainlink', 'polkadot', 'sui'] as const;
 

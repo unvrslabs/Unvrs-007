@@ -26,6 +26,7 @@ import { createCircuitBreaker } from '@/utils';
 import { getCSSColor } from '@/utils';
 import { isFeatureAvailable } from '../runtime-config';
 import { dataFreshness } from '../data-freshness';
+import { SITE_VARIANT } from '@/config/variant';
 
 // ---- Client + Circuit Breakers ----
 
@@ -80,7 +81,7 @@ interface FredConfig {
   precision: number;
 }
 
-const FRED_SERIES: FredConfig[] = [
+const GLOBAL_FRED_SERIES: FredConfig[] = [
   { id: 'WALCL', name: 'Fed Total Assets', unit: '$B', precision: 0 },
   { id: 'FEDFUNDS', name: 'Fed Funds Rate', unit: '%', precision: 2 },
   { id: 'T10Y2Y', name: '10Y-2Y Spread', unit: '%', precision: 2 },
@@ -89,6 +90,18 @@ const FRED_SERIES: FredConfig[] = [
   { id: 'DGS10', name: '10Y Treasury', unit: '%', precision: 2 },
   { id: 'VIXCLS', name: 'VIX', unit: '', precision: 2 },
 ];
+
+const ITALIA_FRED_SERIES: FredConfig[] = [
+  { id: 'IRLTLT01ITM156N', name: 'BTP 10 Anni', unit: '%', precision: 2 },
+  { id: 'ITACPIALLMINMEI', name: 'Inflazione Italia', unit: '', precision: 1 },
+  { id: 'LRHUTTTTITM156S', name: 'Disoccupazione Italia', unit: '%', precision: 1 },
+  { id: 'ECBDFR', name: 'Tasso BCE', unit: '%', precision: 2 },
+  { id: 'IRLTLT01DEM156N', name: 'Bund 10 Anni', unit: '%', precision: 2 },
+  { id: 'DEXUSEU', name: 'USD/EUR', unit: '', precision: 4 },
+  { id: 'VIXCLS', name: 'VIX', unit: '', precision: 2 },
+];
+
+const FRED_SERIES: FredConfig[] = SITE_VARIANT === 'italia' ? ITALIA_FRED_SERIES : GLOBAL_FRED_SERIES;
 
 async function fetchSingleFredSeries(config: FredConfig): Promise<FredSeries | null> {
   const resp = await getFredBreaker(config.id).execute(async () => {
