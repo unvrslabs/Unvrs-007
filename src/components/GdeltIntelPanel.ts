@@ -30,17 +30,21 @@ export class GdeltIntelPanel extends Panel {
   }
 
   private createTabs(): void {
+    const makeTab = (topic: IntelTopic) =>
+      h('button', {
+        className: `gdelt-intel-tab ${topic.id === this.activeTopic.id ? 'active' : ''}`,
+        dataset: { topicId: topic.id },
+        title: topic.description,
+        onClick: () => this.selectTopic(topic),
+      },
+        h('span', { className: 'tab-icon' }, topic.icon),
+        h('span', { className: 'tab-label' }, topic.name),
+      );
+
+    const topics = getIntelTopics();
     this.tabsEl = h('div', { className: 'gdelt-intel-tabs' },
-      ...getIntelTopics().map(topic =>
-        h('button', {
-          className: `gdelt-intel-tab ${topic.id === this.activeTopic.id ? 'active' : ''}`,
-          dataset: { topicId: topic.id },
-          title: topic.description,
-          onClick: () => this.selectTopic(topic),
-        },
-          h('span', { className: 'tab-icon' }, topic.icon),
-          h('span', { className: 'tab-label' }, topic.name),
-        ),
+      h('div', { className: 'slide-track' },
+        ...topics.map(makeTab),
       ),
     );
 

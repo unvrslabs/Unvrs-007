@@ -425,16 +425,20 @@ export class InsightsPanel extends Panel {
     const missedHtml = this.renderMissedStories();
 
     this.setContent(`
-      ${briefHtml}
-      ${focalPointsHtml}
-      ${convergenceHtml}
-      ${sentimentOverview}
-      ${statsHtml}
-      <div class="insights-section">
-        <div class="insights-section-title">BREAKING & CONFIRMED</div>
-        ${breakingHtml}
+      <div class="insights-fixed">
+        ${briefHtml}
+        ${focalPointsHtml}
+        ${convergenceHtml}
+        ${sentimentOverview}
+        ${statsHtml}
       </div>
-      ${missedHtml}
+      <div class="insights-scrollable">
+        <div class="insights-section">
+          <div class="insights-section-title">BREAKING & CONFIRMED</div>
+          ${breakingHtml}
+        </div>
+        ${missedHtml}
+      </div>
     `);
   }
 

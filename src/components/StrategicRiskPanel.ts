@@ -343,7 +343,7 @@ export class StrategicRiskPanel extends Panel {
       return '';
     }
 
-    const displayAlerts = this.alerts.slice(0, 5);
+    const displayAlerts = this.alerts.slice(0, 15);
 
     return `
       <div class="risk-section">

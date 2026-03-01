@@ -98,11 +98,12 @@ export class CascadePanel extends Panel {
 
   private renderSelector(): string {
     const nodes = this.getFilteredNodes();
-    const filterButtons = ['cable', 'pipeline', 'port', 'chokepoint'].map((f) =>
+    const filterItems = ['cable', 'pipeline', 'port', 'chokepoint'].map((f) =>
       `<button class="cascade-filter-btn ${this.filter === f ? 'active' : ''}" data-filter="${f}">
         ${this.getNodeTypeEmoji(f)} ${this.getFilterLabel(f as Exclude<NodeFilter, 'all'>)}
       </button>`
     ).join('');
+    const filterButtons = `<div class="slide-track">${filterItems}</div>`;
 
     const nodeOptions = nodes.map(n =>
       `<option value="${escapeHtml(n.id)}" ${this.selectedNode === n.id ? 'selected' : ''}>
