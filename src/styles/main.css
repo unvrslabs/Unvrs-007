@@ -1563,8 +1563,45 @@ canvas,
   max-height: none !important;
 }
 
-.panel.col-full {
+/* Intelligence section – explicit 4-column × 2-row grid */
+.panels-grid.section-intelligence {
+  grid-template-columns: repeat(4, 1fr) !important;
+}
+
+.panels-grid.section-intelligence > .panel-section-tabs,
+.panels-grid.section-intelligence > .panel[data-panel="live-news"],
+.panels-grid.section-intelligence > .panel[data-panel="live-webcams"],
+.panels-grid.section-intelligence > .site-footer {
   grid-column: 1 / -1;
+}
+
+.panels-grid.section-intelligence > .panel[data-panel="strategic-risk"] {
+  grid-column: 1;
+  grid-row: span 2;
+}
+
+.panels-grid.section-intelligence > .panel[data-panel="cii"] {
+  grid-column: 2;
+}
+
+.panels-grid.section-intelligence > .panel[data-panel="strategic-posture"] {
+  grid-column: 3;
+}
+
+.panels-grid.section-intelligence > .panel[data-panel="cascade"] {
+  grid-column: 4;
+}
+
+.panels-grid.section-intelligence > .panel[data-panel="insights"] {
+  grid-column: 2;
+}
+
+.panels-grid.section-intelligence > .panel[data-panel="gdelt-intel"] {
+  grid-column: 3;
+}
+
+.panels-grid.section-intelligence > .panel[data-panel="intel"] {
+  grid-column: 4;
 }
 
 .panel-resize-handle {

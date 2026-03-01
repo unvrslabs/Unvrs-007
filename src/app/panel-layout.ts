@@ -683,9 +683,6 @@ export class PanelLayoutManager implements AppModule {
         }
       }
 
-      // Strategic Risk spans full width in the Intelligence section
-      const srPanel = this.ctx.panels['strategic-risk'];
-      if (srPanel) srPanel.getElement().classList.add('col-full');
     }
 
     // Site footer — inside the grid so it's visible in all layouts (incl. ultra-wide)
@@ -1000,6 +997,11 @@ export class PanelLayoutManager implements AppModule {
       const el = panel?.getElement();
       if (!el) continue;
       el.classList.toggle('tab-hidden', allowedSet !== null && !allowedSet.has(key));
+    }
+    // Toggle intelligence-specific grid layout
+    const grid = document.querySelector('.panels-grid');
+    if (grid) {
+      grid.classList.toggle('section-intelligence', activeTab === 'intelligence');
     }
   }
 
