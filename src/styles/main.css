@@ -1573,34 +1573,30 @@ canvas,
   grid-column: 1 / -1;
 }
 
+/* Strategic Risk: col 1, spans both rows */
 .panels-grid.section-intelligence > .panel[data-panel="strategic-risk"] {
   grid-column: 1;
-  grid-row: span 2;
+  grid-row: span 2 !important;
+  min-height: auto !important;
 }
 
-.panels-grid.section-intelligence > .panel[data-panel="cii"] {
-  grid-column: 2;
-}
-
-.panels-grid.section-intelligence > .panel[data-panel="strategic-posture"] {
-  grid-column: 3;
-}
-
-.panels-grid.section-intelligence > .panel[data-panel="cascade"] {
-  grid-column: 4;
-}
-
-.panels-grid.section-intelligence > .panel[data-panel="insights"] {
-  grid-column: 2;
-}
-
-.panels-grid.section-intelligence > .panel[data-panel="gdelt-intel"] {
-  grid-column: 3;
-}
-
+/* Row 1 & 2 cards: force single row each */
+.panels-grid.section-intelligence > .panel[data-panel="cii"],
+.panels-grid.section-intelligence > .panel[data-panel="strategic-posture"],
+.panels-grid.section-intelligence > .panel[data-panel="cascade"],
+.panels-grid.section-intelligence > .panel[data-panel="insights"],
+.panels-grid.section-intelligence > .panel[data-panel="gdelt-intel"],
 .panels-grid.section-intelligence > .panel[data-panel="intel"] {
-  grid-column: 4;
+  grid-row: span 1 !important;
+  min-height: 200px !important;
 }
+
+.panels-grid.section-intelligence > .panel[data-panel="cii"] { grid-column: 2; }
+.panels-grid.section-intelligence > .panel[data-panel="strategic-posture"] { grid-column: 3; }
+.panels-grid.section-intelligence > .panel[data-panel="cascade"] { grid-column: 4; }
+.panels-grid.section-intelligence > .panel[data-panel="insights"] { grid-column: 2; }
+.panels-grid.section-intelligence > .panel[data-panel="gdelt-intel"] { grid-column: 3; }
+.panels-grid.section-intelligence > .panel[data-panel="intel"] { grid-column: 4; }
 
 .panel-resize-handle {
   position: absolute;

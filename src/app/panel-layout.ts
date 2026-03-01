@@ -652,6 +652,9 @@ export class PanelLayoutManager implements AppModule {
         'strategic-risk': 2,
         'cascade': 1,
       } : {
+        /* Pinned – taller for video visibility */
+        'live-news': 2,
+        'live-webcams': 2,
         /* Intelligence – hero cards */
         'strategic-risk': 2,
         'insights': 2,
