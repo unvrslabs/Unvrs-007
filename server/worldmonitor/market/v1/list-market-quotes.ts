@@ -11,7 +11,7 @@ import type {
   ListMarketQuotesResponse,
   MarketQuote,
 } from '../../../../src/generated/server/worldmonitor/market/v1/service_server';
-import { YAHOO_ONLY_SYMBOLS, fetchFinnhubQuotesBatch, fetchYahooQuotesBatch } from './_shared';
+import { isYahooOnly, fetchFinnhubQuotesBatch, fetchYahooQuotesBatch } from './_shared';
 import { cachedFetchJson } from '../../../_shared/redis';
 
 const REDIS_CACHE_KEY = 'market:quotes:v1';
@@ -49,8 +49,8 @@ export async function listMarketQuotes(
     const symbols = req.symbols;
     if (!symbols.length) return { quotes: [], finnhubSkipped: !apiKey, skipReason: !apiKey ? 'FINNHUB_API_KEY not configured' : '' };
 
-    const finnhubSymbols = symbols.filter((s) => !YAHOO_ONLY_SYMBOLS.has(s));
-    const yahooSymbols = symbols.filter((s) => YAHOO_ONLY_SYMBOLS.has(s));
+    const finnhubSymbols = symbols.filter((s) => !isYahooOnly(s));
+    const yahooSymbols = symbols.filter((s) => isYahooOnly(s));
 
     const quotes: MarketQuote[] = [];
 

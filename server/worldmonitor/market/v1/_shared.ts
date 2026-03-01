@@ -56,10 +56,27 @@ export async function fetchYahooQuotesBatch(
 }
 
 // Yahoo-only symbols: indices and futures not on Finnhub free tier
-export const YAHOO_ONLY_SYMBOLS = new Set([
+const YAHOO_ONLY_SYMBOL_SET = new Set([
   '^GSPC', '^DJI', '^IXIC', '^VIX',
   'GC=F', 'CL=F', 'NG=F', 'SI=F', 'HG=F',
 ]);
+
+/**
+ * Determines whether a symbol should skip Finnhub and go directly to Yahoo Finance.
+ * Pattern-based to automatically handle international symbols without manual updates.
+ */
+export function isYahooOnly(symbol: string): boolean {
+  if (YAHOO_ONLY_SYMBOL_SET.has(symbol)) return true;
+  // All indices (^ prefix) — Finnhub uses a different endpoint
+  if (symbol.startsWith('^')) return true;
+  // All commodity futures (=F suffix) — e.g. BZ=F, ZW=F
+  if (symbol.endsWith('=F')) return true;
+  // All forex pairs (=X suffix) — e.g. EURUSD=X, EURGBP=X
+  if (symbol.endsWith('=X')) return true;
+  // European exchange suffixes — Finnhub free tier lacks coverage
+  if (symbol.endsWith('.MI')) return true;
+  return false;
+}
 
 // Known crypto IDs and their metadata
 export const CRYPTO_META: Record<string, { name: string; symbol: string }> = {
