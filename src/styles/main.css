@@ -1569,9 +1569,7 @@ canvas,
 }
 
 .panels-grid.section-intelligence > .panel-section-tabs,
-.panels-grid.section-intelligence > .panel[data-panel="live-news"],
-.panels-grid.section-intelligence > .panel[data-panel="live-webcams"],
-.panels-grid.section-intelligence > .site-footer {
+.panels-grid.section-intelligence > footer.site-footer {
   grid-column: 1 / -1;
 }
 
