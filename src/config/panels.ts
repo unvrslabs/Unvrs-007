@@ -11,12 +11,13 @@ const FULL_PANELS: Record<string, PanelConfig> = {
   map: { name: 'Global Map', enabled: true, priority: 1 },
   'live-news': { name: 'Live News', enabled: true, priority: 1 },
   'live-webcams': { name: 'Live Webcams', enabled: true, priority: 1 },
-  insights: { name: 'AI Insights', enabled: true, priority: 1 },
-  'strategic-posture': { name: 'AI Strategic Posture', enabled: true, priority: 1 },
-  cii: { name: 'Country Instability', enabled: true, priority: 1 },
+  // Intelligence section — order matches wireframe layout
   'strategic-risk': { name: 'Strategic Risk Overview', enabled: true, priority: 1 },
-  intel: { name: 'Intel Feed', enabled: true, priority: 1 },
+  insights: { name: 'AI Insights', enabled: true, priority: 1 },
+  cii: { name: 'Country Instability', enabled: true, priority: 1 },
   'gdelt-intel': { name: 'Live Intelligence', enabled: true, priority: 1 },
+  'strategic-posture': { name: 'AI Strategic Posture', enabled: true, priority: 1 },
+  intel: { name: 'Intel Feed', enabled: true, priority: 1 },
   gov: { name: 'Government', enabled: true, priority: 1 },
   thinktanks: { name: 'Think Tanks', enabled: true, priority: 1 },
   politics: { name: 'World News', enabled: true, priority: 1 },
@@ -719,7 +720,7 @@ export const PANEL_CATEGORY_MAP: Record<string, { labelKey: string; panelKeys: s
   // Full (geopolitical) variant
   intelligence: {
     labelKey: 'header.panelCatIntelligence',
-    panelKeys: ['cii', 'strategic-risk', 'intel', 'gdelt-intel', 'cascade', 'telegram-intel'],
+    panelKeys: ['strategic-risk', 'insights', 'cii', 'gdelt-intel', 'strategic-posture', 'intel', 'cascade'],
     variants: ['full'],
   },
   regionalNews: {

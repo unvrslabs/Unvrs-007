@@ -652,17 +652,14 @@ export class PanelLayoutManager implements AppModule {
         'strategic-risk': 2,
         'cascade': 1,
       } : {
-        /* Intelligence – hero cards */
-        'strategic-risk': 3,
-        'insights': 2,
-        'strategic-posture': 2,
-        'intel': 2,
-        'gdelt-intel': 2,
-        'cii': 2,
-        'cascade': 2,
-        'telegram-intel': 2,
-        'oref-sirens': 1,
-        'security-advisories': 2,
+        /* Intelligence – equal-height cards (2-col layout via intel-tab-layout) */
+        'strategic-risk': 1,
+        'insights': 1,
+        'strategic-posture': 1,
+        'intel': 1,
+        'gdelt-intel': 1,
+        'cii': 1,
+        'cascade': 1,
         /* News – varied layout */
         'politics': 2,
         'us': 2,
@@ -945,7 +942,7 @@ export class PanelLayoutManager implements AppModule {
 
   private readonly PANEL_SECTION_TABS_DEF = [
     { key: 'all', label: 'All' },
-    { key: 'intelligence', label: 'Intelligence', panels: ['insights', 'strategic-posture', 'cii', 'strategic-risk', 'intel', 'gdelt-intel', 'cascade', 'telegram-intel', 'oref-sirens', 'security-advisories'] },
+    { key: 'intelligence', label: 'Intelligence', panels: ['strategic-risk', 'insights', 'cii', 'gdelt-intel', 'strategic-posture', 'intel', 'cascade'] },
     { key: 'news', label: 'News', panels: ['politics', 'us', 'europe', 'middleeast', 'africa', 'latam', 'asia', 'energy'] },
     { key: 'markets', label: 'Markets', panels: ['commodities', 'markets', 'economic', 'trade-policy', 'supply-chain', 'finance', 'polymarket', 'macro-signals', 'etf-flows', 'stablecoins', 'crypto', 'heatmap'] },
     { key: 'topics', label: 'Topics', panels: ['gov', 'thinktanks', 'tech', 'ai', 'layoffs'] },
@@ -996,6 +993,16 @@ export class PanelLayoutManager implements AppModule {
       const el = panel?.getElement();
       if (!el) continue;
       el.classList.toggle('tab-hidden', allowedSet !== null && !allowedSet.has(key));
+    }
+
+    // Intelligence tab: apply 2-column grid layout with strategic-risk full-width
+    const grid = document.getElementById('panelsGrid');
+    if (grid) {
+      grid.classList.toggle('intel-tab-layout', activeTab === 'intelligence');
+    }
+    const srPanel = this.ctx.panels['strategic-risk']?.getElement();
+    if (srPanel) {
+      srPanel.classList.toggle('intel-full-width', activeTab === 'intelligence');
     }
   }
 
