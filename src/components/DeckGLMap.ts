@@ -456,6 +456,9 @@ export class DeckGLMap {
       attributionControl: false,
       interactive: true,
       scrollZoom: false,
+      ...(SITE_VARIANT === 'italia'
+        ? { maxBounds: [[5, 35], [20, 48]] }
+        : {}),
       ...(MAP_INTERACTION_MODE === 'flat'
         ? {
           maxPitch: 0,

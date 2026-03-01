@@ -77,8 +77,8 @@ const TECH_LIVE_CHANNELS: LiveChannel[] = [
 
 // Italia variant: Italian TV channels
 const ITALIA_LIVE_CHANNELS: LiveChannel[] = [
-  { id: 'tgcom24', name: 'TGCOM24', handle: '@tgcom24', fallbackVideoId: 'ud5LHQ-XzK4', useFallbackOnly: true },
-  { id: 'sky-tg24', name: 'Sky TG24', handle: '@SkyTG24', fallbackVideoId: 'l_82l53W5I8', useFallbackOnly: true },
+  { id: 'rainews24', name: 'RAINEWS24', handle: '@RaiNews', fallbackVideoId: '8buKtQBnvAs', useFallbackOnly: true },
+  { id: 'sky-tg24', name: 'SKY TG24', handle: '@SkyTG24', fallbackVideoId: 'l_82l53W5I8', useFallbackOnly: true },
   { id: 'euronews-it', name: 'Euronews', handle: '@euronews', fallbackVideoId: 'pUcmpyynASM', useFallbackOnly: true },
   { id: 'rai-1', name: 'Rai 1', handle: '@Rai', fallbackVideoId: 'gSL3sM7sIKA', useFallbackOnly: true },
   { id: 'rai-2', name: 'Rai 2', handle: '@Rai', fallbackVideoId: 'qDBvNJUa4lg', useFallbackOnly: true },

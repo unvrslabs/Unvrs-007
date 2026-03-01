@@ -20,6 +20,15 @@ import {
 } from '@/services/data-freshness';
 import { getLearningProgress } from '@/services/country-instability';
 import { fetchCachedRiskScores } from '@/services/cached-risk-scores';
+import { SITE_VARIANT } from '@/config/variant';
+
+// Countries relevant to Italian national security (Mediterranean + NATO Europe)
+const ITALIA_ALERT_COUNTRIES = new Set([
+  'IT', 'FR', 'DE', 'ES', 'AT', 'CH', 'SI', 'HR', 'GR', 'MT',
+  'TN', 'LY', 'AL', 'ME', 'BA', 'RS', 'TR', 'EG', 'CY', 'DZ',
+  'MA', 'IL', 'LB', 'SY', 'IQ', 'RU', 'UA', 'PL', 'RO', 'BG',
+  'HU', 'CZ', 'SK', 'YE', 'IR', 'SA',
+]);
 
 export class StrategicRiskPanel extends Panel {
   private overview: StrategicRiskOverview | null = null;
@@ -68,9 +77,29 @@ export class StrategicRiskPanel extends Panel {
 
   public async refresh(): Promise<void> {
     this.freshnessSummary = dataFreshness.getSummary();
-    this.convergenceAlerts = detectConvergence();
+    let convergence = detectConvergence();
+    let recentAlerts = getRecentAlerts(24);
+
+    // Italia variant: filter to Mediterranean/European region
+    if (SITE_VARIANT === 'italia') {
+      convergence = convergence.filter(c => {
+        // Mediterranean box: lat 25-65, lon -10 to 45
+        return c.lat >= 25 && c.lat <= 65 && c.lon >= -10 && c.lon <= 45;
+      });
+      recentAlerts = recentAlerts.filter(a => {
+        if (a.countries.length > 0) {
+          return a.countries.some(c => ITALIA_ALERT_COUNTRIES.has(c));
+        }
+        if (a.location) {
+          return a.location.lat >= 25 && a.location.lat <= 65 && a.location.lon >= -10 && a.location.lon <= 45;
+        }
+        return true; // Keep alerts without location data
+      });
+    }
+
+    this.convergenceAlerts = convergence;
     this.overview = calculateStrategicRiskOverview(this.convergenceAlerts);
-    this.alerts = getRecentAlerts(24);
+    this.alerts = recentAlerts;
 
     // Try to get cached scores during learning mode
     const { inLearning } = getLearningProgress();

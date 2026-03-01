@@ -1,5 +1,6 @@
 import type { Hotspot } from '@/types';
 import { t } from '@/services/i18n';
+import { SITE_VARIANT } from '@/config/variant';
 import {
   IntelligenceServiceClient,
   type GdeltArticle as ProtoGdeltArticle,
@@ -76,6 +77,51 @@ export const INTEL_TOPICS: IntelTopic[] = [
   },
 ];
 
+export const ITALIA_INTEL_TOPICS: IntelTopic[] = [
+  {
+    id: 'italia-military',
+    name: 'Attività Militare',
+    query: '(Italy military OR "esercito italiano" OR NATO Italy OR "difesa italiana" OR "marina militare") sourcelang:ita OR sourcelang:eng',
+    icon: '⚔️',
+    description: 'Operazioni militari italiane e NATO',
+  },
+  {
+    id: 'italia-cyber',
+    name: 'Minacce Informatiche',
+    query: '(Italy cyberattack OR "attacco informatico" OR "sicurezza informatica" OR ACN Italia OR hacker Italia) sourcelang:ita OR sourcelang:eng',
+    icon: '🔓',
+    description: 'Attacchi informatici e minacce digitali in Italia',
+  },
+  {
+    id: 'italia-intelligence',
+    name: 'Intelligence',
+    query: '(Italy intelligence OR AISE OR AISI OR Copasir OR "servizi segreti" OR spionaggio Italia) sourcelang:ita OR sourcelang:eng',
+    icon: '🕵️',
+    description: 'Servizi di intelligence e sicurezza nazionale',
+  },
+  {
+    id: 'italia-geopolitica',
+    name: 'Geopolitica',
+    query: '(Italy diplomacy OR "politica estera" OR Meloni OR Tajani OR "Unione Europea" Italy OR G7 Italy) sourcelang:ita OR sourcelang:eng',
+    icon: '🌍',
+    description: 'Diplomazia e relazioni internazionali italiane',
+  },
+  {
+    id: 'italia-sicurezza',
+    name: 'Sicurezza Interna',
+    query: '(Italy terrorism OR mafia OR "criminalità organizzata" OR ndrangheta OR camorra OR "sicurezza nazionale") sourcelang:ita OR sourcelang:eng',
+    icon: '🛡️',
+    description: 'Sicurezza interna e criminalità organizzata',
+  },
+  {
+    id: 'italia-energia',
+    name: 'Energia & Risorse',
+    query: '(Italy energy OR "gas naturale" Italy OR ENI OR "energia rinnovabile" Italy OR "gasdotto" OR TAP) sourcelang:ita OR sourcelang:eng',
+    icon: '⚡',
+    description: 'Sicurezza energetica e risorse strategiche',
+  },
+];
+
 export const POSITIVE_GDELT_TOPICS: IntelTopic[] = [
   {
     id: 'science-breakthroughs',
@@ -115,6 +161,9 @@ export const POSITIVE_GDELT_TOPICS: IntelTopic[] = [
 ];
 
 export function getIntelTopics(): IntelTopic[] {
+  if (SITE_VARIANT === 'italia') {
+    return ITALIA_INTEL_TOPICS;
+  }
   return INTEL_TOPICS.map(topic => ({
     ...topic,
     name: t(`intel.topics.${topic.id}.name`),
@@ -193,8 +242,9 @@ export async function fetchTopicIntelligence(topic: IntelTopic): Promise<TopicIn
 }
 
 export async function fetchAllTopicIntelligence(): Promise<TopicIntelligence[]> {
+  const topics = SITE_VARIANT === 'italia' ? ITALIA_INTEL_TOPICS : INTEL_TOPICS;
   const results = await Promise.allSettled(
-    INTEL_TOPICS.map(topic => fetchTopicIntelligence(topic))
+    topics.map(topic => fetchTopicIntelligence(topic))
   );
 
   return results

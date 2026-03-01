@@ -1805,6 +1805,72 @@ canvas,
   grid-column: 3 / span 2; min-height: 300px !important;
 }
 
+/* ======= Italia variant – map + panels 4-column grid ======= */
+.panels-grid.variant-italia {
+  grid-template-columns: repeat(4, 1fr) !important;
+}
+
+/* Map embedded in the grid: col 1-2, rows 1-3 */
+.panels-grid.variant-italia > .map-section {
+  grid-column: 1 / span 2;
+  grid-row: 1 / span 3;
+  height: auto;
+  min-height: 500px;
+  max-height: unset;
+  margin: 0;
+}
+
+/* Hide resize handle, region select and legend when map is inside grid */
+.panels-grid.variant-italia > .map-section .map-resize-handle,
+.panels-grid.variant-italia > .map-section .map-region-select-wrap,
+.panels-grid.variant-italia > .map-section .deckgl-legend,
+.panels-grid.variant-italia > .map-section .map-legend {
+  display: none;
+}
+
+/* Canali (live news): col 3-4, rows 1-3 (same height as map) */
+.panels-grid.variant-italia > .panel[data-panel="live-news"] {
+  grid-column: 3 / span 2 !important;
+  grid-row: 1 / span 3;
+  min-height: 240px !important;
+  max-height: unset !important;
+  align-self: stretch;
+}
+
+/* Webcam: all 4 columns, below map+canali */
+.panels-grid.variant-italia > .panel[data-panel="live-webcams"] {
+  grid-column: 1 / -1 !important;
+  grid-row: 4;
+  min-height: 460px !important;
+  max-height: unset !important;
+  align-self: stretch;
+}
+
+.panels-grid.variant-italia > .panel[data-panel="live-webcams"] .webcam-content {
+  overflow: visible !important;
+}
+
+.panels-grid.variant-italia > .panel[data-panel="live-webcams"] .webcam-grid {
+  row-gap: 6px;
+}
+
+/* Italia: hide region filter buttons */
+.variant-italia .webcam-toolbar .webcam-toolbar-group:first-child {
+  display: none !important;
+}
+
+/* Section tabs: full width, after webcams */
+.panels-grid.variant-italia > .panel-section-tabs {
+  grid-column: 1 / -1;
+  grid-row: 5;
+}
+
+/* Other Italia panels flow below */
+.panels-grid.variant-italia > footer.site-footer {
+  grid-column: 1 / -1;
+  order: 99;
+}
+
 /* ======= News section – 4-column grid ======= */
 .panels-grid.section-news {
   grid-template-columns: repeat(4, 1fr) !important;
@@ -1872,6 +1938,147 @@ canvas,
 .panels-grid.section-news > .panel[data-panel="asia"] {
   grid-row: span 1 !important;
   min-height: 350px !important;
+}
+
+/* ======= Notizie section (Italia) – 4-column, 4-row grid ======= */
+.panels-grid.section-notizie {
+  grid-template-columns: repeat(4, 1fr) !important;
+}
+
+.panels-grid.section-notizie > .panel-section-tabs,
+.panels-grid.section-notizie > footer.site-footer {
+  grid-column: 1 / -1;
+}
+
+/* Visual order */
+.panels-grid.section-notizie > .panel[data-panel="italia-politica"]       { order: 1; }
+.panels-grid.section-notizie > .panel[data-panel="italia-economia"]       { order: 2; }
+.panels-grid.section-notizie > .panel[data-panel="italia-energia"]        { order: 3; }
+.panels-grid.section-notizie > .panel[data-panel="italia-esteri"]         { order: 4; }
+.panels-grid.section-notizie > .panel[data-panel="europe"]                { order: 5; }
+.panels-grid.section-notizie > .panel[data-panel="italia-difesa"]         { order: 6; }
+.panels-grid.section-notizie > .panel[data-panel="italia-infrastrutture"] { order: 7; }
+.panels-grid.section-notizie > .panel[data-panel="italia-tech"]           { order: 8; }
+.panels-grid.section-notizie > .panel[data-panel="gov"]                  { order: 9; }
+.panels-grid.section-notizie > .panel[data-panel="thinktanks"]           { order: 10; }
+.panels-grid.section-notizie > footer.site-footer                        { order: 99; }
+
+/* Row 1-2: top 4 cards */
+.panels-grid.section-notizie > .panel[data-panel="italia-politica"] {
+  grid-column: 1;
+  grid-row: span 2 !important;
+  min-height: 500px !important;
+  align-self: stretch;
+}
+.panels-grid.section-notizie > .panel[data-panel="italia-economia"] {
+  grid-column: 2;
+  grid-row: span 2 !important;
+  min-height: 500px !important;
+  align-self: stretch;
+}
+.panels-grid.section-notizie > .panel[data-panel="italia-energia"] {
+  grid-column: 3;
+  grid-row: span 2 !important;
+  min-height: 500px !important;
+  align-self: stretch;
+}
+.panels-grid.section-notizie > .panel[data-panel="italia-esteri"] {
+  grid-column: 4;
+  grid-row: span 2 !important;
+  min-height: 500px !important;
+  align-self: stretch;
+}
+
+/* Row 3-4: bottom 4 cards */
+.panels-grid.section-notizie > .panel[data-panel="europe"] {
+  grid-column: 1;
+  grid-row: span 2 !important;
+  min-height: 500px !important;
+  align-self: stretch;
+}
+.panels-grid.section-notizie > .panel[data-panel="italia-difesa"] {
+  grid-column: 2;
+  grid-row: span 2 !important;
+  min-height: 500px !important;
+  align-self: stretch;
+}
+.panels-grid.section-notizie > .panel[data-panel="italia-infrastrutture"] {
+  grid-column: 3;
+  grid-row: span 2 !important;
+  min-height: 500px !important;
+  align-self: stretch;
+}
+.panels-grid.section-notizie > .panel[data-panel="italia-tech"] {
+  grid-column: 4;
+  grid-row: span 2 !important;
+  min-height: 500px !important;
+  align-self: stretch;
+}
+
+/* Row 5-6: Governo (col1-2), Think Tanks (col3-4) */
+.panels-grid.section-notizie > .panel[data-panel="gov"] {
+  grid-column: 1 / span 2;
+  grid-row: span 2 !important;
+  min-height: 500px !important;
+  align-self: stretch;
+}
+.panels-grid.section-notizie > .panel[data-panel="thinktanks"] {
+  grid-column: 3 / span 2;
+  grid-row: span 2 !important;
+  min-height: 500px !important;
+  align-self: stretch;
+}
+
+/* ======= Mercati section (Italia) – 4-column, 4-row grid ======= */
+.panels-grid.section-mercati {
+  grid-template-columns: repeat(4, 1fr) !important;
+}
+
+.panels-grid.section-mercati > .panel-section-tabs,
+.panels-grid.section-mercati > footer.site-footer {
+  grid-column: 1 / -1;
+}
+
+/* Visual order */
+.panels-grid.section-mercati > .panel[data-panel="italia-finanza"] { order: 1; }
+.panels-grid.section-mercati > .panel[data-panel="energy"]         { order: 2; }
+.panels-grid.section-mercati > .panel[data-panel="economic"]       { order: 3; }
+.panels-grid.section-mercati > .panel[data-panel="markets"]        { order: 4; }
+.panels-grid.section-mercati > .panel[data-panel="commodities"]    { order: 5; }
+.panels-grid.section-mercati > footer.site-footer                  { order: 99; }
+
+/* Row 1-2: Borsa e Finanza (col1), Energia (col2), Indicatori Economici (col3-4) */
+.panels-grid.section-mercati > .panel[data-panel="italia-finanza"] {
+  grid-column: 1;
+  grid-row: span 2 !important;
+  min-height: 500px !important;
+  align-self: stretch;
+}
+.panels-grid.section-mercati > .panel[data-panel="energy"] {
+  grid-column: 2;
+  grid-row: span 2 !important;
+  min-height: 500px !important;
+  align-self: stretch;
+}
+.panels-grid.section-mercati > .panel[data-panel="economic"] {
+  grid-column: 3 / span 2;
+  grid-row: span 2 !important;
+  min-height: 500px !important;
+  align-self: stretch;
+}
+
+/* Row 3-4: Mercati (col1-2), Materie Prime (col3-4) */
+.panels-grid.section-mercati > .panel[data-panel="markets"] {
+  grid-column: 1 / span 2;
+  grid-row: span 2 !important;
+  min-height: 500px !important;
+  align-self: stretch;
+}
+.panels-grid.section-mercati > .panel[data-panel="commodities"] {
+  grid-column: 3 / span 2;
+  grid-row: span 2 !important;
+  min-height: 500px !important;
+  align-self: stretch;
 }
 
 .panel-resize-handle {
@@ -3049,6 +3256,12 @@ canvas,
   gap: 2px;
   flex: 1;
   background: #000;
+}
+
+/* Italia variant: 4x2 webcam grid (8 screens) */
+.variant-italia .webcam-grid {
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: 1fr 1fr;
 }
 
 .webcam-cell {

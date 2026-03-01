@@ -48,14 +48,17 @@ const WEBCAM_FEEDS: WebcamFeed[] = [
   { id: 'seoul', city: 'Seoul', country: 'South Korea', region: 'asia', channelHandle: '@UNvillage_live', fallbackVideoId: '-JhoMGoAfFc' },
   { id: 'sydney', city: 'Sydney', country: 'Australia', region: 'asia', channelHandle: '@WebcamSydney', fallbackVideoId: '7pcL-0Wo77U' },
   // Italia
-  { id: 'roma', city: 'Roma', country: 'Italia', region: 'italia', channelHandle: '@SkylineWebcams', fallbackVideoId: 'TaGUVve3s_k' },
-  { id: 'venezia', city: 'Venezia', country: 'Italia', region: 'italia', channelHandle: '@SkylineWebcams', fallbackVideoId: 'vPwD-gPqCf4' },
-  { id: 'napoli', city: 'Napoli', country: 'Italia', region: 'italia', channelHandle: '@SkylineWebcams', fallbackVideoId: 'wKnYzq3POIY' },
-  { id: 'firenze', city: 'Firenze', country: 'Italia', region: 'italia', channelHandle: '@SkylineWebcams', fallbackVideoId: 'TZPXMnG4S3g' },
-  { id: 'milano', city: 'Milano', country: 'Italia', region: 'italia', channelHandle: '@SkylineWebcams', fallbackVideoId: 'pPfCJQDJpkw' },
+  { id: 'roma', city: 'Roma', country: 'Italia', region: 'italia', channelHandle: '@SkylineWebcams', fallbackVideoId: 'VzPbcndoD40' },
+  { id: 'venezia', city: 'Venezia', country: 'Italia', region: 'italia', channelHandle: '@SkylineWebcams', fallbackVideoId: 'ph1vpnYIxJk' },
+  { id: 'napoli', city: 'Napoli', country: 'Italia', region: 'italia', channelHandle: '@SkylineWebcams', fallbackVideoId: 'RbI8JwrBZQA' },
+  { id: 'firenze', city: 'Firenze', country: 'Italia', region: 'italia', channelHandle: '@SkylineWebcams', fallbackVideoId: 'yhJEW02TfZU' },
+  { id: 'milano', city: 'Milano', country: 'Italia', region: 'italia', channelHandle: '@SkylineWebcams', fallbackVideoId: '28BXLXTP63E' },
+  { id: 'torino', city: 'Torino', country: 'Italia', region: 'italia', channelHandle: '@SkylineWebcams', fallbackVideoId: 'wwDy9mx8zgA' },
+  { id: 'assisi', city: 'Assisi', country: 'Italia', region: 'italia', channelHandle: '@SkylineWebcams', fallbackVideoId: 'CkNeltsc5ps' },
+  { id: 'siena', city: 'Siena', country: 'Italia', region: 'italia', channelHandle: '@SkylineWebcams', fallbackVideoId: 'd6IstgeKiiU' },
 ];
 
-const MAX_GRID_CELLS = 4;
+const MAX_GRID_CELLS = SITE_VARIANT === 'italia' ? 8 : 4;
 
 type ViewMode = 'grid' | 'single';
 type RegionFilter = 'all' | WebcamRegion;
@@ -89,7 +92,7 @@ export class LiveWebcamsPanel extends Panel {
   }
 
   private static readonly ALL_GRID_IDS = SITE_VARIANT === 'italia'
-    ? ['roma', 'venezia', 'napoli', 'milano']
+    ? ['roma', 'venezia', 'napoli', 'milano', 'firenze', 'torino', 'assisi', 'siena']
     : ['jerusalem', 'tehran', 'kyiv', 'washington'];
 
   private get gridFeeds(): WebcamFeed[] {

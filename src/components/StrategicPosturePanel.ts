@@ -4,6 +4,17 @@ import { fetchCachedTheaterPosture, type CachedTheaterPosture } from '@/services
 import { fetchMilitaryVessels } from '@/services/military-vessels';
 import { recalcPostureWithVessels, type TheaterPostureSummary } from '@/services/military-surge';
 import { t } from '../services/i18n';
+import { SITE_VARIANT } from '@/config/variant';
+
+// Theaters relevant to Italian national security and Mediterranean interests
+const ITALIA_THEATERS = new Set([
+  'east-med-theater',
+  'blacksea-theater',
+  'baltic-theater',
+  'iran-theater',
+  'israel-gaza-theater',
+  'yemen-redsea-theater',
+]);
 
 export class StrategicPosturePanel extends Panel {
   private postures: TheaterPostureSummary[] = [];
@@ -137,10 +148,17 @@ export class StrategicPosturePanel extends Panel {
       }
 
       // Deep clone to avoid mutating cached data
-      this.postures = data.postures.map((p) => ({
+      let postures = data.postures.map((p) => ({
         ...p,
         byOperator: { ...p.byOperator },
       }));
+
+      // Italia variant: only show theaters relevant to Italian security
+      if (SITE_VARIANT === 'italia') {
+        postures = postures.filter(p => ITALIA_THEATERS.has(p.theaterId));
+      }
+
+      this.postures = postures;
       this.lastTimestamp = data.timestamp;
       this.isStale = data.stale || false;
 
@@ -274,10 +292,14 @@ export class StrategicPosturePanel extends Panel {
       return;
     }
     // Deep clone to avoid mutating cached data
-    this.postures = data.postures.map((p) => ({
+    let postures = data.postures.map((p) => ({
       ...p,
       byOperator: { ...p.byOperator },
     }));
+    if (SITE_VARIANT === 'italia') {
+      postures = postures.filter(p => ITALIA_THEATERS.has(p.theaterId));
+    }
+    this.postures = postures;
     this.lastTimestamp = data.timestamp;
     this.isStale = data.stale || false;
     this.augmentWithVessels().then(() => {

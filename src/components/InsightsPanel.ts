@@ -373,9 +373,11 @@ export class InsightsPanel extends Panel {
 
         // Pass focal point context + theater posture to AI for correlation-aware summarization
         // Tech variant: no geopolitical context, just tech news summarization
-        const theaterContext = SITE_VARIANT === 'full' ? this.getTheaterPostureContext() : '';
+        const theaterContext = (SITE_VARIANT === 'full' || SITE_VARIANT === 'italia') ? this.getTheaterPostureContext() : '';
         const geoContext = SITE_VARIANT === 'full'
           ? (focalSummary.aiContext || signalSummary.aiContext) + theaterContext
+          : SITE_VARIANT === 'italia'
+          ? 'Focus exclusively on Italy and Italian interests. Analyze events through the lens of Italian national security, economy, and geopolitics. ' + theaterContext
           : '';
         const result = await generateSummary(titles, (_step, _total, msg) => {
           // Show sub-progress for summarization
@@ -445,7 +447,7 @@ export class InsightsPanel extends Panel {
   private renderWorldBrief(brief: string): string {
     return `
       <div class="insights-brief">
-        <div class="insights-section-title">${SITE_VARIANT === 'tech' ? '🚀 TECH BRIEF' : '🌍 WORLD BRIEF'}</div>
+        <div class="insights-section-title">${SITE_VARIANT === 'tech' ? '🚀 TECH BRIEF' : SITE_VARIANT === 'italia' ? '🇮🇹 BRIEFING ITALIA' : '🌍 WORLD BRIEF'}</div>
         <div class="insights-brief-text">${escapeHtml(brief)}</div>
       </div>
     `;

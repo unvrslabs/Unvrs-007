@@ -10,6 +10,18 @@ import {
   type DependencyGraph,
 } from '@/services/infrastructure-cascade';
 import type { CascadeResult, CascadeImpactLevel, InfrastructureNode } from '@/types';
+import { SITE_VARIANT } from '@/config/variant';
+
+// Countries whose infrastructure is relevant to Italian security
+const ITALIA_INFRA_COUNTRIES = new Set([
+  'IT', 'Italy', 'FR', 'France', 'DE', 'Germany', 'ES', 'Spain',
+  'AT', 'Austria', 'CH', 'Switzerland', 'SI', 'Slovenia', 'HR', 'Croatia',
+  'GR', 'Greece', 'MT', 'Malta', 'TN', 'Tunisia', 'LY', 'Libya',
+  'AL', 'Albania', 'ME', 'Montenegro', 'TR', 'Turkey', 'EG', 'Egypt',
+  'DZ', 'Algeria', 'MA', 'Morocco', 'CY', 'Cyprus', 'IL', 'Israel',
+  'LB', 'Lebanon', 'AZ', 'Azerbaijan', 'RU', 'Russia', 'UA', 'Ukraine',
+  'NO', 'Norway', 'NL', 'Netherlands', 'UK', 'GB', 'United Kingdom',
+]);
 
 type NodeFilter = 'all' | 'cable' | 'pipeline' | 'port' | 'chokepoint';
 
@@ -83,12 +95,48 @@ export class CascadePanel extends Panel {
     return labels[filter];
   }
 
+  private isNodeRelevantForItalia(node: InfrastructureNode): boolean {
+    const meta = node.metadata || {};
+
+    // Cables: check landingPoints and countriesServed
+    if (node.type === 'cable') {
+      const landingPoints = meta.landingPoints as Array<{ country: string }> | undefined;
+      const countriesServed = meta.countriesServed as Array<{ country: string }> | undefined;
+      if (landingPoints?.some(lp => ITALIA_INFRA_COUNTRIES.has(lp.country))) return true;
+      if (countriesServed?.some(cs => ITALIA_INFRA_COUNTRIES.has(cs.country))) return true;
+      return false;
+    }
+
+    // Pipelines: check countries array
+    if (node.type === 'pipeline') {
+      const countries = meta.countries as string[] | undefined;
+      if (countries?.some(c => ITALIA_INFRA_COUNTRIES.has(c))) return true;
+      return false;
+    }
+
+    // Ports: check country
+    if (node.type === 'port') {
+      const country = meta.country as string | undefined;
+      return country ? ITALIA_INFRA_COUNTRIES.has(country) : false;
+    }
+
+    // Chokepoints: filter by Mediterranean-relevant coordinates
+    if (node.type === 'chokepoint' && node.coordinates) {
+      const [lon, lat] = node.coordinates;
+      // Mediterranean box: roughly lat 25-48, lon -10 to 45
+      return lat >= 25 && lat <= 48 && lon >= -10 && lon <= 45;
+    }
+
+    return true;
+  }
+
   private getFilteredNodes(): InfrastructureNode[] {
     if (!this.graph) return [];
     const nodes: InfrastructureNode[] = [];
     for (const node of this.graph.nodes.values()) {
       if (this.filter === 'all' || node.type === this.filter) {
         if (node.type !== 'country') {
+          if (SITE_VARIANT === 'italia' && !this.isNodeRelevantForItalia(node)) continue;
           nodes.push(node);
         }
       }

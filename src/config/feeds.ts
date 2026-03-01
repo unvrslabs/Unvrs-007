@@ -1160,7 +1160,7 @@ export const SOURCE_REGION_MAP: Record<string, { labelKey: string; feedKeys: str
   gulfMena: { labelKey: 'header.sourceRegionGulfMena', feedKeys: ['gccNews'] },
 };
 
-export const INTEL_SOURCES: Feed[] = [
+const GLOBAL_INTEL_SOURCES: Feed[] = [
   // Defense & Security (Tier 1)
   { name: 'Defense One', url: rss('https://www.defenseone.com/rss/all/'), type: 'defense' },
   { name: 'Breaking Defense', url: rss('https://breakingdefense.com/feed/'), type: 'defense' },
@@ -1210,6 +1210,49 @@ export const INTEL_SOURCES: Feed[] = [
   { name: 'FAO GIEWS', url: rss('https://news.google.com/rss/search?q=site:fao.org+GIEWS+food+security+when:30d&hl=en-US&gl=US&ceid=US:en'), type: 'economic' },
   { name: 'EU ISS', url: rss('https://news.google.com/rss/search?q=site:iss.europa.eu+when:7d&hl=en-US&gl=US&ceid=US:en'), type: 'intl' },
 ];
+
+// ============================================
+// ITALIA VARIANT INTEL SOURCES
+// ============================================
+const ITALIA_INTEL_SOURCES_DEF: Feed[] = [
+  // Difesa & Sicurezza Italiana
+  { name: 'Difesa Online', url: rss('https://news.google.com/rss/search?q=site:difesaonline.it+when:3d&hl=it&gl=IT&ceid=IT:it'), type: 'defense' },
+  { name: 'Analisi Difesa', url: rss('https://news.google.com/rss/search?q=site:analisidifesa.it+when:3d&hl=it&gl=IT&ceid=IT:it'), type: 'defense' },
+  { name: 'Formiche', url: rss('https://news.google.com/rss/search?q=site:formiche.net+(difesa+OR+intelligence+OR+sicurezza+OR+NATO)+when:3d&hl=it&gl=IT&ceid=IT:it'), type: 'defense' },
+  { name: 'Rid Italia', url: rss('https://news.google.com/rss/search?q=site:rid.it+when:7d&hl=it&gl=IT&ceid=IT:it'), type: 'defense' },
+  { name: 'Forze Armate', url: rss('https://news.google.com/rss/search?q=("esercito+italiano"+OR+"marina+militare"+OR+"aeronautica+militare"+OR+"arma+dei+carabinieri")+when:3d&hl=it&gl=IT&ceid=IT:it'), type: 'defense' },
+  { name: 'NATO Italia', url: rss('https://news.google.com/rss/search?q=(NATO+Italia+OR+"alleanza+atlantica"+OR+"spesa+militare"+Italia)+when:3d&hl=it&gl=IT&ceid=IT:it'), type: 'defense' },
+
+  // Intelligence & Servizi Segreti
+  { name: 'Intelligence Italia', url: rss('https://news.google.com/rss/search?q=(AISE+OR+AISI+OR+COPASIR+OR+"servizi+segreti"+OR+DIS+OR+"intelligence+italiana")+when:7d&hl=it&gl=IT&ceid=IT:it'), type: 'intl' },
+  { name: 'Sicurezza Nazionale', url: rss('https://news.google.com/rss/search?q=site:sicurezzanazionale.gov.it+when:14d&hl=it&gl=IT&ceid=IT:it'), type: 'intl' },
+  { name: 'Start InSight', url: rss('https://news.google.com/rss/search?q=site:startinsight.eu+when:7d&hl=it&gl=IT&ceid=IT:it'), type: 'intl' },
+
+  // Geopolitica & Think Tank Italiani
+  { name: 'Limes', url: rss('https://news.google.com/rss/search?q=site:limesonline.com+when:7d&hl=it&gl=IT&ceid=IT:it'), type: 'research' },
+  { name: 'ISPI', url: rss('https://news.google.com/rss/search?q=site:ispionline.it+when:7d&hl=it&gl=IT&ceid=IT:it'), type: 'research' },
+  { name: 'IAI', url: rss('https://news.google.com/rss/search?q=site:iai.it+when:14d&hl=it&gl=IT&ceid=IT:it'), type: 'research' },
+  { name: 'Affari Internazionali', url: rss('https://news.google.com/rss/search?q=site:affarinternazionali.it+when:7d&hl=it&gl=IT&ceid=IT:it'), type: 'research' },
+  { name: 'CESI', url: rss('https://news.google.com/rss/search?q=site:cesi-italia.org+when:14d&hl=it&gl=IT&ceid=IT:it'), type: 'research' },
+
+  // Cybersicurezza Italia
+  { name: 'ACN', url: rss('https://news.google.com/rss/search?q=("Agenzia+Cybersicurezza"+OR+ACN+OR+"cybersicurezza+Italia"+OR+"attacco+informatico"+Italia)+when:7d&hl=it&gl=IT&ceid=IT:it'), type: 'cyber' },
+  { name: 'Cyber Italy', url: rss('https://news.google.com/rss/search?q=(hacker+Italia+OR+ransomware+Italia+OR+"sicurezza+informatica"+Italia)+when:7d&hl=it&gl=IT&ceid=IT:it'), type: 'cyber' },
+
+  // Terrorismo & Criminalità Organizzata
+  { name: 'Antiterrorismo', url: rss('https://news.google.com/rss/search?q=(terrorismo+Italia+OR+radicalizzazione+OR+"antiterrorismo"+OR+jihadismo+Italia)+when:7d&hl=it&gl=IT&ceid=IT:it'), type: 'intl' },
+  { name: 'Criminalità Organizzata', url: rss('https://news.google.com/rss/search?q=(mafia+OR+ndrangheta+OR+camorra+OR+"criminalità+organizzata"+OR+"sacra+corona+unita")+when:3d&hl=it&gl=IT&ceid=IT:it'), type: 'intl' },
+
+  // Mediterraneo & Confini
+  { name: 'Mediterraneo', url: rss('https://news.google.com/rss/search?q=("Mediterraneo"+OR+"Libia"+OR+"Tunisia"+OR+"migranti"+OR+"guardia+costiera")+Italia+when:3d&hl=it&gl=IT&ceid=IT:it'), type: 'intl' },
+  { name: 'Confini & Frontiere', url: rss('https://news.google.com/rss/search?q=("frontiera"+OR+"Frontex"+OR+"sbarchi"+OR+"immigrazione+clandestina"+Italia)+when:3d&hl=it&gl=IT&ceid=IT:it'), type: 'intl' },
+
+  // EU Sicurezza & Difesa
+  { name: 'EU Difesa', url: rss('https://news.google.com/rss/search?q=("difesa+europea"+OR+"PESCO"+OR+"European+Defence"+OR+"EDA")+when:7d&hl=it&gl=IT&ceid=IT:it'), type: 'intl' },
+  { name: 'EU ISS', url: rss('https://news.google.com/rss/search?q=site:iss.europa.eu+when:7d&hl=it&gl=IT&ceid=IT:it'), type: 'intl' },
+];
+
+export const INTEL_SOURCES: Feed[] = SITE_VARIANT === 'italia' ? ITALIA_INTEL_SOURCES_DEF : GLOBAL_INTEL_SOURCES;
 
 // Keywords that trigger alert status - must be specific to avoid false positives
 export const ALERT_KEYWORDS = [

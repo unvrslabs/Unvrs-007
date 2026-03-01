@@ -621,8 +621,17 @@ export class PanelLayoutManager implements AppModule {
       }
     });
 
-    if (SITE_VARIANT === 'full') {
+    if (SITE_VARIANT === 'full' || SITE_VARIANT === 'italia') {
       this.createPanelSectionTabs(panelsGrid);
+    }
+
+    // Italia variant: embed map inside the panels grid for 4-column layout
+    if (SITE_VARIANT === 'italia') {
+      panelsGrid.classList.add('variant-italia');
+      const mapSection = document.getElementById('mapSection');
+      if (mapSection) {
+        panelsGrid.prepend(mapSection);
+      }
     }
 
     // Apply default varied spans for visual variety.
@@ -947,8 +956,11 @@ export class PanelLayoutManager implements AppModule {
 
   private readonly PANEL_SECTION_TAB_KEY = 'worldmonitor-panel-section-tab';
 
-  private readonly PANEL_SECTION_TABS_DEF = [
-    { key: 'all', label: 'All' },
+  private readonly PANEL_SECTION_TABS_DEF = SITE_VARIANT === 'italia' ? [
+    { key: 'intelligence', label: 'Intelligence', panels: ['strategic-risk', 'insights', 'cii', 'gdelt-intel', 'strategic-posture', 'intel', 'cascade', 'monitors'] },
+    { key: 'notizie', label: 'Notizie', panels: ['italia-politica', 'italia-economia', 'italia-esteri', 'italia-difesa', 'italia-energia', 'italia-infrastrutture', 'italia-tech', 'europe', 'gov', 'thinktanks'] },
+    { key: 'mercati', label: 'Mercati', panels: ['italia-finanza', 'markets', 'commodities', 'economic', 'energy'] },
+  ] : [
     { key: 'intelligence', label: 'Intelligence', panels: ['strategic-risk', 'insights', 'cii', 'gdelt-intel', 'strategic-posture', 'intel', 'cascade', 'telegram-intel', 'oref-sirens', 'security-advisories'] },
     { key: 'news', label: 'News', panels: ['politics', 'us', 'europe', 'middleeast', 'africa', 'latam', 'asia', 'energy'] },
     { key: 'markets', label: 'Markets', panels: ['commodities', 'markets', 'economic', 'trade-policy', 'supply-chain', 'finance', 'polymarket', 'macro-signals', 'etf-flows', 'stablecoins', 'crypto', 'heatmap'] },
@@ -958,7 +970,9 @@ export class PanelLayoutManager implements AppModule {
 
   private createPanelSectionTabs(grid: HTMLElement): void {
     const PINNED = new Set(['live-news', 'live-webcams']);
-    const saved = localStorage.getItem(this.PANEL_SECTION_TAB_KEY) ?? 'all';
+    const defaultTab = this.PANEL_SECTION_TABS_DEF[0]?.key ?? 'intelligence';
+    const saved = localStorage.getItem(this.PANEL_SECTION_TAB_KEY) ?? defaultTab;
+    const activeTab = this.PANEL_SECTION_TABS_DEF.some(t => t.key === saved) ? saved : defaultTab;
 
     const wrapper = document.createElement('div');
     wrapper.className = 'panel-section-tabs';
@@ -966,7 +980,7 @@ export class PanelLayoutManager implements AppModule {
     this.PANEL_SECTION_TABS_DEF.forEach(tab => {
       const btn = document.createElement('a');
       btn.href = '#';
-      btn.className = 'glass-nav-item' + (tab.key === saved ? ' active' : '');
+      btn.className = 'glass-nav-item' + (tab.key === activeTab ? ' active' : '');
       btn.dataset.tab = tab.key;
       btn.textContent = tab.label;
       btn.addEventListener('click', (e) => {
@@ -989,7 +1003,7 @@ export class PanelLayoutManager implements AppModule {
       grid.prepend(wrapper);
     }
 
-    this.applyPanelTabFilter(saved, PINNED);
+    this.applyPanelTabFilter(activeTab, PINNED);
   }
 
   private applyPanelTabFilter(activeTab: string, pinned: Set<string>): void {
@@ -1009,6 +1023,8 @@ export class PanelLayoutManager implements AppModule {
       grid.classList.toggle('section-markets', activeTab === 'markets');
       grid.classList.toggle('section-topics', activeTab === 'topics');
       grid.classList.toggle('section-tracking', activeTab === 'tracking');
+      grid.classList.toggle('section-notizie', activeTab === 'notizie');
+      grid.classList.toggle('section-mercati', activeTab === 'mercati');
     }
   }
 

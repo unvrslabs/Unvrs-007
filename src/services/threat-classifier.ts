@@ -109,6 +109,24 @@ const CRITICAL_KEYWORDS: KeywordMap = {
   'nuclear meltdown': 'disaster',
   'major combat operations': 'military',
   'declared war': 'conflict',
+  // Italian critical keywords
+  'attacco nucleare': 'military',
+  'guerra nucleare': 'military',
+  'invasione': 'conflict',
+  'dichiarazione di guerra': 'conflict',
+  'dichiara guerra': 'conflict',
+  'guerra totale': 'conflict',
+  'legge marziale': 'military',
+  'colpo di stato': 'military',
+  'golpe': 'military',
+  'genocidio': 'conflict',
+  'pulizia etnica': 'conflict',
+  'attacco chimico': 'terrorism',
+  'attacco biologico': 'terrorism',
+  'bomba sporca': 'terrorism',
+  'strage': 'conflict',
+  'emergenza sanitaria': 'health',
+  'pandemia': 'health',
 };
 
 const HIGH_KEYWORDS: KeywordMap = {
@@ -170,6 +188,33 @@ const HIGH_KEYWORDS: KeywordMap = {
   'cruise missile': 'military',
   'air defense intercepted': 'military',
   'forces struck': 'conflict',
+  // Italian high keywords
+  'guerra': 'conflict',
+  'conflitto armato': 'conflict',
+  'attacco aereo': 'conflict',
+  'bombardamento': 'conflict',
+  'raid aereo': 'conflict',
+  'drone': 'conflict',
+  'missili': 'military',
+  'lancio di missili': 'military',
+  'truppe schierate': 'military',
+  'escalation militare': 'military',
+  'operazione militare': 'military',
+  'offensiva': 'military',
+  'vittime': 'conflict',
+  'morti': 'conflict',
+  'ostaggio': 'terrorism',
+  'terrorismo': 'terrorism',
+  'attentato': 'terrorism',
+  'attentato terroristico': 'terrorism',
+  'attacco terroristico': 'terrorism',
+  'assassinio': 'crime',
+  'attacco informatico': 'cyber',
+  'cyberattacco': 'cyber',
+  'sanzioni': 'economic',
+  'terremoto': 'disaster',
+  'esplosione': 'conflict',
+  'esplosioni': 'conflict',
 };
 
 const MEDIUM_KEYWORDS: KeywordMap = {
@@ -206,6 +251,36 @@ const MEDIUM_KEYWORDS: KeywordMap = {
   'power outage': 'infrastructure',
   'internet outage': 'infrastructure',
   'derailment': 'infrastructure',
+  // Italian medium keywords
+  'protesta': 'protest',
+  'proteste': 'protest',
+  'rivolta': 'protest',
+  'disordini': 'protest',
+  'manifestazione': 'protest',
+  'sciopero': 'protest',
+  'esercitazione militare': 'military',
+  'esercitazione navale': 'military',
+  'vendita armi': 'military',
+  'crisi diplomatica': 'diplomatic',
+  'ambasciatore richiamato': 'diplomatic',
+  'espulsione diplomatici': 'diplomatic',
+  'guerra commerciale': 'economic',
+  'dazi': 'economic',
+  'recessione': 'economic',
+  'inflazione': 'economic',
+  'crollo mercati': 'economic',
+  'alluvione': 'disaster',
+  'incendio': 'disaster',
+  'eruzione': 'disaster',
+  'epidemia': 'health',
+  'emergenza': 'disaster',
+  'deragliamento': 'infrastructure',
+  'mafia': 'crime',
+  'ndrangheta': 'crime',
+  'camorra': 'crime',
+  'criminalità organizzata': 'crime',
+  'arresto': 'crime',
+  'sequestro': 'crime',
 };
 
 const LOW_KEYWORDS: KeywordMap = {
@@ -236,6 +311,24 @@ const LOW_KEYWORDS: KeywordMap = {
   'gdp': 'economic',
   'unemployment': 'economic',
   'regulation': 'economic',
+  // Italian low keywords
+  'elezioni': 'diplomatic',
+  'voto': 'diplomatic',
+  'vertice': 'diplomatic',
+  'trattato': 'diplomatic',
+  'accordo': 'diplomatic',
+  'negoziati': 'diplomatic',
+  'colloqui': 'diplomatic',
+  'cessate il fuoco': 'diplomatic',
+  'trattato di pace': 'diplomatic',
+  'cambiamento climatico': 'environmental',
+  'inquinamento': 'environmental',
+  'siccità': 'environmental',
+  'vaccino': 'health',
+  'vaccinazione': 'health',
+  'tasso di interesse': 'economic',
+  'disoccupazione': 'economic',
+  'pil': 'economic',
 };
 
 const TECH_HIGH_KEYWORDS: KeywordMap = {
@@ -286,6 +379,7 @@ const EXCLUSIONS = [
 const SHORT_KEYWORDS = new Set([
   'war', 'coup', 'ban', 'vote', 'riot', 'riots', 'hack', 'talks', 'ipo', 'gdp',
   'virus', 'disease', 'flood', 'strikes',
+  'guerra', 'golpe', 'voto', 'morti', 'drone', 'mafia', 'dazi', 'pil',
 ]);
 
 const TRAILING_BOUNDARY_KEYWORDS = new Set([

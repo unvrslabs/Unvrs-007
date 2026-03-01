@@ -3,6 +3,7 @@ import { getCSSColor } from '@/utils';
 import { calculateCII, type CountryScore } from '@/services/country-instability';
 import { t } from '../services/i18n';
 import { h, replaceChildren, rawHtml } from '@/utils/dom-utils';
+import { SITE_VARIANT } from '@/config/variant';
 
 export class CIIPanel extends Panel {
   private scores: CountryScore[] = [];
@@ -112,7 +113,13 @@ export class CIIPanel extends Panel {
       this.scores = localScores;
       console.log(`[CIIPanel] Calculated ${localWithData} countries with focal point intelligence`);
 
-      const withData = this.scores.filter(s => s.score > 0);
+      let withData = this.scores.filter(s => s.score > 0);
+      // Italia variant: show Italy first, then Mediterranean/EU neighbors
+      if (SITE_VARIANT === 'italia') {
+        const italiaFocus = new Set(['IT', 'FR', 'DE', 'ES', 'AT', 'CH', 'SI', 'HR', 'GR', 'MT', 'TN', 'LY', 'AL', 'ME', 'BA', 'RS', 'TR', 'EG']);
+        withData = withData.filter(s => italiaFocus.has(s.code));
+        withData.sort((a, b) => a.code === 'IT' ? -1 : b.code === 'IT' ? 1 : b.score - a.score);
+      }
       this.setCount(withData.length);
 
       if (withData.length === 0) {
