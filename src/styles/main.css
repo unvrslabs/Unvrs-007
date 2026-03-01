@@ -1730,12 +1730,18 @@ canvas,
 
 .live-news-switcher {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  overflow-x: auto;
   gap: 4px;
   padding: 0;
   background: transparent;
   border: none;
   min-width: 0;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.live-news-switcher::-webkit-scrollbar {
+  display: none;
 }
 
 .live-channel-btn {
