@@ -1007,6 +1007,8 @@ export class PanelLayoutManager implements AppModule {
       grid.classList.toggle('section-intelligence', activeTab === 'intelligence');
       grid.classList.toggle('section-news', activeTab === 'news');
       grid.classList.toggle('section-markets', activeTab === 'markets');
+      grid.classList.toggle('section-topics', activeTab === 'topics');
+      grid.classList.toggle('section-tracking', activeTab === 'tracking');
     }
   }
 
