@@ -46,6 +46,7 @@ import { mlWorker } from '@/services/ml-worker';
 import { UnifiedSettings } from '@/components/UnifiedSettings';
 import { t } from '@/services/i18n';
 import { TvModeController } from '@/services/tv-mode';
+import { AgentSidebar } from '@/components/AgentSidebar';
 
 export interface EventHandlerCallbacks {
   updateSearchIndex: () => void;
@@ -168,6 +169,13 @@ export class EventHandlerManager implements AppModule {
     document.getElementById('searchBtn')?.addEventListener('click', () => {
       this.callbacks.updateSearchIndex();
       this.ctx.searchModal?.open();
+    });
+
+    document.getElementById('glassAgentBtn')?.addEventListener('click', () => {
+      if (!this.ctx.agentSidebar) {
+        this.ctx.agentSidebar = new AgentSidebar();
+      }
+      this.ctx.agentSidebar.toggle();
     });
 
     document.getElementById('copyLinkBtn')?.addEventListener('click', async () => {

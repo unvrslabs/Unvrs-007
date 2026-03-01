@@ -246,6 +246,7 @@ export class App {
       speciesPanel: null,
       renewablePanel: null,
       tvMode: null,
+      agentSidebar: null,
       happyAllItems: [],
       isDestroyed: false,
       isPlaybackMode: false,

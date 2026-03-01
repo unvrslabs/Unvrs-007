@@ -23,6 +23,7 @@ import type { GoodThingsDigestPanel } from '@/components/GoodThingsDigestPanel';
 import type { SpeciesComebackPanel } from '@/components/SpeciesComebackPanel';
 import type { RenewableEnergyPanel } from '@/components/RenewableEnergyPanel';
 import type { TvModeController } from '@/services/tv-mode';
+import type { AgentSidebar } from '@/components/AgentSidebar';
 import type { BreakingNewsBanner } from '@/components/BreakingNewsBanner';
 
 export interface CountryBriefSignals {
@@ -107,6 +108,7 @@ export interface AppContext {
   speciesPanel: SpeciesComebackPanel | null;
   renewablePanel: RenewableEnergyPanel | null;
   tvMode: TvModeController | null;
+  agentSidebar: AgentSidebar | null;
   happyAllItems: NewsItem[];
   isDestroyed: boolean;
   isPlaybackMode: boolean;
