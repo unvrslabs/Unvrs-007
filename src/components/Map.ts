@@ -647,30 +647,18 @@ export class MapComponent {
     };
 
     // Wheel zoom with smooth delta
+    // Wheel events pass through to page scroll — zoom only via buttons
+    // Only intercept pinch-to-zoom (ctrlKey) to prevent browser zoom
     this.container.addEventListener(
       'wheel',
       (e) => {
-        e.preventDefault();
-
-        // Check if this is a pinch gesture (ctrlKey is set for trackpad pinch)
         if (e.ctrlKey) {
-          // Pinch-to-zoom on trackpad
+          e.preventDefault();
           const zoomDelta = -e.deltaY * 0.01;
           this.state.zoom = Math.max(1, Math.min(10, this.state.zoom + zoomDelta));
-        } else {
-          // Two-finger scroll for pan, regular scroll for zoom
-          if (Math.abs(e.deltaX) > Math.abs(e.deltaY) * 0.5 || e.shiftKey) {
-            // Horizontal scroll or shift+scroll = pan
-            const panSpeed = 2 / this.state.zoom;
-            this.state.pan.x -= e.deltaX * panSpeed;
-            this.state.pan.y -= e.deltaY * panSpeed;
-          } else {
-            // Vertical scroll = zoom
-            const zoomDelta = e.deltaY > 0 ? -0.15 : 0.15;
-            this.state.zoom = Math.max(1, Math.min(10, this.state.zoom + zoomDelta));
-          }
+          this.applyTransform();
         }
-        this.applyTransform();
+        // Otherwise let the event bubble up for normal page scroll
       },
       { passive: false }
     );
