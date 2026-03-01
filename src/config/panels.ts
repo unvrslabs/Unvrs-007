@@ -11,12 +11,16 @@ const FULL_PANELS: Record<string, PanelConfig> = {
   map: { name: 'Global Map', enabled: true, priority: 1 },
   'live-news': { name: 'Live News', enabled: true, priority: 1 },
   'live-webcams': { name: 'Live Webcams', enabled: true, priority: 1 },
-  insights: { name: 'AI Insights', enabled: true, priority: 1 },
-  'strategic-posture': { name: 'AI Strategic Posture', enabled: true, priority: 1 },
-  cii: { name: 'Country Instability', enabled: true, priority: 1 },
   'strategic-risk': { name: 'Strategic Risk Overview', enabled: true, priority: 1 },
-  intel: { name: 'Intel Feed', enabled: true, priority: 1 },
+  insights: { name: 'AI Insights', enabled: true, priority: 1 },
+  cii: { name: 'Country Instability', enabled: true, priority: 1 },
   'gdelt-intel': { name: 'Live Intelligence', enabled: true, priority: 1 },
+  'strategic-posture': { name: 'AI Strategic Posture', enabled: true, priority: 1 },
+  intel: { name: 'Intel Feed', enabled: true, priority: 1 },
+  cascade: { name: 'Infrastructure Cascade', enabled: true, priority: 1 },
+  'telegram-intel': { name: 'Telegram Intel', enabled: true, priority: 2 },
+  'oref-sirens': { name: 'Israel Sirens', enabled: true, priority: 2 },
+  'security-advisories': { name: 'Security Advisories', enabled: true, priority: 2 },
   gov: { name: 'Government', enabled: true, priority: 1 },
   thinktanks: { name: 'Think Tanks', enabled: true, priority: 1 },
   politics: { name: 'World News', enabled: true, priority: 1 },
@@ -48,11 +52,7 @@ const FULL_PANELS: Record<string, PanelConfig> = {
   ai: { name: 'AI/ML', enabled: true, priority: 2 },
   layoffs: { name: 'Layoffs Tracker', enabled: true, priority: 2 },
   // Row 9 – Security & Conflicts
-  cascade: { name: 'Infrastructure Cascade', enabled: true, priority: 1 },
   'ucdp-events': { name: 'UCDP Conflict Events', enabled: true, priority: 2 },
-  'security-advisories': { name: 'Security Advisories', enabled: true, priority: 2 },
-  'oref-sirens': { name: 'Israel Sirens', enabled: true, priority: 2 },
-  'telegram-intel': { name: 'Telegram Intel', enabled: true, priority: 2 },
   // Row 10 – Humanitarian & Climate
   displacement: { name: 'UNHCR Displacement', enabled: true, priority: 2 },
   climate: { name: 'Climate Anomalies', enabled: true, priority: 2 },
@@ -719,7 +719,7 @@ export const PANEL_CATEGORY_MAP: Record<string, { labelKey: string; panelKeys: s
   // Full (geopolitical) variant
   intelligence: {
     labelKey: 'header.panelCatIntelligence',
-    panelKeys: ['cii', 'strategic-risk', 'intel', 'gdelt-intel', 'cascade', 'telegram-intel'],
+    panelKeys: ['strategic-risk', 'cii', 'gdelt-intel', 'intel', 'cascade', 'telegram-intel'],
     variants: ['full'],
   },
   regionalNews: {

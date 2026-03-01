@@ -1563,6 +1563,10 @@ canvas,
   max-height: none !important;
 }
 
+.panel.col-full {
+  grid-column: 1 / -1;
+}
+
 .panel-resize-handle {
   position: absolute;
   bottom: 0;

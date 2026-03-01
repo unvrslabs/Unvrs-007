@@ -155,14 +155,14 @@ export class App {
     }
 
     // One-time migration: clear stale panel ordering and sizing state
-    const LAYOUT_RESET_MIGRATION_KEY = 'worldmonitor-layout-reset-v2.5';
+    const LAYOUT_RESET_MIGRATION_KEY = 'worldmonitor-layout-reset-v2.6';
     if (!localStorage.getItem(LAYOUT_RESET_MIGRATION_KEY)) {
       const hadSavedOrder = !!localStorage.getItem(PANEL_ORDER_KEY);
       const hadSavedSpans = !!localStorage.getItem(PANEL_SPANS_KEY);
       if (hadSavedOrder || hadSavedSpans) {
         localStorage.removeItem(PANEL_ORDER_KEY);
         localStorage.removeItem(PANEL_SPANS_KEY);
-        console.log('[App] Applied layout reset migration (v2.5): cleared panel order/spans');
+        console.log('[App] Applied layout reset migration (v2.6): cleared panel order/spans');
       }
       localStorage.setItem(LAYOUT_RESET_MIGRATION_KEY, 'done');
     }

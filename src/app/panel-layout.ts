@@ -653,12 +653,12 @@ export class PanelLayoutManager implements AppModule {
         'cascade': 1,
       } : {
         /* Intelligence – hero cards */
-        'strategic-risk': 3,
+        'strategic-risk': 2,
         'insights': 2,
+        'cii': 2,
+        'gdelt-intel': 2,
         'strategic-posture': 2,
         'intel': 2,
-        'gdelt-intel': 2,
-        'cii': 2,
         'cascade': 2,
         'telegram-intel': 2,
         'oref-sirens': 1,
@@ -682,6 +682,10 @@ export class PanelLayoutManager implements AppModule {
           el.classList.add(`span-${span}`, 'resized');
         }
       }
+
+      // Strategic Risk spans full width in the Intelligence section
+      const srPanel = this.ctx.panels['strategic-risk'];
+      if (srPanel) srPanel.getElement().classList.add('col-full');
     }
 
     // Site footer — inside the grid so it's visible in all layouts (incl. ultra-wide)
@@ -945,7 +949,7 @@ export class PanelLayoutManager implements AppModule {
 
   private readonly PANEL_SECTION_TABS_DEF = [
     { key: 'all', label: 'All' },
-    { key: 'intelligence', label: 'Intelligence', panels: ['insights', 'strategic-posture', 'cii', 'strategic-risk', 'intel', 'gdelt-intel', 'cascade', 'telegram-intel', 'oref-sirens', 'security-advisories'] },
+    { key: 'intelligence', label: 'Intelligence', panels: ['strategic-risk', 'insights', 'cii', 'gdelt-intel', 'strategic-posture', 'intel', 'cascade', 'telegram-intel', 'oref-sirens', 'security-advisories'] },
     { key: 'news', label: 'News', panels: ['politics', 'us', 'europe', 'middleeast', 'africa', 'latam', 'asia', 'energy'] },
     { key: 'markets', label: 'Markets', panels: ['commodities', 'markets', 'economic', 'trade-policy', 'supply-chain', 'finance', 'polymarket', 'macro-signals', 'etf-flows', 'stablecoins', 'crypto', 'heatmap'] },
     { key: 'topics', label: 'Topics', panels: ['gov', 'thinktanks', 'tech', 'ai', 'layoffs'] },
