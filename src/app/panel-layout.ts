@@ -33,9 +33,6 @@ import {
   InvestmentsPanel,
   TradePolicyPanel,
   SupplyChainPanel,
-  SecurityAdvisoriesPanel,
-  OrefSirensPanel,
-  TelegramIntelPanel,
 } from '@/components';
 import { SatelliteFiresPanel } from '@/components/SatelliteFiresPanel';
 import { PositiveNewsFeedPanel } from '@/components/PositiveNewsFeedPanel';
@@ -464,15 +461,6 @@ export class PanelLayoutManager implements AppModule {
 
       const cascadePanel = new CascadePanel();
       this.ctx.panels['cascade'] = cascadePanel;
-
-      const telegramIntelPanel = new TelegramIntelPanel();
-      this.ctx.panels['telegram-intel'] = telegramIntelPanel;
-
-      const orefSirensPanel = new OrefSirensPanel();
-      this.ctx.panels['oref-sirens'] = orefSirensPanel;
-
-      const securityAdvisoriesPanel = new SecurityAdvisoriesPanel();
-      this.ctx.panels['security-advisories'] = securityAdvisoriesPanel;
 
       const satelliteFiresPanel = new SatelliteFiresPanel();
       this.ctx.panels['satellite-fires'] = satelliteFiresPanel;
