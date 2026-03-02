@@ -158,3 +158,79 @@ export async function cachedFetchJsonWithMeta<T>(
   const data = await promise;
   return { data, source: 'fresh' };
 }
+
+/**
+ * GEOSEARCH by bounding box — uses Upstash REST pipeline.
+ * Returns member IDs within the box.
+ */
+export async function geoSearchByBox(
+  key: string,
+  lon: number,
+  lat: number,
+  widthKm: number,
+  heightKm: number,
+  count: number,
+  _rawKeys = false,
+): Promise<string[]> {
+  const url = process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (!url || !token) return [];
+
+  const effectiveKey = _rawKeys ? key : prefixKey(key);
+  try {
+    const resp = await fetch(`${url}`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify([
+        'GEOSEARCH', effectiveKey,
+        'FROMLONLAT', String(lon), String(lat),
+        'BYBOX', String(widthKm), String(heightKm), 'km',
+        'COUNT', String(count), 'ASC',
+      ]),
+      signal: AbortSignal.timeout(5_000),
+    });
+    if (!resp.ok) return [];
+    const data = (await resp.json()) as { result?: string[] };
+    return data.result || [];
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Batch HGET — fetches multiple hash fields in a single pipeline call.
+ * Returns a Map of field → parsed JSON value.
+ */
+export async function getHashFieldsBatch(
+  key: string,
+  fields: string[],
+  _rawKeys = false,
+): Promise<Map<string, unknown>> {
+  const result = new Map<string, unknown>();
+  if (fields.length === 0) return result;
+
+  const url = process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (!url || !token) return result;
+
+  const effectiveKey = _rawKeys ? key : prefixKey(key);
+  try {
+    const pipeline = fields.map((f) => ['HGET', effectiveKey, f]);
+    const resp = await fetch(`${url}/pipeline`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(pipeline),
+      signal: AbortSignal.timeout(5_000),
+    });
+    if (!resp.ok) return result;
+
+    const data = (await resp.json()) as Array<{ result?: string }>;
+    for (let i = 0; i < fields.length; i++) {
+      const raw = data[i]?.result;
+      if (raw) {
+        try { result.set(fields[i]!, JSON.parse(raw)); } catch { /* skip */ }
+      }
+    }
+  } catch { /* best-effort */ }
+  return result;
+}
