@@ -54,6 +54,8 @@ import { createTradeServiceRoutes } from '../../../src/generated/server/worldmon
 import { tradeHandler } from '../../../server/worldmonitor/trade/v1/handler';
 import { createSupplyChainServiceRoutes } from '../../../src/generated/server/worldmonitor/supply_chain/v1/service_server';
 import { supplyChainHandler } from '../../../server/worldmonitor/supply-chain/v1/handler';
+import { createAiInvestServiceRoutes } from '../../../src/generated/server/worldmonitor/ai_invest/v1/service_server';
+import { aiInvestHandler } from '../../../server/worldmonitor/ai-invest/v1/handler';
 
 import type { ServerOptions } from '../../../src/generated/server/worldmonitor/seismology/v1/service_server';
 
@@ -81,6 +83,7 @@ const allRoutes = [
   ...createGivingServiceRoutes(givingHandler, serverOptions),
   ...createTradeServiceRoutes(tradeHandler, serverOptions),
   ...createSupplyChainServiceRoutes(supplyChainHandler, serverOptions),
+  ...createAiInvestServiceRoutes(aiInvestHandler, serverOptions),
 ];
 
 const router = createRouter(allRoutes);

@@ -163,43 +163,23 @@ const FULL_MOBILE_MAP_LAYERS: MapLayers = {
 };
 
 // ============================================
-// TECH VARIANT (Tech/AI/Startups)
+// AI VARIANT (Investment AI, Marketplace, Charts & Predictions)
 // ============================================
 const TECH_PANELS: Record<string, PanelConfig> = {
-  map: { name: 'Global Tech Map', enabled: true, priority: 1 },
-  'live-news': { name: 'Tech Headlines', enabled: true, priority: 1 },
-  'live-webcams': { name: 'Live Webcams', enabled: true, priority: 2 },
-  insights: { name: 'AI Insights', enabled: true, priority: 1 },
-  ai: { name: 'AI/ML News', enabled: true, priority: 1 },
-  tech: { name: 'Technology', enabled: true, priority: 1 },
-  startups: { name: 'Startups & VC', enabled: true, priority: 1 },
-  vcblogs: { name: 'VC Insights & Essays', enabled: true, priority: 1 },
-  regionalStartups: { name: 'Global Startup News', enabled: true, priority: 1 },
-  unicorns: { name: 'Unicorn Tracker', enabled: true, priority: 1 },
-  accelerators: { name: 'Accelerators & Demo Days', enabled: true, priority: 1 },
-  security: { name: 'Cybersecurity', enabled: true, priority: 1 },
-  policy: { name: 'AI Policy & Regulation', enabled: true, priority: 1 },
-  regulation: { name: 'AI Regulation Dashboard', enabled: true, priority: 1 },
-  layoffs: { name: 'Layoffs Tracker', enabled: true, priority: 1 },
-  markets: { name: 'Tech Stocks', enabled: true, priority: 2 },
-  finance: { name: 'Financial News', enabled: true, priority: 2 },
-  crypto: { name: 'Crypto', enabled: true, priority: 2 },
-  hardware: { name: 'Semiconductors & Hardware', enabled: true, priority: 2 },
-  cloud: { name: 'Cloud & Infrastructure', enabled: true, priority: 2 },
-  dev: { name: 'Developer Community', enabled: true, priority: 2 },
-  github: { name: 'GitHub Trending', enabled: true, priority: 1 },
-  ipo: { name: 'IPO & SPAC', enabled: true, priority: 2 },
-  polymarket: { name: 'Tech Predictions', enabled: true, priority: 2 },
-  funding: { name: 'Funding & VC', enabled: true, priority: 1 },
-  producthunt: { name: 'Product Hunt', enabled: true, priority: 1 },
-  events: { name: 'Tech Events', enabled: true, priority: 1 },
-  'service-status': { name: 'Service Status', enabled: true, priority: 2 },
-  economic: { name: 'Economic Indicators', enabled: true, priority: 2 },
-  'tech-readiness': { name: 'Tech Readiness Index', enabled: true, priority: 1 },
-  'macro-signals': { name: 'Market Radar', enabled: true, priority: 2 },
-  'etf-flows': { name: 'BTC ETF Tracker', enabled: true, priority: 2 },
-  stablecoins: { name: 'Stablecoins', enabled: true, priority: 2 },
-  monitors: { name: 'My Monitors', enabled: true, priority: 2 },
+  'ai-agent': { name: 'Agente AI Investimenti', enabled: true, priority: 1 },
+  'ai-opportunities': { name: 'Opportunità di Investimento', enabled: true, priority: 1 },
+  marketplace: { name: 'Comparatore Marketplace', enabled: true, priority: 1 },
+  'ai-dashboard': { name: 'Tendenze Prodotti', enabled: true, priority: 1 },
+  'ai-suppliers': { name: 'Fornitori & Grossisti', enabled: true, priority: 1 },
+  markets: { name: 'Grafici Mercati', enabled: true, priority: 1 },
+  economic: { name: 'Statistiche Economiche', enabled: true, priority: 1 },
+  polymarket: { name: 'Predizioni', enabled: true, priority: 1 },
+  'macro-signals': { name: 'Radar di Mercato', enabled: true, priority: 1 },
+  crypto: { name: 'Crypto', enabled: true, priority: 1 },
+  'etf-flows': { name: 'BTC ETF Tracker', enabled: true, priority: 1 },
+  stablecoins: { name: 'Stablecoins', enabled: true, priority: 1 },
+  commodities: { name: 'Materie Prime', enabled: true, priority: 1 },
+  monitors: { name: 'I Miei Monitor', enabled: true, priority: 2 },
 };
 
 const TECH_MAP_LAYERS: MapLayers = {
@@ -587,6 +567,11 @@ const ITALIA_PANELS: Record<string, PanelConfig> = {
   commodities: { name: 'Materie Prime', enabled: true, priority: 2 },
   energy: { name: 'Energia & Risorse', enabled: true, priority: 2 },
   monitors: { name: 'I Miei Monitor', enabled: true, priority: 2 },
+  'ai-agent': { name: 'Agente AI Investimenti', enabled: true, priority: 1 },
+  'ai-opportunities': { name: 'Opportunità di Investimento', enabled: true, priority: 1 },
+  marketplace: { name: 'Comparatore Marketplace', enabled: true, priority: 1 },
+  'ai-dashboard': { name: 'Tendenze Prodotti', enabled: true, priority: 1 },
+  'ai-suppliers': { name: 'Fornitori & Grossisti', enabled: true, priority: 1 },
 };
 
 const ITALIA_MAP_LAYERS: MapLayers = {
@@ -743,25 +728,20 @@ export const PANEL_CATEGORY_MAP: Record<string, { labelKey: string; panelKeys: s
     variants: ['full'],
   },
 
-  // Tech variant
-  techAi: {
-    labelKey: 'header.panelCatTechAi',
-    panelKeys: ['ai', 'tech', 'hardware', 'cloud', 'dev', 'github', 'producthunt', 'events', 'service-status', 'tech-readiness'],
+  // AI variant (was Tech)
+  aiAnalysis: {
+    labelKey: 'header.panelCatAiAnalysis',
+    panelKeys: ['ai-agent', 'ai-opportunities', 'marketplace', 'ai-dashboard', 'ai-suppliers'],
     variants: ['tech'],
   },
-  startupsVc: {
-    labelKey: 'header.panelCatStartupsVc',
-    panelKeys: ['startups', 'vcblogs', 'regionalStartups', 'unicorns', 'accelerators', 'funding', 'ipo'],
-    variants: ['tech'],
-  },
-  securityPolicy: {
-    labelKey: 'header.panelCatSecurityPolicy',
-    panelKeys: ['security', 'policy', 'regulation'],
-    variants: ['tech'],
-  },
-  techMarkets: {
+  aiMarkets: {
     labelKey: 'header.panelCatMarkets',
-    panelKeys: ['markets', 'finance', 'crypto', 'economic', 'polymarket', 'macro-signals', 'etf-flows', 'stablecoins', 'layoffs', 'monitors'],
+    panelKeys: ['markets', 'commodities', 'crypto', 'etf-flows', 'stablecoins'],
+    variants: ['tech'],
+  },
+  aiStats: {
+    labelKey: 'header.panelCatStats',
+    panelKeys: ['economic', 'polymarket', 'macro-signals', 'monitors'],
     variants: ['tech'],
   },
 

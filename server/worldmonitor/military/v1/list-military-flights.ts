@@ -25,6 +25,11 @@ interface RequestBounds {
   east: number;
 }
 
+interface BoundingBox {
+  southWest: { latitude: number; longitude: number };
+  northEast: { latitude: number; longitude: number };
+}
+
 function getRelayRequestHeaders(): Record<string, string> {
   const headers: Record<string, string> = {
     Accept: 'application/json',
@@ -39,12 +44,12 @@ function getRelayRequestHeaders(): Record<string, string> {
   return headers;
 }
 
-function normalizeBounds(bb: NonNullable<ListMilitaryFlightsRequest['boundingBox']>): RequestBounds {
+function normalizeBounds(bb: BoundingBox): RequestBounds {
   return {
-    south: Math.min(bb.southWest!.latitude, bb.northEast!.latitude),
-    north: Math.max(bb.southWest!.latitude, bb.northEast!.latitude),
-    west: Math.min(bb.southWest!.longitude, bb.northEast!.longitude),
-    east: Math.max(bb.southWest!.longitude, bb.northEast!.longitude),
+    south: Math.min(bb.southWest.latitude, bb.northEast.latitude),
+    north: Math.max(bb.southWest.latitude, bb.northEast.latitude),
+    west: Math.min(bb.southWest.longitude, bb.northEast.longitude),
+    east: Math.max(bb.southWest.longitude, bb.northEast.longitude),
   };
 }
 
@@ -74,8 +79,12 @@ export async function listMilitaryFlights(
   req: ListMilitaryFlightsRequest,
 ): Promise<ListMilitaryFlightsResponse> {
   try {
-    const bb = req.boundingBox;
-    if (!bb?.southWest || !bb?.northEast) return { flights: [], clusters: [], pagination: undefined };
+    // Map flat request fields to a bounding box structure used internally
+    const bb: BoundingBox = {
+      southWest: { latitude: req.swLat, longitude: req.swLon },
+      northEast: { latitude: req.neLat, longitude: req.neLon },
+    };
+    if (!req.swLat && !req.swLon && !req.neLat && !req.neLon) return { flights: [], clusters: [], pagination: undefined };
     const requestBounds = normalizeBounds(bb);
 
     // Quantize bbox to a 1° grid so nearby map views share cache entries.
@@ -86,7 +95,7 @@ export async function listMilitaryFlights(
       quantize(bb.northEast.latitude, BBOX_GRID_STEP),
       quantize(bb.northEast.longitude, BBOX_GRID_STEP),
     ].join(':');
-    const cacheKey = `${REDIS_CACHE_KEY}:${quantizedBB}:${req.operator || ''}:${req.aircraftType || ''}:${req.pagination?.pageSize || 0}`;
+    const cacheKey = `${REDIS_CACHE_KEY}:${quantizedBB}:${req.operator || ''}:${req.aircraftType || ''}:${req.pageSize || 0}`;
 
     const fullResult = await cachedFetchJson<ListMilitaryFlightsResponse>(
       cacheKey,

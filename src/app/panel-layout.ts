@@ -33,6 +33,11 @@ import {
   InvestmentsPanel,
   TradePolicyPanel,
   SupplyChainPanel,
+  AiAgentPanel,
+  AiOpportunitiesPanel,
+  MarketplacePanel,
+  AiDashboardPanel,
+  AiSuppliersPanel,
 } from '@/components';
 import { SatelliteFiresPanel } from '@/components/SatelliteFiresPanel';
 import { PositiveNewsFeedPanel } from '@/components/PositiveNewsFeedPanel';
@@ -117,7 +122,7 @@ export class PanelLayoutManager implements AppModule {
             <span class="glass-nav-divider"></span>
             <a href="#" class="glass-nav-item ${SITE_VARIANT === 'full' ? 'active' : ''}" data-glass-variant="full">World</a>
             <a href="#" class="glass-nav-item ${SITE_VARIANT === 'italia' ? 'active' : ''}" data-glass-variant="italia">Italia</a>
-            <a href="#" class="glass-nav-item ${SITE_VARIANT === 'tech' ? 'active' : ''}" data-glass-variant="tech">Tech</a>
+            <a href="#" class="glass-nav-item ${SITE_VARIANT === 'tech' ? 'active' : ''}" data-glass-variant="tech">AI</a>
             <span class="glass-nav-divider"></span>
             <button class="glass-nav-item glass-nav-agent" id="glassAgentBtn">⬡ Agent</button>
         </nav>
@@ -266,6 +271,12 @@ export class PanelLayoutManager implements AppModule {
 
     this.ctx.map.initEscalationGetters();
     this.ctx.currentTimeRange = this.ctx.map.getTimeRange();
+
+    // AI variant has no map — hide the map section
+    if (!('map' in DEFAULT_PANELS)) {
+      const mapSection = document.getElementById('mapSection');
+      if (mapSection) mapSection.classList.add('hidden');
+    }
 
     const politicsPanel = new NewsPanel('politics', t('panels.politics'));
     this.attachRelatedAssetHandlers(politicsPanel);
@@ -500,6 +511,23 @@ export class PanelLayoutManager implements AppModule {
       this.ctx.panels['population-exposure'] = populationExposurePanel;
     }
 
+    if (SITE_VARIANT === 'italia' || SITE_VARIANT === 'tech') {
+      const aiAgentPanel = new AiAgentPanel();
+      this.ctx.panels['ai-agent'] = aiAgentPanel;
+
+      const aiOpportunitiesPanel = new AiOpportunitiesPanel();
+      this.ctx.panels['ai-opportunities'] = aiOpportunitiesPanel;
+
+      const marketplacePanel = new MarketplacePanel();
+      this.ctx.panels['marketplace'] = marketplacePanel;
+
+      const aiDashboardPanel = new AiDashboardPanel();
+      this.ctx.panels['ai-dashboard'] = aiDashboardPanel;
+
+      const aiSuppliersPanel = new AiSuppliersPanel();
+      this.ctx.panels['ai-suppliers'] = aiSuppliersPanel;
+    }
+
     if (SITE_VARIANT === 'finance') {
       const investmentsPanel = new InvestmentsPanel((inv) => {
         focusInvestmentOnMap(this.ctx.map, this.ctx.mapLayers, inv.lat, inv.lon);
@@ -621,7 +649,7 @@ export class PanelLayoutManager implements AppModule {
       }
     });
 
-    if (SITE_VARIANT === 'full' || SITE_VARIANT === 'italia') {
+    if (SITE_VARIANT === 'full' || SITE_VARIANT === 'italia' || SITE_VARIANT === 'tech') {
       this.createPanelSectionTabs(panelsGrid);
     }
 
@@ -956,10 +984,15 @@ export class PanelLayoutManager implements AppModule {
 
   private readonly PANEL_SECTION_TAB_KEY = 'worldmonitor-panel-section-tab';
 
-  private readonly PANEL_SECTION_TABS_DEF = SITE_VARIANT === 'italia' ? [
+  private readonly PANEL_SECTION_TABS_DEF = SITE_VARIANT === 'tech' ? [
+    { key: 'analisi', label: 'Analisi AI', panels: ['ai-agent', 'ai-opportunities', 'marketplace', 'ai-dashboard', 'ai-suppliers'] },
+    { key: 'mercati', label: 'Mercati', panels: ['markets', 'commodities', 'crypto', 'etf-flows', 'stablecoins'] },
+    { key: 'statistiche', label: 'Statistiche', panels: ['economic', 'polymarket', 'macro-signals', 'monitors'] },
+  ] : SITE_VARIANT === 'italia' ? [
     { key: 'intelligence', label: 'Intelligence', panels: ['strategic-risk', 'insights', 'cii', 'gdelt-intel', 'strategic-posture', 'intel', 'cascade', 'monitors'] },
     { key: 'notizie', label: 'Notizie', panels: ['italia-politica', 'italia-economia', 'italia-esteri', 'italia-difesa', 'italia-energia', 'italia-infrastrutture', 'italia-tech', 'europe', 'gov', 'thinktanks'] },
     { key: 'mercati', label: 'Mercati', panels: ['italia-finanza', 'markets', 'commodities', 'economic', 'energy'] },
+    { key: 'ai', label: 'AI', panels: ['ai-agent', 'ai-opportunities', 'marketplace', 'ai-dashboard', 'ai-suppliers'] },
   ] : [
     { key: 'intelligence', label: 'Intelligence', panels: ['strategic-risk', 'insights', 'cii', 'gdelt-intel', 'strategic-posture', 'intel', 'cascade', 'telegram-intel', 'oref-sirens', 'security-advisories'] },
     { key: 'news', label: 'News', panels: ['politics', 'us', 'europe', 'middleeast', 'africa', 'latam', 'asia', 'energy'] },
@@ -969,7 +1002,8 @@ export class PanelLayoutManager implements AppModule {
   ];
 
   private createPanelSectionTabs(grid: HTMLElement): void {
-    const PINNED = new Set(['live-news', 'live-webcams']);
+    // AI variant (tech) has no live-news/webcams to pin
+    const PINNED = SITE_VARIANT === 'tech' ? new Set<string>() : new Set(['live-news', 'live-webcams']);
     const defaultTab = this.PANEL_SECTION_TABS_DEF[0]?.key ?? 'intelligence';
     const saved = localStorage.getItem(this.PANEL_SECTION_TAB_KEY) ?? defaultTab;
     const activeTab = this.PANEL_SECTION_TABS_DEF.some(t => t.key === saved) ? saved : defaultTab;
@@ -1025,6 +1059,8 @@ export class PanelLayoutManager implements AppModule {
       grid.classList.toggle('section-tracking', activeTab === 'tracking');
       grid.classList.toggle('section-notizie', activeTab === 'notizie');
       grid.classList.toggle('section-mercati', activeTab === 'mercati');
+      grid.classList.toggle('section-ai', activeTab === 'ai' || activeTab === 'analisi');
+      grid.classList.toggle('section-statistiche', activeTab === 'statistiche');
     }
   }
 

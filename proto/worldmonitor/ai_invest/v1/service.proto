@@ -1,0 +1,128 @@
+syntax = "proto3";
+
+package worldmonitor.ai_invest.v1;
+
+import "sebuf/http/annotations.proto";
+
+// ReasoningStep represents one step in the agent's visible thought process.
+message ReasoningStep {
+  // Step number (1-indexed).
+  int32 step = 1;
+  // Category: "data_scan", "pattern_detection", "correlation", "conclusion".
+  string category = 2;
+  // Description of what the agent observed or concluded.
+  string description = 3;
+  // Optional supporting data point or evidence.
+  string evidence = 4;
+}
+
+// InvestmentOpportunity represents a single AI-generated investment signal.
+message InvestmentOpportunity {
+  // Unique identifier for this opportunity.
+  string id = 1;
+  // Asset name or ticker (e.g., "FTSE MIB", "ENI", "BTC").
+  string asset = 2;
+  // Action: COMPRA, VENDI, MONITORA, EVITA.
+  string action = 3;
+  // Confidence score 0-100.
+  int32 confidence = 4;
+  // Short rationale (1-2 sentences).
+  string rationale = 5;
+  // Which data domains contributed: "markets", "news", "economic", "geopolitics".
+  repeated string data_sources = 6;
+  // Time horizon: "short" (days), "medium" (weeks), "long" (months).
+  string time_horizon = 7;
+  // Risk level: "low", "medium", "high".
+  string risk_level = 8;
+  // Current price or value if available.
+  string current_value = 9;
+}
+
+// GetInvestmentAnalysisRequest provides the agent with a current data snapshot.
+message GetInvestmentAnalysisRequest {
+  // Serialized market data summary (top movers, indices).
+  string market_summary = 1;
+  // Serialized news headlines grouped by category.
+  string news_summary = 2;
+  // Serialized economic indicators.
+  string economic_summary = 3;
+  // Focus area: "italia", "global", "crypto", "commodities".
+  string focus = 4;
+  // Language for output: "it" for Italian.
+  string lang = 5;
+}
+
+// GetInvestmentAnalysisResponse contains the full AI analysis.
+message GetInvestmentAnalysisResponse {
+  // The agent's reasoning chain (visible to user).
+  repeated ReasoningStep reasoning = 1;
+  // Generated investment opportunities.
+  repeated InvestmentOpportunity opportunities = 2;
+  // Overall market sentiment summary.
+  string market_outlook = 3;
+  // Model used for generation.
+  string model = 4;
+  // When this analysis was generated (Unix epoch ms).
+  int64 generated_at = 5 [(sebuf.http.int64_encoding) = INT64_ENCODING_NUMBER];
+  // Whether this was served from cache.
+  bool cached = 6;
+  // Disclaimer text.
+  string disclaimer = 7;
+  // Error message if analysis failed.
+  string error = 8;
+}
+
+// MarketSignal represents one detected market signal.
+message MarketSignal {
+  // Signal type: "bullish", "bearish", "neutral", "risk_event".
+  string type = 1;
+  // Sector or asset affected.
+  string sector = 2;
+  // Description of the signal.
+  string description = 3;
+  // Strength 1-5.
+  int32 strength = 4;
+}
+
+// GetMarketRadarRequest asks for a quick sentiment scan.
+message GetMarketRadarRequest {
+  // Headlines for sentiment scan.
+  repeated string headlines = 1;
+  // Market price changes for context.
+  string price_changes = 2;
+  // Language for output.
+  string lang = 3;
+}
+
+// GetMarketRadarResponse provides a quick market sentiment scan.
+message GetMarketRadarResponse {
+  // Detected signals.
+  repeated MarketSignal signals = 1;
+  // Overall sentiment: "bullish", "bearish", "mixed", "cautious".
+  string overall_sentiment = 2;
+  // One-line summary.
+  string summary = 3;
+  // Model used.
+  string model = 4;
+  // When generated (Unix epoch ms).
+  int64 generated_at = 5 [(sebuf.http.int64_encoding) = INT64_ENCODING_NUMBER];
+  // Cache hit.
+  bool cached = 6;
+  // Error if failed.
+  string error = 7;
+}
+
+// AiInvestService provides AI-powered investment analysis using cross-domain data.
+service AiInvestService {
+  option (sebuf.http.service_config) = {base_path: "/api/ai-invest/v1"};
+
+  // GetInvestmentAnalysis generates investment opportunities with visible reasoning.
+  rpc GetInvestmentAnalysis(GetInvestmentAnalysisRequest) returns (GetInvestmentAnalysisResponse) {
+    option (sebuf.http.config) = {path: "/get-investment-analysis"};
+  }
+
+  // GetMarketRadar provides a quick sentiment scan of current market conditions.
+  rpc GetMarketRadar(GetMarketRadarRequest) returns (GetMarketRadarResponse) {
+    option (sebuf.http.config) = {path: "/get-market-radar"};
+  }
+}

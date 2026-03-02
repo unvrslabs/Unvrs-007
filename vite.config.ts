@@ -197,10 +197,10 @@ function htmlVariantPlugin(): Plugin {
           `v='${activeVariant}';document.documentElement.dataset.variant=v;`
         );
       } else {
-        // For 'full' variant: clear stale localStorage variant and force 'full'
+        // For 'full' variant: respect localStorage (runtime variant switching) but default to 'full'
         result = result.replace(
           /if\(v\)document\.documentElement\.dataset\.variant=v;/,
-          `v='full';document.documentElement.dataset.variant=v;`
+          `if(!v)v='full';document.documentElement.dataset.variant=v;`
         );
       }
 
@@ -314,6 +314,7 @@ function sebufApiPlugin(): Plugin {
       positiveEventsServerMod, positiveEventsHandlerMod,
       givingServerMod, givingHandlerMod,
       tradeServerMod, tradeHandlerMod,
+      aiInvestServerMod, aiInvestHandlerMod,
     ] = await Promise.all([
         import('./server/router'),
         import('./server/cors'),
@@ -358,6 +359,8 @@ function sebufApiPlugin(): Plugin {
         import('./server/worldmonitor/giving/v1/handler'),
         import('./src/generated/server/worldmonitor/trade/v1/service_server'),
         import('./server/worldmonitor/trade/v1/handler'),
+        import('./src/generated/server/worldmonitor/ai_invest/v1/service_server'),
+        import('./server/worldmonitor/ai-invest/v1/handler'),
       ]);
 
     const serverOptions = { onError: errorMod.mapErrorToResponse };
@@ -382,6 +385,7 @@ function sebufApiPlugin(): Plugin {
       ...positiveEventsServerMod.createPositiveEventsServiceRoutes(positiveEventsHandlerMod.positiveEventsHandler, serverOptions),
       ...givingServerMod.createGivingServiceRoutes(givingHandlerMod.givingHandler, serverOptions),
       ...tradeServerMod.createTradeServiceRoutes(tradeHandlerMod.tradeHandler, serverOptions),
+      ...aiInvestServerMod.createAiInvestServiceRoutes(aiInvestHandlerMod.aiInvestHandler, serverOptions),
     ];
     cachedCorsMod = corsMod;
     return routerMod.createRouter(allRoutes);

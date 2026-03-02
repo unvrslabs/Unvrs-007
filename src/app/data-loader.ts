@@ -11,6 +11,12 @@ import {
   SITE_VARIANT,
   LAYER_TO_SOURCE,
 } from '@/config';
+import { fetchInvestmentAnalysis, fetchMarketRadar, fetchMarketplaceListings, fetchProductTrends } from '@/services/ai-invest';
+import type { AiAgentPanel } from '@/components/AiAgentPanel';
+import type { AiOpportunitiesPanel } from '@/components/AiOpportunitiesPanel';
+import type { MarketplacePanel } from '@/components/MarketplacePanel';
+import type { AiDashboardPanel } from '@/components/AiDashboardPanel';
+import type { AiSuppliersPanel } from '@/components/AiSuppliersPanel';
 import { INTEL_HOTSPOTS, CONFLICT_ZONES } from '@/config/geo';
 import { tokenizeForMatch, matchKeyword } from '@/utils/keyword-match';
 import {
@@ -236,6 +242,10 @@ export class DataLoaderManager implements AppModule {
 
     if (SITE_VARIANT === 'full' || SITE_VARIANT === 'italia') {
       tasks.push({ name: 'intelligence', task: runGuarded('intelligence', () => this.loadIntelligenceSignals()) });
+    }
+
+    if (SITE_VARIANT === 'italia' || SITE_VARIANT === 'tech') {
+      tasks.push({ name: 'ai-invest', task: runGuarded('ai-invest', () => this.loadAiInvestment()) });
     }
 
     if (SITE_VARIANT === 'full' || SITE_VARIANT === 'italia') tasks.push({ name: 'firms', task: runGuarded('firms', () => this.loadFirmsData()) });
@@ -738,6 +748,99 @@ export class DataLoaderManager implements AppModule {
       this.ctx.statusPanel?.updateApi('CoinGecko', { status: crypto.length > 0 ? 'ok' : 'error' });
     } catch {
       this.ctx.statusPanel?.updateApi('CoinGecko', { status: 'error' });
+    }
+  }
+
+  async loadAiInvestment(): Promise<void> {
+    const aiPanel = this.ctx.panels['ai-agent'] as AiAgentPanel | undefined;
+    const oppPanel = this.ctx.panels['ai-opportunities'] as AiOpportunitiesPanel | undefined;
+    if (!aiPanel) return;
+
+    aiPanel.setLoading();
+    oppPanel?.setLoading();
+
+    // Serialize market data
+    const marketLines = (this.ctx.latestMarkets || [])
+      .slice(0, 15)
+      .map((m) => `${m.display || m.symbol}: ${m.price != null ? m.price.toFixed(2) : 'N/A'} (${m.change != null ? (m.change >= 0 ? '+' : '') + m.change.toFixed(2) + '%' : 'N/A'})`)
+      .join('\n');
+
+    // Serialize news headlines
+    const newsLines: string[] = [];
+    const categories = this.ctx.newsByCategory;
+    if (categories) {
+      for (const [cat, items] of Object.entries(categories)) {
+        const headlines = (items as NewsItem[]).slice(0, 5).map((n) => n.title);
+        if (headlines.length > 0) {
+          newsLines.push(`[${cat}] ${headlines.join(' | ')}`);
+        }
+      }
+    }
+
+    // Serialize price changes for radar
+    const priceChanges = (this.ctx.latestMarkets || [])
+      .filter((m) => m.change != null)
+      .map((m) => `${m.display || m.symbol}: ${m.change! >= 0 ? '+' : ''}${m.change!.toFixed(2)}%`)
+      .join(', ');
+
+    const allHeadlines = newsLines.flatMap((line) => {
+      const match = line.match(/^\[.*?\]\s*(.*)$/);
+      return match ? match[1]!.split(' | ') : [line];
+    });
+
+    try {
+      const [analysis, radar] = await Promise.all([
+        fetchInvestmentAnalysis(
+          marketLines || 'Nessun dato di mercato',
+          newsLines.join('\n') || 'Nessuna notizia',
+          '', // economic summary (not yet wired)
+          'italia',
+          'it',
+        ),
+        fetchMarketRadar(allHeadlines.slice(0, 30), priceChanges, 'it'),
+      ]);
+
+      aiPanel.updateRadar(radar);
+      aiPanel.updateAnalysis(analysis);
+      oppPanel?.updateOpportunities(analysis.opportunities || []);
+    } catch (e) {
+      console.error('[DataLoader] AI investment analysis failed:', e);
+    }
+
+    // Setup marketplace panel search handler
+    const mktPanel = this.ctx.panels['marketplace'] as MarketplacePanel | undefined;
+    if (mktPanel) {
+      mktPanel.getElement().addEventListener('marketplace-search', ((e: Event) => {
+        const detail = (e as CustomEvent<{ query: string; country: string }>).detail;
+        mktPanel.setLoading();
+        fetchMarketplaceListings(detail.query, detail.country, 'it')
+          .then(resp => mktPanel.updateListings(resp))
+          .catch(err => console.error('[DataLoader] Marketplace search failed:', err));
+      }) as EventListener);
+
+      // Load a default search
+      mktPanel.setLoading();
+      try {
+        const defaultResp = await fetchMarketplaceListings('elettronica usata', 'italia', 'it');
+        mktPanel.updateListings(defaultResp);
+      } catch {
+        // ignore default load failure
+      }
+    }
+
+    // Load product trends + suppliers (same API call, two panels)
+    const dashPanel = this.ctx.panels['ai-dashboard'] as AiDashboardPanel | undefined;
+    const supPanel = this.ctx.panels['ai-suppliers'] as AiSuppliersPanel | undefined;
+    if (dashPanel || supPanel) {
+      dashPanel?.setLoading();
+      supPanel?.setLoading();
+      try {
+        const trendsData = await fetchProductTrends('italia', 'it');
+        dashPanel?.updateDashboard(trendsData);
+        supPanel?.updateSuppliers(trendsData);
+      } catch (e) {
+        console.error('[DataLoader] Product trends failed:', e);
+      }
     }
   }
 

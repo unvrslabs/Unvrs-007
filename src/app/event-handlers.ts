@@ -230,16 +230,17 @@ export class EventHandlerManager implements AppModule {
     }
 
     // Glass nav variant buttons (World / Italia / Tech)
-    this.ctx.container.querySelectorAll<HTMLAnchorElement>('[data-glass-variant]').forEach(link => {
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-        const variant = link.dataset.glassVariant;
-        if (variant && variant !== SITE_VARIANT) {
-          trackVariantSwitch(SITE_VARIANT, variant);
-          localStorage.setItem('worldmonitor-variant', variant);
-          window.location.reload();
-        }
-      });
+    // Use event delegation on the container for robustness (handles DOM replacement by HMR etc.)
+    this.ctx.container.addEventListener('click', (e) => {
+      const link = (e.target as HTMLElement).closest<HTMLAnchorElement>('[data-glass-variant]');
+      if (!link) return;
+      e.preventDefault();
+      const variant = link.dataset.glassVariant;
+      if (variant && variant !== SITE_VARIANT) {
+        trackVariantSwitch(SITE_VARIANT, variant);
+        localStorage.setItem('worldmonitor-variant', variant);
+        window.location.href = window.location.pathname; // full navigation (more reliable than reload)
+      }
     });
 
     const fullscreenBtn = document.getElementById('fullscreenBtn');

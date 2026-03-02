@@ -95,7 +95,7 @@ export async function listPositiveGeoEvents(
       }
 
       try {
-        const events = await fetchGdeltGeoPositive(POSITIVE_QUERIES[i]);
+        const events = await fetchGdeltGeoPositive(POSITIVE_QUERIES[i]!);
         for (const event of events) {
           if (!seenNames.has(event.name)) {
             seenNames.add(event.name);
