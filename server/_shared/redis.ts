@@ -18,12 +18,13 @@ function prefixKey(key: string): string {
   return `${cachedPrefix}${key}`;
 }
 
-export async function getCachedJson(key: string): Promise<unknown | null> {
+export async function getCachedJson(key: string, rawKey = false): Promise<unknown | null> {
   const url = process.env.UPSTASH_REDIS_REST_URL;
   const token = process.env.UPSTASH_REDIS_REST_TOKEN;
   if (!url || !token) return null;
   try {
-    const resp = await fetch(`${url}/get/${encodeURIComponent(prefixKey(key))}`, {
+    const effectiveKey = rawKey ? key : prefixKey(key);
+    const resp = await fetch(`${url}/get/${encodeURIComponent(effectiveKey)}`, {
       headers: { Authorization: `Bearer ${token}` },
       signal: AbortSignal.timeout(3_000),
     });
